@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Twitter</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Twitter</h1>
+      <h2>Home</h2>
+      <p>See the most recent activity for you.</p>
+    </div>
+    {% block content %}
+    <section>
+      <h2>Create a travel proposal!</h2>
+      <form action="{{ url_for('main.new_post')}}" method="post">
+        <label for="title">Trip Title:</label><br>
+        <textarea
+          id="title"
+          name="title"
+          rows="1"
+          cols="50"
+          placeholder="Give your trip a name..."
+        ></textarea>
+      <br>
+        <label for="description">Trip Description:</label><br>
+        <textarea
+          id="description"
+          name="text"
+          rows="4"
+          cols="50"
+          placeholder="Detail your dream trip..."
+        ></textarea>
+        <br>
+        <label for="route">Route:</label><br>
+        <textarea
+          name="departure location"
+          rows="1"
+          cols="50"
+          placeholder="Departure location..."
+        ></textarea>
+        <br>
+        <textarea
+          name="destination"
+          rows="1"
+          cols="50"
+          placeholder="Destination"
+        ></textarea>
+        <br>
+        <label for="start">Start date:</label>
+        <input type="date" id="start" name="start">
+        <label for="end">End date:</label>
+        <input type="date" id="end" name="end">
+        <br>
+        <label for="budget">Budget:</label>
+        <input type="number" id="budget" name="budget" min="0">
+        <br>
+        <button type="submit">Publish</button>
+      </form>
+    </section>
+    <section>
+      <h2>Latest posts from the people you follow</h2>
+      {% set posts = following_posts %}
+      {% include 'posts_template.html' %}
+
+      <h2>Latest posts</h2>
+      {% set posts = latest_posts %}
+      {% include 'posts_template.html' %}
+    </section>
+    {% endblock %}
+  </body>
+</html>
