@@ -20,7 +20,7 @@ def create_app(test_config=None):
     # Code to place inside create_app, after the other app.config assignment
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00a"
+    ] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00b"
 
     #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///microblog.db"
 

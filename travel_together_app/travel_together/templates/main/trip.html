@@ -1,9 +1,9 @@
 {% extends 'base.html' %} {% block content %}
-<div class="single_post_container">
-  {% include 'post_template.html' with context %}
+<div class="single_trip_container">
+  {% include 'trip_template.html' with context %}
   <section>
-    <h2>Reply to the post</h2>
-    <form action="{{ url_for('main.new_post')}}" method="post">
+    <h2>Reply to the trip</h2>
+    <form action="{{ url_for('main.new_trip')}}" method="post">
       <textarea
         name="text"
         rows="4"
@@ -11,13 +11,13 @@
         placeholder="What's on your mind?"
       ></textarea>
       <br />
-      <input type="hidden" name="response_to" value="{{ post.id }}">
+      <input type="hidden" name="response_to" value="{{ trip.id }}">
       <button type="submit">Publish</button>
     </form>
   </section>
   <div class="replies_section">
-    {% for post in responses %}
-      {% include 'post_template.html' %}
+    {% for trip in responses %}
+      {% include 'trip_template.html' %}
     {% endfor %}
   </div>
 </div>

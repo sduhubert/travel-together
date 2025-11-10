@@ -1,0 +1,27 @@
+<div class="feed">
+  {% if trip.response_to is none %}
+    <a
+    href="{{ url_for('main.trip', trip_id=trip.id) }}"
+    style="text-decoration: none; color: inherit"
+    >
+  {% endif %}
+      {% if trip.response_to is none %}
+        <div class="trip original" data-trip-id="{{ trip.id }}">
+      {% else %}
+        <div class="trip response">
+      {% endif %}
+          <div class="metadata">
+            <img
+              src="../../static/resources/Defaultpfp.png"
+              alt="Profile picture"
+              class="avatar"
+            />
+            <span class="username">{{ trip.user.name }}</span>
+            <span class="timestamp">{{ trip.timestamp }}</span>
+          </div>
+          <div class="content">{{ trip.text }}</div>
+        </div>
+  {% if trip.response_to is none %}
+    </a>
+  {% endif %}
+</div>

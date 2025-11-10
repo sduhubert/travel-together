@@ -3,15 +3,15 @@ $(document).ready(function() {
         let link = $("<a>")
             .attr("href", "#")
             .addClass("reply")
-            .text("Reply to this post");
+            .text("Reply to this trip");
         $(this).append(link);
         link.on("click", function() {
-            post_id = parseInt(
+            trip_id = parseInt(
                 $(this)
                     .parent()
-                    .attr("data-post-id")
+                    .attr("data-trip-id")
             );
-            form = create_response_form(post_id);
+            form = create_response_form(trip_id);
             $(this).parent().append(form);
             $(this).remove();
         });
@@ -22,15 +22,15 @@ $(document).ready(function() {
     });
 });
 
-let create_response_form = function(post_id) {
+let create_response_form = function(trip_id) {
     let form = $("<form>")
         .attr("method", "post")
-        .attr("action", "/new_post")
+        .attr("action", "/new_trip")
         .addClass("reply-form");
     let hidden = $("<input>")
         .attr("type", "hidden")
         .attr("name", "response_to")
-        .attr("value", post_id);
+        .attr("value", trip_id);
     let textarea = $("<textarea>")
         .attr("name", "text")
         .attr("rows", 4)

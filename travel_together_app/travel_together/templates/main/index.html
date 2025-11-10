@@ -15,7 +15,7 @@
     {% block content %}
     <section>
       <h2>Create a travel proposal!</h2>
-      <form action="{{ url_for('main.new_post')}}" method="post">
+      <form action="{{ url_for('main.new_trip')}}" method="post">
         <label for="title">Trip Title:</label><br>
         <textarea
           id="title"
@@ -61,13 +61,13 @@
       </form>
     </section>
     <section>
-      <h2>Latest posts from the people you follow</h2>
-      {% set posts = following_posts %}
-      {% include 'posts_template.html' %}
+      <h2>Latest trips from the people you follow</h2>
+      {% set trips = following_trips %}
+      {% include 'trips_template.html' %}
 
-      <h2>Latest posts</h2>
-      {% set posts = latest_posts %}
-      {% include 'posts_template.html' %}
+      <h2>Latest trips</h2>
+      {% set trips = latest_trips %}
+      {% include 'trips_template.html' %}
     </section>
     {% endblock %}
   </body>

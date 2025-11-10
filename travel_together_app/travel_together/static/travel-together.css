@@ -19,7 +19,7 @@ body {
   object-fit: cover;
 }
 
-.post {
+.trip {
   background: white;
   border: 1px solid #5e59ab;
   border-radius: 6px;
@@ -45,12 +45,12 @@ body {
   font-size: 14px;
 }
 
-.post-content {
+.trip-content {
   color: #14171a;
   line-height: 1.5;
 }
 
-.single_post_container {
+.single_trip_container {
   max-width: 600px;
   margin: 0 auto;
   padding: 15px;
