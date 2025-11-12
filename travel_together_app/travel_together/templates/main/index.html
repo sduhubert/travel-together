@@ -23,6 +23,7 @@
           rows="1"
           cols="50"
           placeholder="Give your trip a name..."
+          required
         ></textarea>
       <br>
         <label for="description">Trip Description:</label><br>
@@ -32,6 +33,7 @@
           rows="4"
           cols="50"
           placeholder="Detail your dream trip..."
+          required
         ></textarea>
         <br>
         <label for="route">Route:</label><br>
@@ -39,7 +41,7 @@
           name="departure location"
           rows="1"
           cols="50"
-          placeholder="Departure location (optional)..."
+          placeholder="Departure location (if you want to travel there together, otherwise optional)..."
         ></textarea>
         <br>
         <textarea
@@ -47,26 +49,25 @@
           rows="1"
           cols="50"
           placeholder="Destination"
+          required
         ></textarea>
         <br>
         <label for="start">Start date:</label>
-        <input type="date" id="start" name="start">
+        <input type="date" id="start" name="start" required>
         <label for="end">End date:</label>
-        <input type="date" id="end" name="end">
+        <input type="date" id="end" name="end" required>
         <br>
         <label for="budget">Budget:</label>
         <input type="number" id="budget" name="budget" min="0">
         <label for="max_members">Maximum Trip Members:</label>
+        <input type="number" id="max_members" name="max_members" min="0">
+        <label for="age_range">Age Range (optional):</label>
         <input type="number" id="max_members" name="max_members" min="0">
         <br>
         <button type="submit">Publish</button>
       </form>
     </section>
     <section>
-      <h2>Latest trips from the people you follow</h2>
-      {% set trips = following_trips %}
-      {% include 'trips_template.html' %}
-
       <h2>Latest trips</h2>
       {% set trips = latest_trips %}
       {% include 'trips_template.html' %}

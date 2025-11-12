@@ -1,0 +1,18 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "mysql.lab.it.uc3m.es",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "travel-together",
+            "username": "26_webapp_00",
+            "database": "26_webapp_00b"
+        }
+    ]
+}

@@ -7,6 +7,7 @@ from sqlalchemy import String, DateTime, ForeignKey, Boolean, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
+
 from . import db
 
 class FollowingAssociation(db.Model):
@@ -50,9 +51,14 @@ class User(flask_login.UserMixin, db.Model):
     
 class TripProposalStatus(enum.Enum):
     OPEN = 0
-    CLOSED = 1
-    FINALIZED = 2
-    CANCELLED = 3   
+    APPROVAL_REQUIRED = 1
+    CLOSED = 2
+    FINALIZED = 3
+    CANCELLED = 4
+
+class TripSexPreference(enum.Enum):
+    FEMALE = 0
+    MALE = 1
     
 class TripProposal(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -60,13 +66,15 @@ class TripProposal(db.Model):
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(512))
     origin: Mapped[str] = mapped_column(String(128))
-    destinations: Mapped[Set[str]] = mapped_column(String(512))  # Comma-separated list
+    destinations: Mapped[str] = mapped_column(String(512))  # Comma-separated list
     start_date: Mapped[datetime.date] = mapped_column(DateTime(timezone=True))
     end_date: Mapped[datetime.date] = mapped_column(DateTime(timezone=True))
-    length: Mapped[int] = mapped_column(Integer)  # in days
-    max_travelers: Mapped[int] = mapped_column(Integer)
-    budget: Mapped[int] = mapped_column(Integer) # in EUR
-    activities: Mapped[Set[str]] = mapped_column(String(512))  # Comma-separated list
+    budget: Mapped[Optional[int]] = mapped_column(Integer) # in EUR
+    max_travelers: Mapped[Optional[int]] = mapped_column(Integer)
+    sex_preference: Mapped[Optional["TripSexPreference"]] = mapped_column(Integer) # Use TripSexPreference enum values
+    activities: Mapped[Optional[str]] = mapped_column(String(512))  # Comma-separated list
+    min_age: Mapped[Optional[int]] = mapped_column(Integer)
+    max_age: Mapped[Optional[int]] = mapped_column(Integer)
     status: Mapped["TripProposalStatus"] = mapped_column(Integer)  # Use TripProposalStatus enum values
     timestamp: Mapped[datetime.datetime] = mapped_column(
         # pylint: disable=not-callable
@@ -76,7 +84,10 @@ class TripProposal(db.Model):
     destinations_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     dates_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     budget_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
+    max_travelers_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
+    sex_preference_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     activities_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
+    age_range_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     status_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     
 class Meetup(db.Model):
