@@ -1,10 +1,70 @@
 body {
-  margin: 25px;
-  background: #cccae3;
+  margin: 0;
+  padding: 0;
+  background: #f2e0c3;
   color: black;
   font-family: arial, sans-serif;
   font-size: 14px;
+  padding-top: 60px;
 }
+
+body footer {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  text-align: center;
+  padding: 10px;
+  font-size: 12px;
+  color: #888;
+}
+
+
+/*============================== HEADER ==============================*/
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: calc(100% - 20px);   /* subtract padding from total width */
+  padding: 0px 10px;
+  z-index: 99;                /* keeps it above everything */
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+  background-color: rgba(100, 100, 100, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+.header-icon {
+    width: 32px;    
+    height: 32px;
+    object-fit: contain;
+    object-fit: cover;   
+    border-radius: 4px;  /* Edge smoothing */
+}
+
+.header-logo {
+    transition: all 0.2s ease-in-out;
+}
+
+/* hover effect */
+.header-logo:hover {
+    filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.5));
+}
+
+/* click / active effect */
+.header-logo:active {
+    filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.7));
+    transform: translateY(1px); /* optional pressed effect */
+}
+
+
+/*============================== FEED ==============================*/
 
 .feed{
   max-width: 600px;

@@ -1,0 +1,115 @@
+.body {
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+} /* Doesn't work, might fix later (it's to prevent the "bounce" on scroll) */
+
+/*=========================== PAGE LAYOUT ===========================*/
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+/*=========================== LOGIN CONTAINER ===========================*/
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+
+    width: 30%;
+    height: 100%;
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+}
+
+.login-container h2 {
+    text-align: center;
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+    width: 100%;
+    
+}
+
+.form-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 15px;
+    align-items: center;
+}
+
+.credential-inputs {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.form-container input[type="email"],
+.form-container input[type="password"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #f2e0c3;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-container input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #D6C6AF;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+
+.form-container input[type="submit"]:hover {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.form-container input[type="submit"]:active {
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(2px);
+}
+
+/*=========================== INFO CONTAINER ===========================*/
+
+.info-container {
+    flex-grow: 1;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.info-image {
+    width: 30%;
+    height: auto;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
