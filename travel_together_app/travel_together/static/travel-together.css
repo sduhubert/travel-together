@@ -121,3 +121,26 @@ body footer {
   border-top: 1px solid #5e59ab;
   padding-top: 10px;
 }
+
+/*============================== FORM ==============================*/
+.range-slider { /*referenced ChatGPT for help creating a two-ended slider*/
+  position: relative;
+  width: 30px;
+}
+
+.range-slider input[type="range"] {
+  position: absolute;
+  pointer-events: none;
+  width: 100%;
+  height: 8px;
+  background: none;
+}
+
+.range-slider input::-webkit-slider-thumb {
+  pointer-events: all;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+}

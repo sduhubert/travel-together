@@ -48,3 +48,25 @@ let create_response_form = function(trip_id) {
     });
     return form;
 }
+
+//referenced ChatGPT to build a double ended slider for age range, as seen below
+const minRange = document.getElementById("minRange");
+const maxRange = document.getElementById("maxRange");
+const minValue = document.getElementById("minValue");
+const maxValue = document.getElementById("maxValue");
+
+function update() {
+    if (parseInt(minRange.value) > parseInt(maxRange.value)) {
+        //this makes it so that values swap if the user crosses sliders
+        const temp = minRange.value;
+        minRange.value = maxRange.value;
+        maxRange.value = temp;
+    }
+
+    minValue.textContent = minRange.value;
+    maxValue.textContent = maxRange.value;
+}
+
+minRange.oninput = update;
+maxRange.oninput = update;
+update();

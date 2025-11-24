@@ -54,7 +54,7 @@ def new_trip():
     if response_to:
         response_to_trip = db.get_or_404(model.TripProposal, response_to)
 
-    new_trip = model.TripProposal(user=user, text=text, response_to_id=response_to, timestamp=datetime.datetime.now(dateutil.tz.tzlocal()))
+    new_trip = model.TripProposal(participants=(user), text=text, response_to_id=response_to, timestamp=datetime.datetime.now(dateutil.tz.tzlocal()))
     
     db.session.add(new_trip)
     db.session.commit()

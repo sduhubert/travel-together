@@ -61,8 +61,14 @@
         <input type="number" id="budget" name="budget" min="0">
         <label for="max_members">Maximum Trip Members:</label>
         <input type="number" id="max_members" name="max_members" min="0">
-        <label for="age_range">Age Range (optional):</label>
-        <input type="number" id="max_members" name="max_members" min="0">
+        <div class = "range_slider">
+          <input type="range" min="0" max="100" value="20" id="minRange">
+          <input type="range" min="0" max="100" value="20" id="maxRange">
+        </div>
+        <div>
+          Min: <span id="minValue">20</span>
+          Max: <span id="minValue">80</span>
+        </div>
         <br>
         <button type="submit">Publish</button>
       </form>
