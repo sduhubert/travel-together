@@ -9,9 +9,9 @@ body {
 }
 
 body footer {
-  position:fixed;
-  bottom:0;
-  width:100%;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   text-align: center;
   padding: 10px;
   font-size: 12px;
@@ -26,10 +26,12 @@ body footer {
   top: 0;
   left: 0;
   height: 60px;
-  width: calc(100% - 20px);   /* subtract padding from total width */
+  width: calc(100% - 20px);
+  /* subtract padding from total width */
   padding: 0px 10px;
-  z-index: 99;                /* keeps it above everything */
-  
+  z-index: 99;
+  /* keeps it above everything */
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -41,59 +43,66 @@ body footer {
 }
 
 .header-icon {
-    width: 32px;    
-    height: 32px;
-    object-fit: contain;
-    object-fit: cover;   
-    border-radius: 4px;  /* Edge smoothing */
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  object-fit: cover;
+  border-radius: 4px;
+  /* Edge smoothing */
 }
 
 .header-logo {
-    transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 /* hover effect */
 .header-logo:hover {
-    filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.5));
+  filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
 }
 
 /* click / active effect */
 .header-logo:active {
-    filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.7));
-    transform: translateY(1px); /* optional pressed effect */
+  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.7));
+  transform: translateY(1px);
+  /* optional pressed effect */
 }
 
 .header-container h1 {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
 }
 
 .spacer {
-    display: inherit;
-    flex-direction: inherit;
-    justify-content: inherit;
-    align-items: inherit;
-    gap: 5px;
+  display: inherit;
+  flex-direction: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  gap: 5px;
 }
 
 .logout-button {
-    margin: 0;
-    padding: 5px 10px;
-    background-color: #900000;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    text-shadow: none;
+  margin: 0;
+  padding: 5px 10px;
+  background-color: #900000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  text-shadow: none;
+}
+
+input {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 /*============================== FEED ==============================*/
 
-.feed{
+.feed {
   max-width: 600px;
   margin: 0 auto;
   padding: 15px;
@@ -112,7 +121,7 @@ body footer {
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 10px;
-  box-shadow: 0 1px 3px rbga(0,0,0,0.2);
+  box-shadow: 0 1px 3px rbga(0, 0, 0, 0.2);
 }
 
 .metadata {
@@ -150,24 +159,14 @@ body footer {
 }
 
 /*============================== FORM ==============================*/
-.range-slider { /*referenced ChatGPT for help creating a two-ended slider*/
-  position: relative;
-  width: 30px;
+.range-slider {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
 }
 
 .range-slider input[type="range"] {
-  position: absolute;
-  pointer-events: none;
   width: 100%;
-  height: 8px;
-  background: none;
-}
-
-.range-slider input::-webkit-slider-thumb {
-  pointer-events: all;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #007bff;
-  cursor: pointer;
+  /* or 100% */
 }
