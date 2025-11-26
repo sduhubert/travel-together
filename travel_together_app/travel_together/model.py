@@ -64,9 +64,12 @@ class TripSexPreference(enum.Enum):
     
 class TripProposal(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
+    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    creator: Mapped["User"] = relationship("User")
     participants: Mapped[Set["User"]] = relationship("User", secondary="trip_proposal_participation", back_populates="trip_proposals")
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(512))
+    response_to_id: Mapped[int] = mapped_column(Integer)
     origin: Mapped[str] = mapped_column(String(128))
     destinations: Mapped[str] = mapped_column(String(512))  # Comma-separated list
     start_date: Mapped[datetime.date] = mapped_column(DateTime(timezone=True))

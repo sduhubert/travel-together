@@ -48,21 +48,56 @@ def profile(user_id):
 @flask_login.login_required
 def new_trip():
     user = flask_login.current_user
-    text = request.form.get("text")
-    response_to = request.form.get("response_to")
+    title = request.form.get("title")
+    description = request.form.get("description")
+    origin = request.form.get("departure_location")
+    destinations = request.form.getlist("destination")
+    start = request.form.get("start")
+    end = request.form.get("end")
+    budget = request.form.get("budget")
+    max_members = request.form.get("max_members")
+    minAge = request.form.get("minAge")
+    maxAge = request.form.get("maxAge")
+    status=model.TripProposalStatus.OPEN.value
 
-    if response_to:
-        response_to_trip = db.get_or_404(model.TripProposal, response_to)
+    #since our model stores 'destinations' as a comma separated string
+    destinations_str = ",".join(destinations) 
 
-    new_trip = model.TripProposal(participants=(user), text=text, response_to_id=response_to, timestamp=datetime.datetime.now(dateutil.tz.tzlocal()))
+
+    #response_to = request.form.get("response_to")
+
+   # if response_to:
+       # response_to_trip = db.get_or_404(model.TripProposal, response_to)
+
+    new_trip = model.TripProposal(
+        creator=user,
+        participants={user}, 
+        title=title, 
+        description=description, 
+        origin=origin, 
+        destinations=destinations_str, 
+        start_date=start, 
+        end_date=end, 
+        budget= budget, 
+        max_travelers=max_members,
+        min_age=minAge,
+        max_age=maxAge,
+        timestamp=datetime.datetime.now(dateutil.tz.tzlocal()),
+        status=status
+        )
     
     db.session.add(new_trip)
     db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=new_trip.id))
+
     
-    if response_to:
-        return redirect(url_for("main.trip", trip_id=response_to))
-    else:
-        return redirect(url_for("main.trip", trip_id=new_trip.id))
+   # if response_to:
+        #return redirect(url_for("main.trip", trip_id=response_to))
+   # else:
+       # return redirect(url_for("main.trip", trip_id=new_trip.id))
+
+       
 
 @bp.route("/trip/<int:trip_id>")
 @flask_login.login_required

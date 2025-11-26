@@ -1,21 +1,15 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Twitter</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Twitter</h1>
-      <h2>Home</h2>
-      <p>See the most recent activity for you.</p>
-    </div>
-    {% block content %}
+
+{% block content %}
+<div class="container">
+    <h1>Twitter</h1>
+    <h2>Home</h2>
+    <p>See the most recent activity for you.</p>
+
     <section>
       <h2>Create a travel proposal!</h2>
-      <form action="{{ url_for('main.new_trip')}}" method="post">
+      <form action="{{ url_for('main.new_trip') }}" method="post">
+
         <label for="title">Trip Title:</label><br>
         <textarea
           id="title"
@@ -25,25 +19,28 @@
           placeholder="Give your trip a name..."
           required
         ></textarea>
-      <br>
+        <br>
+
         <label for="description">Trip Description:</label><br>
         <textarea
           id="description"
-          name="text"
+          name="description"
           rows="4"
           cols="50"
           placeholder="Detail your dream trip..."
           required
         ></textarea>
         <br>
+
         <label for="route">Route:</label><br>
         <textarea
-          name="departure location"
+          name="departure_location"
           rows="1"
           cols="50"
-          placeholder="Departure location (if you want to travel there together, otherwise optional)..."
+          placeholder="Departure location (optional)..."
         ></textarea>
         <br>
+
         <textarea
           name="destination"
           rows="1"
@@ -52,32 +49,41 @@
           required
         ></textarea>
         <br>
+
         <label for="start">Start date:</label>
         <input type="date" id="start" name="start" required>
+
         <label for="end">End date:</label>
         <input type="date" id="end" name="end" required>
         <br>
+
         <label for="budget">Budget:</label>
         <input type="number" id="budget" name="budget" min="0">
+
         <label for="max_members">Maximum Trip Members:</label>
         <input type="number" id="max_members" name="max_members" min="0">
-        <div class = "range_slider">
+        <br>
+
+        <div class="range_slider">
           <input type="range" min="0" max="100" value="20" id="minRange">
-          <input type="range" min="0" max="100" value="20" id="maxRange">
+          <input type="range" min="0" max="100" value="80" id="maxRange">
         </div>
+
         <div>
           Min: <span id="minValue">20</span>
-          Max: <span id="minValue">80</span>
+          Max: <span id="maxValue">80</span>
         </div>
+
         <br>
         <button type="submit">Publish</button>
       </form>
     </section>
+
     <section>
       <h2>Latest trips</h2>
       {% set trips = latest_trips %}
       {% include 'trips_template.html' %}
     </section>
-    {% endblock %}
-  </body>
-</html>
+
+</div>
+{% endblock %}
