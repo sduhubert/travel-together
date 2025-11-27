@@ -111,6 +111,11 @@ def trip(trip_id):
     responses = db.session.execute(query).scalars().all()
     return render_template("main/trip.html", trip=trip, responses=responses)
 
+@bp.route("/form")
+@flask_login.login_required
+def form():
+    return render_template("main/trip_form.html")
+
 @bp.route("/follow/<int:user_id>", methods=["POST"])
 @flask_login.login_required
 def follow(user_id):
