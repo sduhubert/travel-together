@@ -16,17 +16,19 @@ bp = Blueprint("main", __name__)
 def index():
     user = model.User(email="mary@example.com", name="hubert")
     query = db.select(model.TripProposal).where(model.TripProposal.status == model.TripProposalStatus.OPEN).order_by(model.TripProposal.timestamp.desc()).limit(10)
-    messages = db.session.execute(query).scalars().all()
-    trip_proposals = db.aliased(model.User)
-    following_query = (
-        db.select(model.TripProposal)
-        .join(model.User)
-        .join(trip_proposals, model.User.trip_proposals)
-        .where(trip_proposals.id == flask_login.current_user.id)
-        .order_by(model.TripProposal.timestamp.desc())
-        .limit(10)
-    )
-    return render_template("main/index.html", messages=messages)
+    # messages = db.session.execute(query).scalars().all()
+    # trip_proposals = db.aliased(model.User)
+    # following_query = (
+    #     db.select(model.TripProposal)
+    #     .join(model.User)
+    #     .join(trip_proposals, model.User.trip_proposals)
+    #     .where(trip_proposals.id == flask_login.current_user.id)
+    #     .order_by(model.TripProposal.timestamp.desc())
+    #     .limit(10)
+    # )
+    latest_trips = db.session.execute(query).scalars().all()
+    
+    return render_template("main/index.html", latest_trips=latest_trips)
 
 @bp.route("/profile/<int:user_id>")
 @flask_login.login_required
