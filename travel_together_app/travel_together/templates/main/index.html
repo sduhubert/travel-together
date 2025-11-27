@@ -10,62 +10,6 @@
     <button>Create a new travel proposal!</button>
   </a>
 
-  <!-- <section>
-    <h2>Create a travel proposal!</h2>
-    <form action="{{ url_for('main.new_trip') }}" method="post">
-
-      <label for="title">Trip Title:</label><br>
-      <textarea id="title" name="title" rows="1" cols="50" placeholder="Give your trip a name..." required></textarea>
-      <br>
-
-      <label for="description">Trip Description:</label><br>
-      <textarea id="description" name="description" rows="4" cols="50" placeholder="Detail your dream trip..."
-        required></textarea>
-      <br>
-
-      <label for="route">Route:</label><br>
-      <textarea name="departure_location" rows="1" cols="50" placeholder="Departure location (optional)..."></textarea>
-      <br>
-
-      <textarea name="destination" rows="1" cols="50" placeholder="Destination" required></textarea>
-      <br>
-
-      <label for="start">Start date:</label>
-      <input type="date" id="start" name="start" required>
-
-      <label for="end">End date:</label>
-      <input type="date" id="end" name="end" required>
-      <br>
-
-      <label for="budget">Budget:</label>
-      <input type="number" id="budget" name="budget" min="0">
-      <br>
-
-      <label for="max_members">Maximum Trip Members:</label>
-      <input type="number" id="max_members" name="max_members" min="0">
-      <br>
-
-      <div class="range-slider">
-        <div>
-          <label for="min_age">Minimum Age to Join:</label><br>
-          <input type="range" min="0" max="100" value="20" id="minRange" name="min_age">
-        </div>
-        <div>
-          <label for="max_age">Maximum Age to Join:</label><br>
-          <input type="range" min="0" max="100" value="80" id="maxRange" name="max_age">
-        </div>
-      </div>
-
-      <div>
-        Min: <span id="minValue">20</span>
-        Max: <span id="maxValue">80</span>
-      </div>
-
-      <br>
-      <button type="submit">Publish</button>
-    </form>
-  </section> -->
-
   <section>
     <h2>Latest trips</h2>
     {% set trips = latest_trips %}

@@ -1,11 +1,12 @@
 <div class="feed">
-  {% if trip.response_to is none %}
+  {% if not trip.response_to %}
     <a
-    href="{{ url_for('main.trip', trip_id=trip.id) }}"
-    style="text-decoration: none; color: inherit"
+      href="{{ url_for('main.trip', trip_id=trip.id) }}"
+      style="text-decoration: none; color: inherit"
     >
   {% endif %}
-      {% if trip.response_to is none %}
+
+      {% if not trip.response_to %}
         <div class="trip original" data-trip-id="{{ trip.id }}">
       {% else %}
         <div class="trip response">
@@ -21,7 +22,9 @@
           </div>
           <div class="content">{{ trip.text }}</div>
         </div>
-  {% if trip.response_to is none %}
+
+  {% if not trip.response_to %}
     </a>
   {% endif %}
 </div>
+
