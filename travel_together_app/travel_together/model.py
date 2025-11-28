@@ -53,6 +53,10 @@ class User(flask_login.UserMixin, db.Model):
     #     secondaryjoin=FollowingAssociation.follower_id == id,
     #     back_populates="following",
     # )
+    @property
+    def age(user):
+        today = datetime.date.today()
+        return(today.year - user.birthday.year - ((today.month, today.day) < (user.birthday.month, user.birthday.day)))
     
 class TripProposalStatus(enum.Enum):
     OPEN = 0

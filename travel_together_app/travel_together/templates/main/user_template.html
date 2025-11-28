@@ -1,7 +1,35 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} 
+
+{% block content %}
 <div class="content">
   <header><h2>{{ user.name }}</h2></header>
-  Trips {{ user.name }} participates in:
+  <h3>About {{ user.name }}:</h3>
+  <br>
+  <section>
+    <div class="user_info">
+      Age: {{ user.age }} <br>
+      Nationality: {{ user.country }} <br>
+      Home University: {{ user.home_uni }} <br>
+      Visiting/Exchange University: 
+      {% if user.visiting_uni %}
+        {{ user.visting_uni }}
+      {% else %}
+        N/A 
+      {% endif %} 
+      <br>
+      <br>
+      <div class="user_description">
+        {% if user.desc %}
+          {{ user.desc }}
+        {% else %}
+          {{ user.name }} has not yet added a description...
+        {% endif %}
+    </div>
+      <br>
+  <div class="trip-contents">
+  </section>
+  <h1> Trips {{ user.name }} participates in: </h1>
   <section>{% include 'trips_template.html' %}</section>
+  </div>
 </div>
 {% endblock %}
