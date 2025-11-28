@@ -5,19 +5,28 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db
 from . import model
+from travel_together.constants import COUNTRIES, COUNTRY_NAMES, UNIVERSITIES, COUNTRY_OF_UNIVERSITIES
 
 bp = Blueprint("auth", __name__)
 
 
 @bp.route("/signup")
 def signup():
-    return render_template("auth/signup.html")
-
+    return render_template(
+        "auth/signup.html", 
+        countries=COUNTRIES,
+        country_names=COUNTRY_NAMES,
+        universities=UNIVERSITIES,
+        country_of_universities=COUNTRY_OF_UNIVERSITIES
+    )
 
 @bp.route("/signup", methods=["POST"])
 def signup_post():
     email = request.form.get("email")
     username = request.form.get("username")
+    country = request.form.get("country")
+    home_uni = request.form.get("home_uni")
+    birthday = request.form.get("birthday")
     password = request.form.get("password")
     # Check that passwords are equal
     if password != request.form.get("password_repeat"):
@@ -30,7 +39,8 @@ def signup_post():
         flash("Sorry, the email you provided is already registered")
         return redirect(url_for("auth.signup"))
     password_hash = generate_password_hash(password)
-    new_user = model.User(email=email, name=username, password=password_hash)
+    # TODO: Fix home_uni selection in the signup form
+    new_user = model.User(email=email, name=username, password=password_hash, birthday=birthday, country=country, home_uni=home_uni)
     db.session.add(new_user)
     db.session.commit()
     flash("You've successfully signed up!")
@@ -60,4 +70,3 @@ def login_post():
 def logout_post():
     flask_login.logout_user()
     return redirect(url_for("auth.login"))
-
