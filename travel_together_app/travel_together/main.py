@@ -14,8 +14,7 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 @flask_login.login_required
 def index():
-    user = model.User(email="mary@example.com", name="hubert")
-    query = db.select(model.TripProposal).where(model.TripProposal.status == model.TripProposalStatus.OPEN).order_by(model.TripProposal.timestamp.desc()).limit(10)
+    query = db.select(model.TripProposal).where(model.TripProposal.status == model.TripProposalStatus.OPEN).order_by(model.TripProposal.timestamp.desc()).limit(9)
     # messages = db.session.execute(query).scalars().all()
     # trip_proposals = db.aliased(model.User)
     # following_query = (
@@ -34,17 +33,30 @@ def index():
 @flask_login.login_required
 def profile(user_id):
     user = db.get_or_404(model.User, user_id)
-    query = db.select(model.TripProposal).filter_by(user=user).where(model.TripProposal.response_to_id==None).order_by(model.TripProposal.timestamp.desc())
-    messages = db.session.execute(query).scalars().all()
 
-    if (flask_login.current_user == user_id):
+    # Load all trips the user participates in
+    query = (
+        db.select(model.TripProposal)
+        .join(model.TripProposal.participants)
+        .filter(model.User.id == user.id)
+        .order_by(model.TripProposal.timestamp.desc())
+    )
+    trips = db.session.execute(query).scalars().all()
+
+    # Follow button logic
+    if flask_login.current_user.id == user.id:
         follow_button = None
-    elif (flask_login.current_user in user.trip_proposals):
+    elif hasattr(user, "followers") and flask_login.current_user in user.followers:
         follow_button = "unfollow"
     else:
         follow_button = "follow"
 
-    return render_template("main/user_template.html", user=user, messages=messages, follow_button=follow_button)
+    return render_template(
+        "main/user_template.html",
+        user=user,
+        trips=trips,
+        follow_button=follow_button,
+    )
 
 @bp.route("/trip", methods=["POST"])
 @flask_login.login_required
@@ -75,7 +87,8 @@ def new_trip():
         creator=user,
         participants={user}, 
         title=title, 
-        description=description, 
+        description=description,
+        response_to_id=0, 
         origin=origin, 
         destinations=destinations_str, 
         start_date=start, 
@@ -105,8 +118,8 @@ def new_trip():
 @flask_login.login_required
 def trip(trip_id):
     trip = db.get_or_404(model.TripProposal, trip_id)
-    if (trip.response_to_id is not None):
-        abort(403)
+    #if (trip.response_to_id is not None):
+    #    abort(403)
     query = db.select(model.TripProposal).filter_by(response_to_id=trip_id).order_by(model.TripProposal.timestamp.desc())
     responses = db.session.execute(query).scalars().all()
     return render_template("main/trip.html", trip=trip, responses=responses)

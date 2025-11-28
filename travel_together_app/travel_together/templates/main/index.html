@@ -1,20 +1,33 @@
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+{% endblock %}
+
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="container">
-  <h1>Twitter</h1>
-  <h2>Home</h2>
-  <p>See the most recent activity for you.</p>
+  <div class="top-container">
+    <div class="trapezoid-overlay">
+      <h1>Welcome!</h1>
+      <p>Start your great adventure now.</p>
 
-  <a href="/form">
-    <button>Create a new travel proposal!</button>
-  </a>
+      <a href="/form">
+        <button class="primary-button">Create a new trip!</button>
+      </a>
+      <a href="/browse">
+        <button class="secondary-button">Browse trips</button>
+      </a>
+    </div>
 
-  <section>
-    <h2>Latest trips</h2>
+    <img src="../../static/resources/index-background.jpeg"/>
+  </div>
+
+  
+  <div class="trip-contents">
+    <h1>Recently added trips</h1>
     {% set trips = latest_trips %}
     {% include 'trips_template.html' %}
-  </section>
+  </div>
 
 </div>
 {% endblock %}

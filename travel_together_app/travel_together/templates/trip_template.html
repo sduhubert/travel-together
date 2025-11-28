@@ -1,30 +1,10 @@
-<div class="feed">
-  {% if not trip.response_to %}
-    <a
-      href="{{ url_for('main.trip', trip_id=trip.id) }}"
-      style="text-decoration: none; color: inherit"
-    >
-  {% endif %}
+<a class="trip-link" href="{{ url_for('main.trip', trip_id=trip.id) }}">
+    <div class="trip-container">
+        <img class="trip-photo" src="../static/resources/example-trip-1.jpg" alt="Avatar">
+        <h2 class="trip-title">{{ trip.title }}</h2>    
+        <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by {{ trip.creator.name }}</p>
+        <p class="trip-description">{{ trip.description }}</p>
+    </div>
+</a>
 
-      {% if not trip.response_to %}
-        <div class="trip original" data-trip-id="{{ trip.id }}">
-      {% else %}
-        <div class="trip response">
-      {% endif %}
-          <div class="metadata">
-            <img
-              src="../../static/resources/Defaultpfp.png"
-              alt="Profile picture"
-              class="avatar"
-            />
-            <span class="username">{{ trip.creator.name }}</span>
-            <span class="timestamp">{{ trip.timestamp }}</span>
-          </div>
-          <div class="content">{{ trip.text }}</div>
-        </div>
-
-  {% if not trip.response_to %}
-    </a>
-  {% endif %}
-</div>
 

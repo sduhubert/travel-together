@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from sqlalchemy.orm import DeclarativeBase
+from datetime import datetime
 
 # Declarations to insert before the create_app function:
 class Base(DeclarativeBase):
@@ -20,6 +21,7 @@ def create_app(test_config=None):
     # Code to place inside create_app, after the other app.config assignment
     app.config[
         "SQLALCHEMY_DATABASE_URI"
+    #] = "mysql+pymysql://traveltogether:waDBlog@localhost/TravelTogether"
     ] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00b"
     
     # app.config[
@@ -43,6 +45,29 @@ def create_app(test_config=None):
     @login_manager.user_loader
     def load_user(user_id):
       return db.session.get(model.User, int(user_id))
+    
+    # Jinja filter for getting time ago
+    def time_ago(dt):
+        now = datetime.utcnow()
+        diff = now - dt
+        seconds = diff.total_seconds()
+
+        intervals = (
+            ('year', 60*60*24*365),
+            ('month', 60*60*24*30),
+            ('day', 60*60*24),
+            ('hour', 60*60),
+            ('minute', 60),
+            ('second', 1),
+        )
+
+        for name, count in intervals:
+            value = int(seconds // count)
+            if value > 0:
+                return f"{value} {name}{'s' if value != 1 else ''} ago"
+        return "just now"
+
+    app.jinja_env.filters['time_ago'] = time_ago
 
     app.register_blueprint(main.bp)
     app.register_blueprint(auth.bp)

@@ -1,0 +1,95 @@
+/*=========================== INDEX PAGE ===========================*/
+
+.top-container {
+    width: auto;
+    height: 50vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.top-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* scale the image to cover the window */
+    object-position: center; /* center the image in the window */
+}
+
+/*=========================== TRAPEZOID OVERLAY ===========================*/
+.trapezoid-overlay {
+    position: absolute;
+    top: 0;
+    width: 40%;
+    height: 100%;
+    background-color: white;
+    clip-path: polygon(0 0, 100% 0, 51% 100%, 0% 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 5vw;
+    box-sizing: border-box;
+}
+
+.trapezoid-overlay h1 {
+    margin: 0 0 10px 0;
+    font-size: 3vw;
+}
+
+.trapezoid-overlay p {
+    margin: 0 0 20px 0;
+    font-size: 1.2vw;
+}
+
+.trapezoid-overlay a {
+    text-decoration: none;
+    width: 50%;
+}
+
+/*BUTTONS*/
+
+.trapezoid-overlay button {
+    width: 100%;
+    padding: 1vh 2vw;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 0.9vw;
+}
+
+.trapezoid-overlay .primary-button {
+    background-color: #D6C6AF;
+    color: black;
+}
+
+.trapezoid-overlay .primary-button:hover {
+    background-color: #BBAA95;
+}
+
+.trapezoid-overlay .secondary-button {
+    background-color: white;
+    color: #D6C6AF;
+}
+
+.trapezoid-overlay .secondary-button:hover {
+    background-color: #f0f0f0;
+}
+
+
+/*=========================== REST OF THE PAGE ===========================*/
+
+.trip-contents {
+    margin-top: 30px;
+}
+
+.trip-contents h1 {
+    margin-left: 2vw;
+    font-size: 2vw;
+}
+
+.trip-contents p {
+    text-align: justify;
+    margin-left: 1vw;
+    font-size: 0.8vw;
+}

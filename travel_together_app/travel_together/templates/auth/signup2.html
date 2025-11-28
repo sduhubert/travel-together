@@ -1,0 +1,38 @@
+{% block head %}
+    <title>Sign up - Travel together</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}"/>
+{% endblock %}
+
+{% extends 'base.html' %}
+{% if current_user.is_authenticated: %}
+    <div>User: {{current_user.name}}</div>
+{% endif %}
+{% block content %}
+    <div class="main-container">
+        <div class="signup-container">
+            <h2>Sign Up</h2>
+            <form class="form-container" action="{{ url_for('auth.signup2_post') }}" method="post">
+                <div class="credential-inputs">
+                    <input type="text" name="description" placeholder="Description"/>
+                    <input type="date" name="birthday" placeholder="Birthday" required/>
+                    <input type="text" name="home_uni" placeholder="Home University" required/>
+                    <input type="text" name="visiting_uni" placeholder="Visiting University" required/>
+                    <input type="text" name="country" placeholder="Country" required/>
+                </div>
+                <input type="submit" value="Sign Up"/>
+            </form>
+            <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+            </div>
+            <div class="info-container">
+                <img src="../../static/resources/logo-full.png" class="info-image"/>
+                <h1>Welcome to Travel together&trade;</h1>
+                <p>Plan trips, share unforgettable adventures, and meet fellow travelers who love discovering places just like you.</p>
+            </div>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="notification">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+{% endblock %}

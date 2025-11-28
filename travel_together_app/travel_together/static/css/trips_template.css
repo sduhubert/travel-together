@@ -1,0 +1,36 @@
+.trips {
+    padding: 1vw;
+    display: grid;
+    gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 22.5vw);
+}
+
+a.trip-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.trip-container {
+    background-color: rgba(100, 100, 100, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 0.3vw;
+}
+
+.trip-container img.trip-photo {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.trip-container h2 {
+    text-align: center;
+    font-size: 1.5vw;
+    text-transform: capitalize;
+}
+
+
+.trip-description {
+    height: 3vw;
+}
+

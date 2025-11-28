@@ -102,61 +102,7 @@ input {
 
 /*============================== FEED ==============================*/
 
-.feed {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 15px;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.trip {
-  background: white;
-  border: 1px solid #5e59ab;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 3px rbga(0, 0, 0, 0.2);
-}
-
-.metadata {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.username {
-  font-weight: bold;
-  color: #14171a;
-}
-
-.timestamp {
-  color: #657786;
-  font-size: 14px;
-}
-
-.trip-content {
-  color: #14171a;
-  line-height: 1.5;
-}
-
-.single_trip_container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 15px;
-}
-
-.replies_section {
-  margin-top: 20px;
-  border-top: 1px solid #5e59ab;
-  padding-top: 10px;
-}
+/* MIGRATED TO TRIPS_TEMPLATE.CSS */
 
 /*============================== FORM ==============================*/
 .range-slider {
