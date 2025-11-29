@@ -4,7 +4,10 @@
         <h2 class="trip-title">{{ trip.title }}</h2>    
         <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by {{ trip.creator.name }}</p>
         <p class="trip-description">{{ trip.description }}</p>
+        <p class="trip-origin">Origin: {{ trip.origin }}</p>
+        <p class="trip-destinations">Destination(s): {{ trip.destinations }}</p>
     </div>
 </a>
+
 
 

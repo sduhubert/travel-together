@@ -2,8 +2,52 @@
 
 {% block content %}
 <div class="single_trip_container">
-  {% include 'trip_template.html' with context %}
-  <section>
+  <img class="trip-photo" src="../static/resources/example-trip-1.jpg" alt="Avatar">
+        <h2 class="trip-title">{{ trip.title }}</h2>    
+        <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by {{ trip.creator.name }}</p>
+        <p class="trip-description">{{ trip.description }}</p>
+        <p class="trip-origin">Origin: {{ trip.origin }}</p>
+        <p class="trip-destinations">Destination(s): {{ trip.destinations }}</p>
+
+  {% set max_travelers = trip.max_travelers or 999999%}
+    {% if max_travelers != 999999 %}
+        <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
+    {% else %}
+        <P class="member-amount-details">This trip has no specified member capacity.</P>
+    {% endif %}
+    {% if trip.participants|length >= max_travelers %}
+        <p class="cannot-join-alerts">This trip is full, and is currently not accepting new members.</p>
+    {% endif %}
+    {% set min_age = trip.min_age or 0%}
+    {% set max_age = trip.max_age or 999999%}
+    {% if min_age == 0 and max_age == 999999 %}
+        <p class="age-range">There is no specified age range for this trip.</p>
+    {% else %}
+        <p class="age-range">Age Range: {{ min_age }} - {{ max_age }} years old</p>
+    {% endif %}
+    {% if current_user.age < min_age or current_user.age > max_age %}
+        <p class="cannot-join-alerts">
+            You are not within the specified age range for this trip, and unfortunately cannot join.
+        </p>
+    {% endif %}
+    {% if trip.budget %}
+        <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
+    {% endif %}
+    <!-- Used AI to figure out how to convert the date into a readable format -->
+    <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{ trip.end_date.strftime('%B %d, %Y') }}</p>
+    {% if trip.status != 0 %}
+        <p class="cannot-join-alerts">This trip is not open now, as is not taking new members. Feel free to check back later for a status change.</p>
+    {% endif %}
+
+    {% if not already_joined %}
+        <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+            <button type="submit">Join Trip!</button>
+        </form>
+    {% else %}
+        <p>You are an active member of this trip.</p>
+    {% endif %}
+</div>
+  <!-- <section>
     <h2>Reply to the trip</h2>
     <form action="{{ url_for('main.new_trip')}}" method="post">
       <textarea
@@ -16,15 +60,14 @@
       <input type="hidden" name="response_to" value="{{ trip.id }}">
       <button type="submit">Publish</button>
     </form>
-  </section>
+  </section> -->
   <div class="replies_section">
     {% for trip in responses %}
       {% include 'trip_template.html' %}
     {% endfor %}
   </div>
+  <a href="{{ url_for('main.index') }}">
+    <button type="submit">Return</button>
+  </a>
 </div>
-<br>
-<a href = "/">
-  <button>Return</button>
-</a>
 {% endblock %}

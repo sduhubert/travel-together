@@ -124,7 +124,36 @@ def trip(trip_id):
     #    abort(403)
     query = db.select(model.TripProposal).filter_by(response_to_id=trip_id).order_by(model.TripProposal.timestamp.desc())
     responses = db.session.execute(query).scalars().all()
-    return render_template("main/trip.html", trip=trip, responses=responses)
+    user = flask_login.current_user
+    already_joined = user in trip.participants
+    return render_template("main/trip.html", trip=trip, responses=responses, already_joined = already_joined)
+
+@bp.route("/trip/<int:trip_id>/join", methods=["POST"])
+@flask_login.login_required
+def join_trip(trip_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    if user in trip.participants:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    if trip.max_travelers is not None and len(trip.participants) >= trip.max_travelers:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    if trip.max_age is not None and trip.min_age is not None:
+        if trip.min_age > user.age or trip.max_age < user.age:
+            return redirect(url_for("main.trip", trip_id=trip_id))
+        
+    joining_user = model.TripProposalParticipation(
+        user_id=user.id,
+        trip_proposal_id=trip.id,
+        is_editor=False,
+    )
+    db.session.add(joining_user)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
 
 @bp.route("/form")
 @flask_login.login_required
