@@ -10,6 +10,8 @@ from . import model, db
 
 bp = Blueprint("main", __name__)
 
+upload_folder = "static/resources"
+
 
 @bp.route("/")
 @flask_login.login_required

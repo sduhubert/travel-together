@@ -1,7 +1,9 @@
+import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 import flask_login
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 from . import db
 from . import model
@@ -27,6 +29,17 @@ def signup_post():
     country = request.form.get("country")
     home_uni = request.form.get("home_uni")
     birthday = request.form.get("birthday")
+
+    # referenced AI for this chunk
+    profile_pic = request.files.get("profile_pic")
+    filename = None
+    if profile_pic and profile_pic.filename != "":
+        filename = secure_filename(profile_pic.filename)
+        upload_path = os.path.join("static/uploads", filename)
+        profile_pic.save(upload_path)
+    else:
+        filename="Defaultpfp.png"
+
     password = request.form.get("password")
     # Check that passwords are equal
     if password != request.form.get("password_repeat"):
@@ -72,6 +85,16 @@ def signup2_post():
     visiting_uni = request.form.get("visiting_uni")
     country = request.form.get("country")
 
+     # referenced AI for this chunk
+    profile_pic = request.files.get("profile_pic")
+    filename = None
+    if profile_pic and profile_pic.filename != "":
+        filename = secure_filename(profile_pic.filename)
+        upload_path = os.path.join("static/uploads", filename)
+        profile_pic.save(upload_path)
+    else:
+        filename="Defaultpfp.png"
+
     # Create new user with all collected data
     new_user = model.User(
         email=signup_data["email"],
@@ -81,7 +104,8 @@ def signup2_post():
         birthday=birthday,
         home_uni=home_uni,
         visiting_uni=visiting_uni,
-        country=country
+        country=country,
+        profile_pic=filename
     )
     db.session.add(new_user)
     db.session.commit()

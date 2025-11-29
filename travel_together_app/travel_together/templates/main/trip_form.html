@@ -4,7 +4,7 @@
 <div class="form">
     <section>
         <h2>Create a travel proposal!</h2>
-        <form action="{{ url_for('main.new_trip') }}" method="post">
+        <form id="trip-form" data-user-age="{{ current_user.age }}" action="{{ url_for('main.new_trip') }}" method="post">
 
         <label for="title">Trip Title:</label><br>
         <textarea id="title" name="title" rows="1" cols="50" placeholder="Give your trip a name..." required></textarea>
@@ -60,7 +60,6 @@
         </form>
     </section>
 </div>
-
 <br>
 <a href="/">
     <button>Return</button>

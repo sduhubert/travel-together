@@ -39,6 +39,7 @@ class User(flask_login.UserMixin, db.Model):
     home_uni: Mapped[str] = mapped_column(String(128))
     visiting_uni: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     country: Mapped[str] = mapped_column(String(2))
+    profile_pic: Mapped[str] = mapped_column(String(256))
     #sex: Mapped[Optional["TripSexPreference"]] = mapped_column(Integer) # Use SexPreference enum values
     trip_proposals: Mapped[Set["TripProposal"]] = relationship("TripProposal", secondary="trip_proposal_participation", back_populates="participants")
     # following: Mapped[List["User"]] = relationship(
