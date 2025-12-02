@@ -117,8 +117,9 @@ def new_trip():
        
 
 @bp.route("/trip/<int:trip_id>")
+@bp.route("/trip/<int:trip_id>/forum/<forum_topic>")
 @flask_login.login_required
-def trip(trip_id):
+def trip(trip_id, forum_topic=None):
     trip = db.get_or_404(model.TripProposal, trip_id)
     #if (trip.response_to_id is not None):
     #    abort(403)
@@ -126,7 +127,20 @@ def trip(trip_id):
     responses = db.session.execute(query).scalars().all()
     user = flask_login.current_user
     already_joined = user in trip.participants
-    return render_template("main/trip.html", trip=trip, responses=responses, already_joined = already_joined)
+
+    topics_query = (db.select(model.TripProposalMessage.forum_topic).where(model.TripProposal.id == trip_id).distinct().order_by(model.TripProposalMessage.forum_topic))
+    forum_topics = db.session.execute(topics_query).scalars().all()
+    if forum_topic:
+        active_topic = forum_topic
+    else:
+        active_topic = "Main"
+
+    active_forum_messages_query = (db.select(model.TripProposalMessage).where(model.TripProposal.id == trip_id, model.TripProposalMessage.forum_topic == active_topic).order_by(model.TripProposalMessage.timestamp.asc()))
+    active_forum_messages = db.session.execute(active_forum_messages_query).scalars().all()
+
+    return render_template("main/trip.html", trip=trip, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
+
+
 
 @bp.route("/trip/<int:trip_id>/join", methods=["POST"])
 @flask_login.login_required
@@ -157,17 +171,22 @@ def join_trip(trip_id):
 @bp.route("/trip/<int:trip_id>/message", methods=["POST"])
 @flask_login.login_required
 def new_message(trip_id):
+    user = flask_login.current_user
     content = request.form.get("message-content", "").strip()
+    forum_topic = request.form.get("forum-topic", "Main").strip() #to get the specific channel/forum of the messages
+    new_forum_topic = request.form.get("new-topic", "").strip() #if user wants to make a new forum for some specific messages
+    if new_forum_topic:
+        forum_topic = new_forum_topic
 
     if not content:
         flash("Message cannot be empty", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
     
-    message = model.TripProposalMessage(trip_proposal_id=trip_id, user_id = flask_login.current_user.id, content=content)
+    message = model.TripProposalMessage(trip_proposal_id=trip_id, user_id = flask_login.current_user.id, content=content, forum_topic = forum_topic)
     db.session.add(message)
     db.session.commit()
 
-    return redirect(url_for("main.trip", trip_id=trip_id))
+    return redirect(url_for("main.trip", trip_id=trip_id, forum_topic = forum_topic))
 
 @bp.route("/form")
 @flask_login.login_required

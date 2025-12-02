@@ -24,6 +24,7 @@ class TripProposalMessage(db.Model):
     trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"))
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship("User")
+    forum_topic: Mapped[str] = mapped_column(String(64), default="Main")
     content: Mapped[str] = mapped_column(String(512))
     timestamp: Mapped[datetime.datetime] = mapped_column(
         # pylint: disable=not-callable

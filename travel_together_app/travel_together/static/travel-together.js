@@ -1,3 +1,5 @@
+const e = require("express");
+
 $(document).ready(function() {
     $('.original').on("mouseenter", function() {
         let link = $("<a>")
