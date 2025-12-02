@@ -38,14 +38,17 @@
     {% if trip.status != 0 %}
         <p class="cannot-join-alerts">This trip is not open now, as is not taking new members. Feel free to check back later for a status change.</p>
     {% endif %}
-
-    {% if not already_joined %}
+    
+    {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age > max_age) %}
+      {% if not already_joined %}
         <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
             <button type="submit">Join Trip!</button>
         </form>
-    {% else %}
+      {% else %}
         <p>You are an active member of this trip.</p>
+      {% endif %}
     {% endif %}
+
 
     {% if already_joined %}
       <div class="forums">
