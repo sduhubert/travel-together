@@ -1,13 +1,13 @@
 const e = require("express");
 
-$(document).ready(function() {
-    $('.original').on("mouseenter", function() {
+$(document).ready(function () {
+    $('.original').on("mouseenter", function () {
         let link = $("<a>")
             .attr("href", "#")
             .addClass("reply")
             .text("Reply to this trip");
         $(this).append(link);
-        link.on("click", function() {
+        link.on("click", function () {
             trip_id = parseInt(
                 $(this)
                     .parent()
@@ -17,14 +17,14 @@ $(document).ready(function() {
             $(this).parent().append(form);
             $(this).remove();
         });
-    }).on("mouseleave", function() {
+    }).on("mouseleave", function () {
         $(this)
             .find("a.reply")
             .remove();
     });
 });
 
-let create_response_form = function(trip_id) {
+let create_response_form = function (trip_id) {
     let form = $("<form>")
         .attr("method", "post")
         .attr("action", "/new_trip")
@@ -44,7 +44,7 @@ let create_response_form = function(trip_id) {
     form.append(hidden)
         .append(textarea)
         .append(submit);
-    textarea.on("click", function(e) {
+    textarea.on("click", function (e) {
         //e.stopPropagation();
         e.preventDefault();
     });
@@ -75,8 +75,8 @@ update();
 
 // Ensures that all mandatory fields are filled out in form
 // Also ensures that creator's age is within age range, and that max_members and budget are non-negative integers
-$(document).ready(function() {
-    $('form[action="{{ url_for("main.new_trip") }}"]').on('submit', function(event) {
+$(document).ready(function () {
+    $('form[action="{{ url_for("main.new_trip") }}"]').on('submit', function (event) {
         let userAge = parseInt($('#new-trip-form').data('user-age'));
         let title = $('#title').val().trim();
         let description = $('#description').val().trim();

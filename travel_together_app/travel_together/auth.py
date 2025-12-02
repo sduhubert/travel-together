@@ -17,9 +17,7 @@ def signup():
     return render_template(
         "auth/signup.html", 
         countries=COUNTRIES,
-        country_names=COUNTRY_NAMES,
-        universities=UNIVERSITIES,
-        country_of_universities=COUNTRY_OF_UNIVERSITIES
+        universities=UNIVERSITIES
     )
 
 @bp.route("/signup", methods=["POST"])
