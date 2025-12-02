@@ -3,7 +3,11 @@
 {% endblock %}
 
 <div class="trips">
-    {% for trip in trips %}
-        {% include 'trip_template.html' %}
-    {% endfor %}
+    {% if trips %}
+        {% for trip in trips %}
+            {% include 'trip_template.html' %}
+        {% endfor %}
+    {% else %}
+        There are currently no trips to display.
+    {% endif %}
 </div>
