@@ -2,7 +2,7 @@ import datetime
 import dateutil.tz
 
 
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, flash, render_template, request, redirect, url_for, abort
 import flask_login
 
 from . import model, db
@@ -154,6 +154,20 @@ def join_trip(trip_id):
 
     return redirect(url_for("main.trip", trip_id=trip_id))
 
+@bp.route("/trip/<int:trip_id>/message", methods=["POST"])
+@flask_login.login_required
+def new_message(trip_id):
+    content = request.form.get("message-content", "").strip()
+
+    if not content:
+        flash("Message cannot be empty", "error")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    message = model.TripProposalMessage(trip_proposal_id=trip_id, user_id = flask_login.current_user.id, content=content)
+    db.session.add(message)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
 
 @bp.route("/form")
 @flask_login.login_required

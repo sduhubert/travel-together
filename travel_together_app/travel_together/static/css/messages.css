@@ -1,0 +1,18 @@
+.message-board-area {
+    padding: 40 px;
+    border: strong black;
+    box-sizing: border-box;
+    width: 60%;
+    height: 80%;
+    box-align: center;
+}
+
+.messages{
+    border: grey;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    flex-grow: 1;
+}

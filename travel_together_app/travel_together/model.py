@@ -23,6 +23,7 @@ class TripProposalMessage(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"))
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user: Mapped["User"] = relationship("User")
     content: Mapped[str] = mapped_column(String(512))
     timestamp: Mapped[datetime.datetime] = mapped_column(
         # pylint: disable=not-callable
@@ -75,6 +76,7 @@ class TripProposal(db.Model):
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     creator: Mapped["User"] = relationship("User")
     participants: Mapped[Set["User"]] = relationship("User", secondary="trip_proposal_participation", back_populates="trip_proposals")
+    messages: Mapped[List["TripProposalMessage"]] = relationship("TripProposalMessage", backref="trip", order_by="TripProposalMessage.timestamp.asc()")
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(512))
     response_to_id: Mapped[int] = mapped_column(Integer)

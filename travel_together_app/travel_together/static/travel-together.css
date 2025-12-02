@@ -28,6 +28,7 @@ body footer {
   left: 0;
   height: 60px;
   width: calc(100% - 20px);
+  font-weight: strong;
   /* subtract padding from total width */
   padding: 0px 10px;
   z-index: 99;

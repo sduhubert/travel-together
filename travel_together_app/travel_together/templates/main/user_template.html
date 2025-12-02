@@ -3,7 +3,7 @@
 {% block content %}
 <div class="content">
   <header><h2>{{ user.name }}</h2>
-    <img src="{{ url_for('static', filename='uploads/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
+    <img src="{{ url_for('static', filename='resources/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
   </header>
   <h3>About {{ user.name }}:</h3>
   <br>

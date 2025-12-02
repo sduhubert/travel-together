@@ -35,7 +35,7 @@ def signup_post():
     filename = None
     if profile_pic and profile_pic.filename != "":
         filename = secure_filename(profile_pic.filename)
-        upload_path = os.path.join("static/uploads", filename)
+        upload_path = os.path.join("static/resources", filename)
         profile_pic.save(upload_path)
     else:
         filename="Defaultpfp.png"
@@ -90,7 +90,7 @@ def signup2_post():
     filename = None
     if profile_pic and profile_pic.filename != "":
         filename = secure_filename(profile_pic.filename)
-        upload_path = os.path.join("static/uploads", filename)
+        upload_path = os.path.join("static/resources", filename)
         profile_pic.save(upload_path)
     else:
         filename="Defaultpfp.png"
