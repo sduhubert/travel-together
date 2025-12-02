@@ -3,12 +3,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}" />
 <!-- Using SlimSelect (external library) for country selection -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.min.js"></script>
-<script>
-    window.UNIVERSITIES = {{ universities | tojson | safe }};
-</script>
-<script src="{{ url_for('static', filename='js/universities.js') }}"></script>
 {% endblock %}
 
 {% extends 'base.html' %}
@@ -29,14 +24,16 @@
                     <option value="{{ country_code }}">{{ country_name }}</option>
                     {% endfor %}
                 </select>
-                <select id="home_uni_country" name="home_uni_country" required>
-                    <option value="" disabled selected>Country of Home University</option>
-                    {% for country_code, country_name in countries %}
-                    <option value="{{ country_code }}">{{ country_name }}</option>
-                    {% endfor %}
-                </select>
                 <select id="home_uni" name="home_uni" required>
                     <option value="" disabled selected>Home University</option>
+                    <!-- Used AI for this section -->
+                    {% for country_code, group in universities[:1000]|groupby("country") %}
+                    <optgroup label="{{ country_of_universities[country_code] }}">
+                        {% for row in group %}
+                        <option value="{{ row.university }}">{{ row.university }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
                 </select>
 
                 <label for="birthday">Birthday</label>

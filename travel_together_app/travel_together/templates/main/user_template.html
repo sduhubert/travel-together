@@ -4,6 +4,11 @@
 <div class="content">
   <header><h2>{{ user.name }}</h2>
     <img src="{{ url_for('static', filename='resources/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
+    {% if user.id == current_user.id %}
+      <a href="{{ url_for('auth.edit_profile', user_id=current_user.id) }}">
+    {% endif %}
+      <button type="submit">Edit Profile</button>
+    </a>
   </header>
   <h3>About {{ user.name }}:</h3>
   <br>
@@ -14,7 +19,7 @@
       Home University: {{ user.home_uni }} <br>
       Visiting/Exchange University: 
       {% if user.visiting_uni %}
-        {{ user.visting_uni }}
+        {{ user.visiting_uni }}
       {% else %}
         N/A 
       {% endif %} 
@@ -34,5 +39,10 @@
   <h1> Trips {{ user.name }} participates in: </h1>
   <section>{% include 'trips_template.html' %}</section>
   </div>
+</div>
+<div>
+  <a href="{{ url_for('main.index') }}">
+    <button type="submit">Return</button>
+  </a>
 </div>
 {% endblock %}

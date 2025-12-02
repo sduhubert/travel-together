@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, current_app, render_template, request, redirect, url_for, flash, session
 import flask_login
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,13 +11,13 @@ from travel_together.constants import COUNTRIES, COUNTRY_NAMES, UNIVERSITIES, CO
 
 bp = Blueprint("auth", __name__)
 
-
-@bp.route("/signup")
+@bp.route("/signup", methods=["GET"])
 def signup():
     return render_template(
         "auth/signup.html", 
         countries=COUNTRIES,
-        universities=UNIVERSITIES
+        universities=UNIVERSITIES,
+        country_of_universities=COUNTRY_OF_UNIVERSITIES
     )
 
 @bp.route("/signup", methods=["POST"])
@@ -28,43 +28,36 @@ def signup_post():
     home_uni = request.form.get("home_uni")
     birthday = request.form.get("birthday")
 
-    # referenced AI for this chunk
     profile_pic = request.files.get("profile_pic")
-    filename = None
     if profile_pic and profile_pic.filename != "":
         filename = secure_filename(profile_pic.filename)
         upload_path = os.path.join("static/resources", filename)
         profile_pic.save(upload_path)
     else:
-        filename="Defaultpfp.png"
+        filename = "Defaultpfp.png"
 
     password = request.form.get("password")
-    # Check that passwords are equal
     if password != request.form.get("password_repeat"):
         flash("Sorry, passwords are different")
         return redirect(url_for("auth.signup"))
-    # Check if the email is already at the database
+
     query = db.select(model.User).where(model.User.email == email)
     user = db.session.execute(query).scalar_one_or_none()
     if user:
         flash("Sorry, the email you provided is already registered")
         return redirect(url_for("auth.signup"))
-    
-    # Moved to another step of signup, not needed here for now
-    # new_user = model.User(email=email, name=username, password=password_hash)
-    # db.session.add(new_user)
-    # db.session.commit()
 
     session["signup_data"] = {
         "email": email,
         "username": username,
-        "password_hash": generate_password_hash(password)
+        "password_hash": generate_password_hash(password),
+        "profile_pic": filename  # store filename in session too
     }
 
-    return redirect(url_for("auth.singup2"))
+    return redirect(url_for("auth.signup2"))
 
 @bp.route("/signup2")
-def singup2():
+def signup2():
     signup_data = session.get("signup_data")
     if not signup_data:
         return redirect(url_for("auth.signup"))
@@ -83,17 +76,14 @@ def signup2_post():
     visiting_uni = request.form.get("visiting_uni")
     country = request.form.get("country")
 
-     # referenced AI for this chunk
     profile_pic = request.files.get("profile_pic")
-    filename = None
     if profile_pic and profile_pic.filename != "":
         filename = secure_filename(profile_pic.filename)
         upload_path = os.path.join("static/resources", filename)
         profile_pic.save(upload_path)
     else:
-        filename="Defaultpfp.png"
+        filename = signup_data.get("profile_pic", "Defaultpfp.png")  # fallback to previous
 
-    # Create new user with all collected data
     new_user = model.User(
         email=signup_data["email"],
         name=signup_data["username"],
@@ -108,9 +98,7 @@ def signup2_post():
     db.session.add(new_user)
     db.session.commit()
 
-    # Clear session data
     session.pop("signup_data", None)
-
     flash("Signup successful! Please log in.")
     return redirect(url_for("auth.login"))
 
@@ -138,3 +126,32 @@ def login_post():
 def logout_post():
     flask_login.logout_user()
     return redirect(url_for("auth.login"))
+
+@bp.route("/edit-profile")
+@flask_login.login_required
+def edit_profile():
+    return render_template('main/edit_profile.html')
+
+@bp.route("/edit-profile", methods=['POST'])
+@flask_login.login_required
+def edit_profile_post():
+    user = flask_login.current_user
+    user.desc= request.form.get('description')
+    user.birthday = request.form.get('birthday')
+    user.home_uni = request.form.get('home_uni')
+    user.visiting_uni = request.form.get('visiting_uni')
+    user.country = request.form.get('country')
+    #profile pic requires specific handling, and is optional
+    #referenced ChatGPT for help
+    profile_pic = request.files.get('profile_pic')
+    if profile_pic and profile_pic.filename != "":
+            filename = secure_filename(profile_pic.filename)
+            save_path = os.path.join(current_app.static_folder, "resources", filename)
+            profile_pic.save(save_path)
+            user.profile_pic = filename
+
+    db.session.commit()
+    flash("Profile updated.")
+
+    return redirect(url_for('main.profile', user_id = user.id))
+
