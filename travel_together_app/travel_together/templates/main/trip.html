@@ -93,6 +93,15 @@
 
     <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{ trip.end_date.strftime('%B %d, %Y') }}</p>
     
+    <div>
+      <h2>Current Trip Members</h2>
+      {% for participant in trip.participants %}
+        <a href="{{ url_for('main.profile', user_id=participant.id) }}" style="text-decoration: none; color: inherit;">
+          <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" alt="Profile" class="header-icon" />
+          <p>{{ participant.name }}</p>
+        </a>
+      {% endfor %}
+    </div>
     {% if trip.status != 0 %}
         <p class="cannot-join-alerts">This trip is not open now, as is not taking new members.</p>
     {% endif %}
@@ -108,54 +117,56 @@
     {% endif %}
 
 
+
     {% if already_joined %}
-      <div class="forums">
-        <div class="forum-tabs">
-          <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic='Main') }}">Main</a>
-
-          {% for topic in forum_topics %}
-            {% if topic != 'Main' %}
-              <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic=topic) }}">{{ topic }}</a>
-            {% endif %}
-          {% endfor %}
-
-          <button id="new-topic-button">Add New Topic...</button>
-        </div>
-      </div>
-
+    <div id="message-board-area" class="message-board-area">
       <h2>Message Board</h2>
       <h4>Chat With Your Tripmates</h4>
-      <div class="message-board-area">
-        <h4>{{ active_topic }}</h4>
-        <div class="messages-container">
-        {% if active_forum_messages %}
-          {% for message in trip.messages %}
-           <a href="{{ url_for('main.profile', user_id=message.user.id) }}" style="text-decoration: none; color: inherit;">
-              <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
-              <div class="messages">
-                <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
-                <p>{{ message.content }}</p>
+        <div class="forums">
+          <div class="forum-tabs">
+            <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic='Main') }}#message-board-area">Main</a>
+
+            {% for topic in forum_topics %}
+              {% if topic != 'Main' %}
+                <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic=topic) }}#message-board-area">{{ topic }}</a>
+              {% endif %}
+            {% endfor %}
+
+            <button id="new-topic-button">Add New Topic...</button>
+          </div>
+        </div>
+
+        <div id="message-board" class="message-board">
+          <h4>{{ active_topic }}</h4>
+          <div class="messages-container">
+          {% if active_forum_messages %}
+            {% for message in active_forum_messages %}
+            <a href="{{ url_for('main.profile', user_id=message.user.id) }}" style="text-decoration: none; color: inherit;">
+                <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
+                <div class="messages">
+                  <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
+                  <p>{{ message.content }}</p>
+                </div>
+              </a>
+            {% endfor %}
+          {% else %}
+              <p>Write the first message for this forum...</p>
+          {% endif %}
+        </div>
+
+          <form action="{{ url_for('main.new_message', trip_id = trip.id)}}" method="post">
+            <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input" data-active-topic="{{ active_topic }}">
+              <div id="new-forum-topic-input" style="display: none">
+                <label>Name your new forum topic:</label>
+                <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
+                <button type="button" id="cancel-new-forum-topic">Cancel</button>
               </div>
-            </a>
-          {% endfor %}
-        {% else %}
-            <p>Write the first message for this forum...</p>
-        {% endif %}
+            <textarea name="message-content" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
+            <br>
+            <button type="submit">Send</button>
+          </form>
+        </div>
       </div>
-
-        <form action="{{ url_for('main.new_message', trip_id = trip.id)}}" method="post">
-          <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input" data-active-topic="{{ active_topic }}">
-            <div id="new-forum-topic-input" style="display: none">
-              <label>Name your new forum topic:</label>
-              <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
-              <button type="button" id="cancel-new-forum-topic">Cancel</button>
-            </div>
-          <textarea name="message-content" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
-          <br>
-          <button type="submit">Send</button>
-        </form>
-      </div>
-
       <h2>Event Calendar</h2>
       <h4>See What Events/Meetups Are Scheduled For This Trip</h4>
       <div id="calendar"></div>
@@ -166,6 +177,7 @@
 
 {% block scripts %}
   <script src="{{ url_for('static', filename='travel-together.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/trip.js') }}"></script>
 
   {% if already_joined %}
     <!-- Load FullCalendar libraries -->

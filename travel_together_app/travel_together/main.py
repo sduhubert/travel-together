@@ -173,8 +173,8 @@ def join_trip(trip_id):
 def new_message(trip_id):
     user = flask_login.current_user
     content = request.form.get("message-content", "").strip()
-    forum_topic = request.form.get("forum-topic", "Main").strip() #to get the specific channel/forum of the messages
-    new_forum_topic = request.form.get("new-topic", "").strip() #if user wants to make a new forum for some specific messages
+    forum_topic = request.form.get("forum_topic", "Main").strip() #to get the specific channel/forum of the messages
+    new_forum_topic = request.form.get("new_forum_topic", "").strip() #if user wants to make a new forum for some specific messages
     if new_forum_topic:
         forum_topic = new_forum_topic
 
