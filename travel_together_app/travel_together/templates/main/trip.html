@@ -1,5 +1,59 @@
 {% extends 'base.html' %} 
 
+{% block styles %}
+  {{ super() }}
+  <style>
+    /* Basic FullCalendar styles - inline to avoid CORS */
+    #calendar {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+    }
+    
+    .fc {
+      direction: ltr;
+      text-align: left;
+    }
+    
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+      border: 1px solid #ddd;
+    }
+    
+    .fc-scrollgrid {
+      border-collapse: separate;
+      border-right-width: 1px;
+      border-bottom-width: 1px;
+    }
+    
+    .fc .fc-daygrid-day-number {
+      padding: 4px;
+      position: relative;
+      z-index: 4;
+    }
+    
+    .fc .fc-daygrid-day-top {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+    
+    .fc .fc-toolbar-title {
+      font-size: 1.75em;
+      margin: 0;
+    }
+    
+    .fc .fc-button {
+      padding: 0.4em 0.65em;
+      font-size: 1em;
+    }
+    
+    .fc-header-toolbar {
+      margin-bottom: 1.5em;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
 <div class="single_trip_container">
   <img class="trip-photo" src="{{ url_for('static', filename='resources/example-trip-1.jpg') }}" alt="Avatar">
@@ -9,7 +63,7 @@
         <p class="trip-origin">Origin: {{ trip.origin }}</p>
         <p class="trip-destinations">Destination(s): {{ trip.destinations }}</p>
 
-  {% set max_travelers = trip.max_travelers or 999999%}
+  {% set max_travelers = trip.max_travelers or 999999 %}
     {% if max_travelers != 999999 %}
         <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
     {% else %}
@@ -18,8 +72,8 @@
     {% if trip.participants|length >= max_travelers %}
         <p class="cannot-join-alerts">This trip is full, and is currently not accepting new members.</p>
     {% endif %}
-    {% set min_age = trip.min_age or 0%}
-    {% set max_age = trip.max_age or 999999%}
+    {% set min_age = trip.min_age or 0 %}
+    {% set max_age = trip.max_age or 999999 %}
     {% if min_age == 0 and max_age == 999999 %}
         <p class="age-range">There is no specified age range for this trip.</p>
     {% else %}
@@ -33,10 +87,11 @@
     {% if trip.budget %}
         <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
     {% endif %}
-    <!-- Used AI to figure out how to convert the date into a readable format -->
+
     <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{ trip.end_date.strftime('%B %d, %Y') }}</p>
+    
     {% if trip.status != 0 %}
-        <p class="cannot-join-alerts">This trip is not open now, as is not taking new members. Feel free to check back later for a status change.</p>
+        <p class="cannot-join-alerts">This trip is not open now, as is not taking new members.</p>
     {% endif %}
     
     {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age > max_age) %}
@@ -65,69 +120,57 @@
         </div>
       </div>
 
+      <h2>Message Board:  chat with your tripmates</h2>
       <div class="message-board-area">
         <h4>{{ active_topic }}</h4>
         <div class="messages-container">
         {% if active_forum_messages %}
           {% for message in trip.messages %}
-            <img src="{{ url_for('static', filename='resources/' ~ current_user.profile_pic) }}" alt="Profile" class="header-icon" />
-            <div class = "messages">
+            <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
+            <div class="messages">
               <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
               <p>{{ message.content }}</p>
             </div>
-            
           {% endfor %}
         {% else %}
             <p>Write the first message for this forum...</p>
         {% endif %}
-
       </div>
+
         <form action="{{ url_for('main.new_message', trip_id = trip.id)}}" method="post">
-          <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input", data-active-topic="{{ active_topic }}">
+          <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input" data-active-topic="{{ active_topic }}">
             <div id="new-forum-topic-input" style="display: none">
               <label>Name your new forum topic:</label>
               <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
-              <button type="button" id ="cancel-new-forum-topic">Cancel</button>
+              <button type="button" id="cancel-new-forum-topic">Cancel</button>
             </div>
-          <textarea
-            name="message-content"
-            rows="4"
-            cols="50"
-            placeholder="What's on your mind?"
-          >
-          </textarea>
+          <textarea name="message-content" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
           <br>
           <button type="submit">Send</button>
         </form>
       </div>
+
+      <h2>Event Calendar: see what events/meetups are scheduled for this trip</h2>
+      <div id="calendar"></div>
+
     {% endif %}
-</div>
-  <!-- <section>
-    <h2>Reply to the trip</h2>
-    <form action="{{ url_for('main.new_trip')}}" method="post">
-      <textarea
-        name="text"
-        rows="4"
-        cols="50"
-        placeholder="What's on your mind?"
-      ></textarea>
-      <br />
-      <input type="hidden" name="response_to" value="{{ trip.id }}">
-      <button type="submit">Publish</button>
-    </form>
-  </section> -->
-  
-  <div class="replies_section">
-    {% for trip in responses %}
-      {% include 'trip_template.html' %}
-    {% endfor %}
-  </div>
-  <a href="{{ url_for('main.index') }}">
-    <button type="submit">Return</button>
-  </a>
 </div>
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('js', filename='travel-together.js') }}"></script>
+  <script src="{{ url_for('static', filename='travel-together.js') }}"></script>
+
+  {% if already_joined %}
+    <!-- Load FullCalendar libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
+
+    <!-- Set the initial date variable for calendar_init.js -->
+    <script>
+      var initialDateValue = "{{ trip.start_date.strftime('%Y-%m-%d') }}";
+    </script>
+
+    <!-- Load the external calendar initialization script -->
+    <script src="{{ url_for('static', filename='calendar_init.js') }}"></script>
+  {% endif %}
+
 {% endblock %}

@@ -1,4 +1,4 @@
-const e = require("express");
+// const e = require("express"); // REMOVED - require() doesn't work in browser and this wasn't used anyway
 
 $(document).ready(function () {
     $('.original').on("mouseenter", function () {
@@ -57,26 +57,29 @@ const maxRange = document.getElementById("maxRange");
 const minValue = document.getElementById("minValue");
 const maxValue = document.getElementById("maxValue");
 
-function update() {
-    if (parseInt(minRange.value) > parseInt(maxRange.value)) {
-        //this makes it so that values swap if the user crosses sliders
-        const temp = minRange.value;
-        minRange.value = maxRange.value;
-        maxRange.value = temp;
+// Only run if elements exist on the page
+if (minRange && maxRange && minValue && maxValue) {
+    function update() {
+        if (parseInt(minRange.value) > parseInt(maxRange.value)) {
+            //this makes it so that values swap if the user crosses sliders
+            const temp = minRange.value;
+            minRange.value = maxRange.value;
+            maxRange.value = temp;
+        }
+
+        minValue.textContent = minRange.value;
+        maxValue.textContent = maxRange.value;
     }
 
-    minValue.textContent = minRange.value;
-    maxValue.textContent = maxRange.value;
+    minRange.oninput = update;
+    maxRange.oninput = update;
+    update();
 }
-
-minRange.oninput = update;
-maxRange.oninput = update;
-update();
 
 // Ensures that all mandatory fields are filled out in form
 // Also ensures that creator's age is within age range, and that max_members and budget are non-negative integers
 $(document).ready(function () {
-    $('form[action="{{ url_for("main.new_trip") }}"]').on('submit', function (event) {
+    $('#new-trip-form').on('submit', function (event) {
         let userAge = parseInt($('#new-trip-form').data('user-age'));
         let title = $('#title').val().trim();
         let description = $('#description').val().trim();
