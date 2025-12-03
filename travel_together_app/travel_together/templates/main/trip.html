@@ -120,17 +120,20 @@
         </div>
       </div>
 
-      <h2>Message Board:  chat with your tripmates</h2>
+      <h2>Message Board</h2>
+      <h4>Chat With Your Tripmates</h4>
       <div class="message-board-area">
         <h4>{{ active_topic }}</h4>
         <div class="messages-container">
         {% if active_forum_messages %}
           {% for message in trip.messages %}
-            <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
-            <div class="messages">
-              <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
-              <p>{{ message.content }}</p>
-            </div>
+           <a href="{{ url_for('main.profile', user_id=message.user.id) }}" style="text-decoration: none; color: inherit;">
+              <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
+              <div class="messages">
+                <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
+                <p>{{ message.content }}</p>
+              </div>
+            </a>
           {% endfor %}
         {% else %}
             <p>Write the first message for this forum...</p>
@@ -150,7 +153,8 @@
         </form>
       </div>
 
-      <h2>Event Calendar: see what events/meetups are scheduled for this trip</h2>
+      <h2>Event Calendar</h2>
+      <h4>See What Events/Meetups Are Scheduled For This Trip</h4>
       <div id="calendar"></div>
 
     {% endif %}
