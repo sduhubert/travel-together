@@ -1,5 +1,7 @@
 $(function () {
-    const universities = window.UNIVERSITIES || [];
+    const universities = JSON.parse(
+        document.getElementById("universities-json").textContent
+    );
 
     const homeUniSelect = $('#home_uni');
     const homeUniCountrySelect = $('#home_uni_country');

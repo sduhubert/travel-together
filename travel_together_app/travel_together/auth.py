@@ -16,8 +16,7 @@ def signup():
     return render_template(
         "auth/signup.html", 
         countries=COUNTRIES,
-        universities=UNIVERSITIES,
-        country_of_universities=COUNTRY_OF_UNIVERSITIES
+        universities=UNIVERSITIES
     )
 
 @bp.route("/signup", methods=["POST"])
@@ -154,4 +153,3 @@ def edit_profile_post():
     flash("Profile updated.")
 
     return redirect(url_for('main.profile', user_id = user.id))
-
