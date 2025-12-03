@@ -175,12 +175,12 @@ def new_message(trip_id):
     content = request.form.get("message-content", "").strip()
     forum_topic = request.form.get("forum_topic", "Main").strip() #to get the specific channel/forum of the messages
     new_forum_topic = request.form.get("new_forum_topic", "").strip() #if user wants to make a new forum for some specific messages
-    if new_forum_topic:
+    if new_forum_topic and new_forum_topic != "":
         forum_topic = new_forum_topic
 
     if not content:
         flash("Message cannot be empty", "error")
-        return redirect(url_for("main.trip", trip_id=trip_id))
+        return redirect(url_for("main.trip", trip_id=trip_id, forum_topic=forum_topic))
     
     message = model.TripProposalMessage(trip_proposal_id=trip_id, user_id = flask_login.current_user.id, content=content, forum_topic = forum_topic)
     db.session.add(message)
