@@ -14,7 +14,7 @@ a.trip-link {
     background-color: rgba(100, 100, 100, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    padding: 0.3vw;
+    padding: 0.5vw;
 }
 
 .trip-container img.trip-photo {
@@ -34,3 +34,19 @@ a.trip-link {
     height: 3vw;
 }
 
+/*text overflow handling (with help of generative AI*/
+.trip-title,
+.trip-origin,
+.trip-destinations {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trip-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical; 
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
