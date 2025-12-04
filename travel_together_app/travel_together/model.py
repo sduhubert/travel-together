@@ -3,7 +3,7 @@ import enum
 from typing import List, Optional, Set
 
 import flask_login
-from sqlalchemy import String, DateTime, ForeignKey, Boolean, Integer
+from sqlalchemy import String, DateTime, ForeignKey, Boolean, Integer, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -37,7 +37,7 @@ class User(flask_login.UserMixin, db.Model):
     name: Mapped[str] = mapped_column(String(64))
     password: Mapped[str] = mapped_column(String(256))
     desc: Mapped[Optional[str]] = mapped_column(String(512))
-    birthday: Mapped[datetime.date] = mapped_column(DateTime(timezone=True))
+    birthday: Mapped[datetime.date] = mapped_column(Date)
     home_uni: Mapped[str] = mapped_column(String(128))
     visiting_uni: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     country: Mapped[str] = mapped_column(String(2))

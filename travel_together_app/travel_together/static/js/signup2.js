@@ -22,3 +22,19 @@ $(function() {
         $fileClear.hide();
     });
 });
+
+// Preview selected profile picture
+$(document).ready(function() {
+    const originalSrc = $('#pfp-preview').attr('src'); // store original image
+
+    $('#profile-pic').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+            // Update preview to selected file
+            $('#pfp-preview').attr('src', URL.createObjectURL(file));
+        } else {
+            // No file selected, reset preview
+            $('#pfp-preview').attr('src', originalSrc);
+        }
+    });
+});

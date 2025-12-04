@@ -1,0 +1,147 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    height: calc(100vh - 60px);
+    width: 100%;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-header {
+    font-size: 2vw;
+    position: absolute;
+    top: 70px;
+    left: 1.5vw;
+}
+
+/* ============== LAYOUT ============== */
+
+.edit-container {
+    border-radius: 15px;
+    height: 60vh;
+    width: 60vw;
+    padding: 3vh 4vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+#profile-pic {
+    display: none;
+}
+
+.profile-pic-input {
+    flex: 1;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-pic-input label {
+    cursor: pointer;
+    text-align: center;
+}
+
+.pfp {
+    width: 15vw;
+    height: 15vw;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.pfp:hover {
+    opacity: 0.8;
+}
+
+.input-flex {
+    flex: 1;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1vh;
+}
+
+.credential-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    width: 90%;
+}
+
+/* ============== INPUTS ============== */
+
+.credential-inputs select,
+.credential-inputs input[type="date"]{
+    width: 100%;
+    background-color: #f2e0c3;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    color: black;
+    resize: vertical;
+    line-height: 1.5;
+    height: 5vh;
+}
+
+.credential-inputs textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5vw;
+    background-color: #f2e0c3;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    color: black;
+    resize: none;
+    line-height: 1.5;
+    height: 20vh;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.edit-profile-buttons {
+    margin-top: auto;
+    margin-left: auto;
+    display: flex;
+    gap: 1vw;
+}
+
+.submit-button {
+    flex:1;
+    font-size: 1vw;
+    width: auto;
+    padding: 0.5vw;
+    background-color: #D6C6AF;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+
+.submit-button:hover {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.submit-button:active {
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(2px);
+}

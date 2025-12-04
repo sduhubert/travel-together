@@ -120,17 +120,38 @@ def logout_post():
 @bp.route("/edit-profile")
 @flask_login.login_required
 def edit_profile():
-    return render_template('main/edit_profile.html')
+    return render_template(
+        "main/edit_profile.html",
+        countries=COUNTRIES,
+        universities=UNIVERSITIES
+    )
 
 @bp.route("/edit-profile", methods=['POST'])
 @flask_login.login_required
 def edit_profile_post():
     user = flask_login.current_user
-    user.desc= request.form.get('description')
-    user.birthday = request.form.get('birthday')
-    user.home_uni = request.form.get('home_uni')
-    user.visiting_uni = request.form.get('visiting_uni')
-    user.country = request.form.get('country')
+
+    birthday = request.form.get('birthday')
+    country = request.form.get('country')
+    
+    if birthday:
+        user.birthday = birthday
+    if country:
+        user.country = country
+
+    # Optional desc, otherwise stick to the old one
+    desc = request.form.get('description')
+    if desc:
+        user.desc = desc
+
+    # Optional home and visiting uni, otherwise stick to the old ones
+    home_uni = request.form.get('home_uni')
+    visiting_uni = request.form.get('visiting_uni')
+    
+    if home_uni:
+        user.home_uni = home_uni
+    if visiting_uni:
+        user.visiting_uni = visiting_uni
     #profile pic requires specific handling, and is optional
     #referenced ChatGPT for help
     profile_pic = request.files.get('profile_pic')
