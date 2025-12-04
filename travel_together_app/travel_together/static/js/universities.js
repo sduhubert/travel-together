@@ -5,14 +5,16 @@ $(function () {
 
     const homeUniSelect = $('#home_uni');
     const homeUniCountrySelect = $('#home_uni_country');
+    const visitingUniSelect = $('#visiting_uni');
+    const visitingUniCountrySelect = $('#visiting_uni_country');
 
-    function populateUniversities(countryCode) {
-        homeUniSelect.html('<option value="" disabled selected>Home University</option>');
+    function populateUniversities(selectElem, countryCode) {
+        selectElem.html('<option value="" disabled selected>University</option>');
 
         const filtered = universities.filter(uni => uni.country === countryCode);
 
         filtered.forEach(uni => {
-            homeUniSelect.append(
+            selectElem.append(
                 $('<option>', {
                     value: uni.university,
                     text: uni.university
@@ -20,14 +22,22 @@ $(function () {
             );
         });
 
-        homeUniSelect.prop('disabled', filtered.length === 0);
+        selectElem.prop('disabled', filtered.length === 0);
     }
 
     homeUniCountrySelect.on('change', function () {
-        populateUniversities($(this).val());
+        populateUniversities(homeUniSelect, $(this).val());
+    });
+
+    visitingUniCountrySelect.on('change', function () {
+        populateUniversities(visitingUniSelect, $(this).val());
     });
 
     if (homeUniCountrySelect.val()) {
-        populateUniversities(homeUniCountrySelect.val());
+        populateUniversities(homeUniSelect, homeUniCountrySelect.val());
+    }
+
+    if (visitingUniCountrySelect.val()) {
+        populateUniversities(visitingUniSelect, visitingUniCountrySelect.val());
     }
 });

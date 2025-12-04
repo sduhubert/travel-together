@@ -1,39 +1,84 @@
 {% block head %}
-    <title>Sign up - Travel together</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}"/>
+<title>Sign up - Travel together</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.min.js"></script>
+<script id="universities-json" type="application/json">
+    {{ universities | tojson | safe }}
+</script>
+<script src="{{ url_for('static', filename='js/universities.js') }}"></script>
+<script src="{{ url_for('static', filename='js/signup2.js') }}"></script>
 {% endblock %}
 
 {% extends 'base.html' %}
-{% if current_user.is_authenticated: %}
-    <div>User: {{current_user.name}}</div>
+
+{% if current_user.is_authenticated %}
+    <div>User: {{ current_user.name }}</div>
 {% endif %}
 {% block content %}
     <div class="main-container">
         <div class="signup-container">
-            <h2>Sign Up</h2>
-            <form class="form-container" action="{{ url_for('auth.signup2_post') }}" method="post" enctype="multipart/form-data">
+            <h2>Complete Your Profile</h2>
+            <form class="form-container" action="{{ url_for('auth.signup2_post') }}" method="post"
+                enctype="multipart/form-data">
                 <div class="credential-inputs">
-                    <input type="text" name="description" placeholder="Description"/>
-                    <input type="date" name="birthday" placeholder="Birthday" required/>
-                    <input type="text" name="home_uni" placeholder="Home University" required/>
-                    <input type="text" name="visiting_uni" placeholder="Visiting University" required/>
-                    <input type="text" name="country" placeholder="Country" required/>
-                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*" style="display: none">
+                    <label for="country" class="required">Country you're from</label>
+                    <select id="country" name="country" required>
+                        <option value="" disabled selected>Select</option>
+                        {% for code, name in countries %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="required">Home university</label>
+                    <div class="uni-choice">
+                        <select id="home_uni_country" name="home_uni_country" required>
+                            <option value="" disabled selected>Country</option>
+                            {% for code, name in countries %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="home_uni" name="home_uni" required>
+                            <option value="" disabled selected>University</option>
+                        </select>
+                    </div>
+                    <label>Visiting university</label>
+                    <div class="uni-choice">
+                        <select id="visiting_uni_country" name="visiting_uni_country">
+                            <option value="" disabled selected>Country</option>
+                            {% for code, name in countries %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="visiting_uni" name="visiting_uni">
+                            <option value="" disabled selected>University</option>
+                        </select>
+                    </div>
+                    <label for="birthday" class="required">Birthday</label>
+                    <input type="date" id="birthday" name="birthday" required />
+                    <label>Profile picture</label>
+                    <label class="profile-pic-button" for="profile_pic">
+                        <span class="file-text">Choose a file</span>
+                        <span class="file-clear" style="display:none;">×</span>
+                    </label>
+                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
+                    <label for="description">Short description</label>
+                    <textarea name="description" placeholder="Tell us something about yourself"></textarea>
                 </div>
-                <input type="submit" value="Sign Up"/>
+                <input class="submit-button" type="submit" value="Finish" />
             </form>
             <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
-            </div>
-            <div class="info-container">
-                <img src="../../static/resources/logo-full.png" class="info-image"/>
-                <h1>Welcome to Travel together&trade;</h1>
-                <p>Plan trips, share unforgettable adventures, and meet fellow travelers who love discovering places just like you.</p>
-            </div>
+        </div>
+        <div class="info-container">
+            <img src="../../static/resources/logo-full.png" class="info-image" />
+            <h1>Welcome to Travel together&trade;</h1>
+            <p>Plan trips, share unforgettable adventures, and meet fellow travelers who love discovering places just like you.</p>
         </div>
     </div>
+
     {% with messages = get_flashed_messages() %}
         {% for message in messages %}
-            <div class="notification">{{ message }}</div>
+        <div class="notification">{{ message }}</div>
         {% endfor %}
     {% endwith %}
 {% endblock %}

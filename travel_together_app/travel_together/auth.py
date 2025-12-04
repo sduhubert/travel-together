@@ -14,7 +14,7 @@ bp = Blueprint("auth", __name__)
 @bp.route("/signup", methods=["GET"])
 def signup():
     return render_template(
-        "auth/signup.html", 
+        "auth/signup.html",
         countries=COUNTRIES,
         universities=UNIVERSITIES
     )
@@ -23,20 +23,10 @@ def signup():
 def signup_post():
     email = request.form.get("email")
     username = request.form.get("username")
-    country = request.form.get("country")
-    home_uni = request.form.get("home_uni")
-    birthday = request.form.get("birthday")
-
-    profile_pic = request.files.get("profile_pic")
-    if profile_pic and profile_pic.filename != "":
-        filename = secure_filename(profile_pic.filename)
-        upload_path = os.path.join("static/resources", filename)
-        profile_pic.save(upload_path)
-    else:
-        filename = "Defaultpfp.png"
-
     password = request.form.get("password")
-    if password != request.form.get("password_repeat"):
+    password_repeat = request.form.get("password_repeat")
+
+    if password != password_repeat:
         flash("Sorry, passwords are different")
         return redirect(url_for("auth.signup"))
 
@@ -50,56 +40,57 @@ def signup_post():
         "email": email,
         "username": username,
         "password_hash": generate_password_hash(password),
-        "profile_pic": filename  # store filename in session too
+        "profile_pic": "Defaultpfp.png"
     }
 
     return redirect(url_for("auth.signup2"))
+
 
 @bp.route("/signup2")
 def signup2():
     signup_data = session.get("signup_data")
     if not signup_data:
         return redirect(url_for("auth.signup"))
-    return render_template("auth/signup2.html")
+    return render_template(
+        "auth/signup2.html",
+        countries=COUNTRIES,
+        universities=UNIVERSITIES
+    )
+
 
 @bp.route("/signup2", methods=["POST"])
 def signup2_post():
     signup_data = session.get("signup_data")
     if not signup_data:
-        flash("Session expired. Please start the signup process again.")
         return redirect(url_for("auth.signup"))
-
-    description = request.form.get("description") or "User has not provided a description."
-    birthday = request.form.get("birthday")
-    home_uni = request.form.get("home_uni")
-    visiting_uni = request.form.get("visiting_uni")
-    country = request.form.get("country")
 
     profile_pic = request.files.get("profile_pic")
     if profile_pic and profile_pic.filename != "":
         filename = secure_filename(profile_pic.filename)
-        upload_path = os.path.join("static/resources", filename)
-        profile_pic.save(upload_path)
+        save_path = os.path.join(current_app.static_folder, "resources", filename)
+        profile_pic.save(save_path)
     else:
-        filename = signup_data.get("profile_pic", "Defaultpfp.png")  # fallback to previous
+        filename = signup_data["profile_pic"]
 
     new_user = model.User(
         email=signup_data["email"],
         name=signup_data["username"],
         password=signup_data["password_hash"],
-        desc=description,
-        birthday=birthday,
-        home_uni=home_uni,
-        visiting_uni=visiting_uni,
-        country=country,
+        desc=request.form.get("description") or "",
+        birthday=request.form.get("birthday"),
+        home_uni=request.form.get("home_uni"),
+        visiting_uni=request.form.get("visiting_uni"),
+        country=request.form.get("country"),
         profile_pic=filename
     )
+
     db.session.add(new_user)
     db.session.commit()
 
     session.pop("signup_data", None)
     flash("Signup successful! Please log in.")
     return redirect(url_for("auth.login"))
+
 
 @bp.route("/login")
 def login():

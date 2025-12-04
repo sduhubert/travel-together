@@ -4,13 +4,15 @@
     touch-action: none;
 } /* Doesn't work, might fix later (it's to prevent the "bounce" on scroll) */
 
+
+
 /*=========================== PAGE LAYOUT ===========================*/
 
 .main-container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: auto;
+    height: calc(100vh - 60px);
 }
 
 /*=========================== SIGNUP CONTAINER ===========================*/
@@ -20,7 +22,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 0.5vw 2vw;
     box-sizing: border-box;
 
     width: 30%;
@@ -36,9 +38,8 @@
 .signup-container h2 {
     text-align: center;
     border-bottom: 1px solid black;
-    padding-bottom: 20px;
+    padding-bottom: 1vw;
     width: 100%;
-    
 }
 
 .form-container {
@@ -47,15 +48,45 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    gap: 15px;
+    gap: 2vh;
     align-items: center;
 }
 
+/*=========================== INPUTS ===========================*/
+.credential-inputs select,
+.credential-inputs input[type="date"]{
+    width: 100%;
+    padding: 0.5vw;
+    background-color: #f2e0c3;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    color: black;
+    resize: vertical;
+    line-height: 1.5;
+    height: 2.5vw;
+}
+
+.credential-inputs textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5vw;
+    background-color: #f2e0c3;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    color: black;
+    resize: none;
+    line-height: 1.5;
+    height: 4em;
+}
+
+
 .credential-inputs {
-    margin-top: 20px;
+    margin-top: 2vh;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1vh;
     width: 100%;
     flex-grow: 1;
 }
@@ -65,16 +96,60 @@
 .form-container input[type="text"] {
     width: 100%;
     box-sizing: border-box;
-    padding: 10px;
+    padding: 0.5vw;
     background-color: #f2e0c3;
     border-radius: 15px;
     border: 1px solid #ccc;
     box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    line-height: 1.5;
+    height: 2.5vw;
+    padding-left: 1vw;
 }
 
-.form-container input[type="submit"] {
+.required::after {
+    content: "*";
+    color: red;
+}
+
+.uni-choice {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3vw;
+}
+
+#profile_pic {
+    display: none;
+}
+
+.profile-pic-button {
+    padding: 0.5vw;
+    background-color: #D6C6AF;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    cursor: pointer;
+}
+
+.profile-pic-button:hover {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.profile-pic-button:active {
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(2px);
+}
+
+.file-clear {
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.submit-button {
     width: 100%;
-    padding: 10px;
+    padding: 0.5vw;
     background-color: #D6C6AF;
     border-radius: 15px;
     border: 1px solid #ccc;
@@ -83,12 +158,12 @@
     transition: all 0.1s ease-in-out;
 }
 
-.form-container input[type="submit"]:hover {
+.submit-button:hover {
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     transform: translateY(-2px);
 }
 
-.form-container input[type="submit"]:active {
+.submit-button:active {
     box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
     transform: translateY(2px);
 }
@@ -97,7 +172,7 @@
 
 .info-container {
     flex-grow: 1;
-    padding: 40px;
+    padding: 2vw;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -111,6 +186,5 @@
 .info-image {
     width: 30%;
     height: auto;
-    border-radius: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 1vw;
 }

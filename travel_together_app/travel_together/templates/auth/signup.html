@@ -1,20 +1,14 @@
 {% block head %}
 <title>Sign up - Travel together</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}" />
-<!-- Using SlimSelect (external library) for country selection -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.min.js"></script>
-<script id="universities-json" type="application/json">
-    {{ universities | tojson | safe }}
-</script>
-<script src="{{ url_for('static', filename='js/universities.js') }}"></script>
 {% endblock %}
 
 {% extends 'base.html' %}
-{% if current_user.is_authenticated: %}
-<div>User: {{current_user.name}}</div>
+
+{% if current_user.is_authenticated %}
+<div>User: {{ current_user.name }}</div>
 {% endif %}
+
 {% block content %}
 <div class="main-container">
     <div class="signup-container">
@@ -23,44 +17,24 @@
             <div class="credential-inputs">
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="text" name="username" placeholder="Username" required />
-                <select id="country" name="country" required>
-                    <option value="" disabled selected>Country</option>
-                    {% for country_code, country_name in countries %}
-                    <option value="{{ country_code }}">{{ country_name }}</option>
-                    {% endfor %}
-                </select>
-                <select id="home_uni_country" name="home_uni_country" required>
-                    <option value="" disabled selected>Country of Home University</option>
-                    {% for country_code, country_name in countries %}
-                    <option value="{{ country_code }}">{{ country_name }}</option>
-                    {% endfor %}
-                </select>
-                <select id="home_uni" name="home_uni" required>
-                    <option value="" disabled selected>Home University</option>
-                </select>
-
-                <label for="birthday">Birthday</label>
-                <input type="date" id="birthday" name="birthday" placeholder="Birthday" required />
-                <label for="profile_pic">Upload profile picture</label>
-                <input type="file" name="profile_pic" accept="image/*">
                 <input type="password" name="password" placeholder="Password" required />
                 <input type="password" name="password_repeat" placeholder="Repeat password" required />
             </div>
-            <input type="submit" value="Sign Up" />
+            <input class="submit-button" type="submit" value="Next"/>
         </form>
         <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
     </div>
+
     <div class="info-container">
         <img src="../../static/resources/logo-full.png" class="info-image" />
         <h1>Welcome to Travel together&trade;</h1>
-        <p>Plan trips, share unforgettable adventures, and meet fellow travelers who love discovering places just like
-            you.</p>
+        <p>Plan trips, share unforgettable adventures, and meet fellow travelers who love discovering places just like you.</p>
     </div>
 </div>
-</div>
-{% with messages = get_flashed_messages() %}
-{% for message in messages %}
-<div class="notification">{{ message }}</div>
-{% endfor %}
-{% endwith %}
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+        <div class="notification">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
 {% endblock %}
