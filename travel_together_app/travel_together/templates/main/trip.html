@@ -9,6 +9,7 @@
       margin: 40px auto;
       padding: 20px;
       background: white;
+      height: 600px;
     }
     
     .fc {
@@ -167,10 +168,50 @@
           </form>
         </div>
       </div>
+
       <h2>Event Calendar</h2>
       <h4>See What Events/Meetups Are Scheduled For This Trip</h4>
+
       <div id="calendar"></div>
 
+      <div id="meetup-area">
+        <div class = "meetup-area-content">
+          <h3>Create a Meetup...</h3>
+          <form id="meetup-form">
+
+            <div class="form-group">
+              <label>Location:</label>
+              <input type="text" name="location" required placeholder="e.g., School libary or Zoom call">
+            </div>
+
+            <div class="form-group">
+              <label>Date:</label>
+              <input type="date" name="date" id="meetup-date" required placeholder="Set a date...">
+            </div>
+
+            <div class="form-group">
+              <label>Time:</label>
+              <input type="time" name="time" required placeholder="Set a time...">
+            </div>
+
+            <div class="form-group">
+              <label>Link (optional):</label>
+              <input type="text" name="link" placeholder="Add a link if needed...">
+              <small>Add a link for online meetings, such as Zoom, Google Meet, etc.</small>
+            </div>
+
+            <div class="form-group">
+              <label>Description:</label>
+              <textarea name="description" rows="5" maxlength="1024" required placeholder="Describe your meetup/event..."></textarea>
+            </div>
+
+            <div class="meetup-area-buttons">
+              <button type="button" id="cancel-meetup-creation-button">Cancel</button>
+              <button type="submit">Create Meetup</button>
+            </div>
+          </form>
+        </div>
+      </div>
     {% endif %}
 </div>
 {% endblock %}
@@ -186,10 +227,11 @@
     <!-- Set the initial date variable for calendar_init.js -->
     <script>
       var initialDateValue = "{{ trip.start_date.strftime('%Y-%m-%d') }}";
+      var tripId = "{{ trip.id }}"
     </script>
 
     <!-- Load the external calendar initialization script -->
-    <script src="{{ url_for('static', filename='calendar_init.js') }}"></script>
+    <script src="{{ url_for('static', filename='calendar.js') }}"></script>
   {% endif %}
 
   <div>

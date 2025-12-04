@@ -113,3 +113,6 @@ class Meetup(db.Model):
     location: Mapped[str] = mapped_column(String(128))
     date_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     description: Mapped[Optional[str]] = mapped_column(String(512))
+    link: Mapped[Optional[str]] = mapped_column(String(256))
+    trip = relationship('TripProposal', backref='meetups')
+    creator = relationship('User', backref='created_meetups')

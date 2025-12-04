@@ -1,8 +1,8 @@
-import datetime
+from datetime import datetime
 import dateutil.tz
 
 
-from flask import Blueprint, flash, render_template, request, redirect, url_for, abort
+from flask import Blueprint, flash, jsonify, render_template, request, redirect, url_for, abort
 import flask_login
 
 from . import model, db
@@ -211,3 +211,57 @@ def unfollow(user_id):
         user.trip_proposals.remove(flask_login.current_user)
         db.session.commit()
     return redirect(url_for("main.profile", user_id=user_id))
+
+# referred to Claude for JSON logic
+@bp.route('/trip/<int:trip_id>/meetups')
+@flask_login.login_required
+def trip_meetup_retrieval(trip_id):
+    trip = model.TripProposal.query.get_or_404(trip_id)
+
+    meetups = model.Meetup.query.filter_by(trip_proposal_id=trip_id).all()
+
+    return jsonify([{
+        'id': meetup.id,
+        'title': meetup.location,
+        'start': meetup.date_time.isoformat(),
+        'description': meetup.description,
+        'extendedProps': {
+            'location': meetup.location,
+            'description': meetup.description,
+            'creator': meetup.creator.name,
+            'link': meetup.link
+        }
+    } for meetup in meetups])
+
+@bp.route('/trip/<int:trip_id>/meetups', methods=['POST'])
+@flask_login.login_required
+def new_trip_meetup(trip_id):
+    current_user=flask_login.current_user
+    trip = model.TripProposal.query.get_or_404(trip_id)
+
+    json = request.get_json()
+
+    try:
+        date = json['date']
+        time = json['time']
+        datetime_string = f"{date} {time}"
+        date_time = datetime.strptime(datetime_string, '%Y-%m-%d %H:%M')
+
+        meetup = model.Meetup(
+            trip_proposal_id=trip_id,
+            creator_id=current_user.id,
+            location=json['location'],
+            date_time=date_time,
+            description=json.get('description'),
+            link=json.get('link')
+
+        )
+
+        db.session.add(meetup)
+        db.session.commit()
+
+        return jsonify({'success': True, 'id': meetup.id})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success':False, 'error': str(e)}), 400
