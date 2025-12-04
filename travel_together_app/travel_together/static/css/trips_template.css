@@ -1,3 +1,7 @@
+body {
+    margin-bottom: 3vh;
+}
+
 .trips {
     padding: 1vw;
     display: grid;

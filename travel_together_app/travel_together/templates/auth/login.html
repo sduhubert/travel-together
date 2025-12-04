@@ -1,9 +1,9 @@
+{% extends 'base.html' %}
+
 {% block head %}
     <title>Login - Travel together</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"/>
 {% endblock %}
-
-{% extends 'base.html' %}
 
 {% if current_user.is_authenticated: %}
     <div>User: {{current_user.name}}</div>

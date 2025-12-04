@@ -1,8 +1,9 @@
-.body {
+body {
     overflow: hidden;
     overscroll-behavior: none;
     touch-action: none;
-} /* Doesn't work, might fix later (it's to prevent the "bounce" on scroll) */
+    padding-bottom: 0;
+}
 
 
 

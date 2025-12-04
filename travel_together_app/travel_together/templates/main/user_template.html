@@ -1,10 +1,9 @@
+{% extends "base.html" %} 
 {% block head %}
     <title>{{user.name}}'s profile - Travel together</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}"/>
     <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 {% endblock %}
-
-{% extends "base.html" %} 
 
 {% block content %}
 <div class="content">
