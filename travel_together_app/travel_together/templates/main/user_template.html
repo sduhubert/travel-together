@@ -1,43 +1,60 @@
+{% block head %}
+    <title>{{user.name}}'s profile - Travel together</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}"/>
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}
+
 {% extends "base.html" %} 
 
 {% block content %}
 <div class="content">
-  <header><h2>{{ user.name }}</h2>
-    <img src="{{ url_for('static', filename='resources/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
-    {% if user.id == current_user.id %}
-      <a href="{{ url_for('auth.edit_profile', user_id=current_user.id) }}">
-      <button type="submit">Edit Profile</button>
-    </a>
-    {% endif %}
-  </header>
-  <h3>About {{ user.name }}:</h3>
-  <br>
-  <section>
-    <div class="user_info">
-      Age: {{ user.age }} <br>
-      Nationality: {{ user.country }} <br>
-      Home University: {{ user.home_uni }} <br>
-      Visiting/Exchange University: 
-      {% if user.visiting_uni %}
-        {{ user.visiting_uni }}
-      {% else %}
-        N/A 
-      {% endif %} 
-      <br>
-      <br>
-      <div class="user_description">
-        {% if user.desc %}
-          {{ user.desc }}
-        {% else %}
-          {{ user.name }} has not yet added a description...
-        {% endif %}
-        
+  <div class="profile-container">
+    <div class="profile-container-lefthand">
+      <img class="pfp" src="{{ url_for('static', filename='resources/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
+      <div class="lefthand-contents">
+        <div class="user-name">
+          <div class="user-name-with-flag">
+            <img class="user-flag" src="https://flagsapi.com/{{user.country}}/flat/32.png">
+            <h2>{{ user.name }}</h2>
+          </div>
+          {% if user.id == current_user.id %}
+          <a href="{{ url_for('auth.edit_profile', user_id=current_user.id) }}">
+            <button type="submit">Edit Profile</button>
+          </a>
+          {% endif %}
+        </div>
+        <div class="user-description">
+          {% if user.desc %}
+            "{{ user.desc }}"
+          {% else %}
+            {{ user.name }} has not yet added a description...
+          {% endif %}
+        </div>
+      </div>
     </div>
-      <br>
+    <div class="righthand-contents">
+      <div class="righthand-line">
+        <p>{{user.age}} years old</p>
+        <img class=icon src="{{ url_for('static', filename='resources/bday.png') }}">
+      </div>
+      <div class="righthand-line">
+        <p>{{user.home_uni}}</p>
+        <img class=icon src="{{ url_for('static', filename='resources/home-uni.png') }}">
+      </div>
+      <div class="righthand-line">
+        {% if user.visiting_uni %}
+          <p>{{ user.visiting_uni }}</p>
+        {% else %}
+          <p>N/A</p> 
+        {% endif %}
+        <img class=icon src="{{ url_for('static', filename='resources/visiting-uni.png') }}">
+      </div>
+    </div>
+      
+  </div>
   <div class="trip-contents">
-  </section>
-  <h1> Trips {{ user.name }} participates in: </h1>
-  <section>{% include 'trips_template.html' %}</section>
+    <h1> Trips {{ user.name }} participates in: </h1>
+    <section>{% include 'trips_template.html' %}</section>
   </div>
 </div>
 <div>
