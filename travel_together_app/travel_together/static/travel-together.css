@@ -210,3 +210,28 @@ p, span, label, input, textarea, select {
 .meetup-area-buttons button[type="button"]:hover {
   background: #f0f0f0;
 }
+
+.existing-meetup-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.existing-meetup-popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 380px;
+  max-width: 90%;
+  text-align: left;
+}
+
+.existing-meetup-popup-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
