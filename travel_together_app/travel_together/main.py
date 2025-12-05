@@ -72,8 +72,8 @@ def new_trip():
     end = request.form.get("end")
     budget = request.form.get("budget")
     max_members = request.form.get("max_members")
-    minAge = request.form.get("minAge")
-    maxAge = request.form.get("maxAge")
+    minAge = request.form.get("min")
+    maxAge = request.form.get("max")
     status=model.TripProposalStatus.OPEN.value
 
     #since our model stores 'destinations' as a comma separated string
@@ -99,7 +99,7 @@ def new_trip():
         max_travelers=max_members,
         min_age=minAge,
         max_age=maxAge,
-        timestamp=datetime.datetime.now(dateutil.tz.tzlocal()),
+        timestamp=datetime.now(dateutil.tz.tzlocal()),
         status=status
         )
     

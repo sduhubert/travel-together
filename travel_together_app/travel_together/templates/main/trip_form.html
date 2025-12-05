@@ -1,69 +1,108 @@
-{% extends 'base.html' %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/trip_form.css') }}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/trip_form.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jahiidh/double-range-slider/d.slider.js"></script>
+{% endblock %}
 
-{% block content %}
-<div class="form">
-    <section>
-        <h2>Create a travel proposal!</h2>
-        <form id="trip-form" data-user-age="{{ current_user.age }}" action="{{ url_for('main.new_trip') }}" method="post">
 
-        <label for="title">Trip Title:</label><br>
-        <textarea id="title" name="title" rows="1" cols="50" placeholder="Give your trip a name..." required></textarea>
-        <br>
+{% block content %}<div id="formPopupModal">
+    <form id="trip-form" data-user-age="{{ current_user.age }}" action="{{ url_for('main.new_trip') }}" method="post">
+        <h2 class="form-header">Create a travel proposal!</h2>
 
-        <label for="description">Trip Description:</label><br>
-        <textarea id="description" name="description" rows="4" cols="50" placeholder="Detail your dream trip..."
-            required></textarea>
-        <br>
-
-        <label for="route">Route:</label><br>
-        <textarea name="departure_location" rows="1" cols="50" placeholder="Departure location (optional)..."></textarea>
-        <br>
-
-        <textarea name="destination" rows="1" cols="50" placeholder="Destination" required></textarea>
-        <br>
-
-        <label for="start">Start date:</label>
-        <input type="date" id="start" name="start" required>
-
-        <label for="end">End date:</label>
-        <input type="date" id="end" name="end" required>
-        <br>
-
-        <label for="budget">Budget:</label>
-        <input type="number" id="budget" name="budget" min="0">
-        <br>
-
-        <label for="max_members">Maximum Trip Members:</label>
-        <input type="number" id="max_members" name="max_members" min="0">
-        <br>
-
-        <div class="range-slider">
-            <div>
-            <label for="min_age">Minimum Age to Join:</label><br>
-            <input type="range" min="0" max="100" value="20" id="minRange" name="min_age">
+        <div class="form-step active-step" id="step-1">
+            <h2 class="step-header">Step 1 - Give your trip a name and description</h2>
+            <div class="form-entries">
+                <div class="single-entry">
+                    <label for="title">Trip Title</label>
+                    <input type="text" id="title" name="title" placeholder="Give your trip a name..." required>
+                </div>
+                <div class="single-entry">
+                    <label for="description">Trip Description</label>
+                    <textarea id="description" name="description" placeholder="Detail your dream trip..." required></textarea>
+                </div>
             </div>
-            <div>
-            <label for="max_age">Maximum Age to Join:</label><br>
-            <input type="range" min="0" max="100" value="80" id="maxRange" name="max_age">
+            <div class="navigation-buttons">
+                <div></div>
+                <div class="progress">⬤&nbsp;&nbsp;○&nbsp;&nbsp;○</div>
+                <button type="button" id="nextStep" class="navigation-button">Next</button>
             </div>
         </div>
 
-        <div>
-            Min: <span id="minValue">20</span>
-            Max: <span id="maxValue">80</span>
+        <div class="form-step" id="step-2">
+            <h2 class="step-header">Step 2 - Cities and dates</h2>
+            <div class="form-entries">
+                <div class="single-entry" id="route-section">
+                    <label>Route</label>
+                    <input type="text" id="departure_location" name="departure_location" placeholder="Departure location (optional)...">
+                    <div id="destination-container">
+                        <div class="destination-entry">
+                            <input type="text" class="destination" name="destination" placeholder="Destination" required>
+                        </div>
+                    </div>
+                    <span id="add-destination" class="add-destination">Add another destination</span>
+                </div>
+                <div class="single-entry">
+                    <label>Dates</label>
+                    <div class="date-entries">
+                        <label for="start">From:</label>
+                        <input type="date" id="start" name="start" required>
+                        <label for="end">To:</label>
+                        <input type="date" id="end" name="end" required>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="prevStep" class="navigation-button">Back</button>
+                <div class="progress">○&nbsp;&nbsp;⬤&nbsp;&nbsp;○</div>
+                <button type="button" id="nextStep" class="navigation-button">Next</button>
+            </div>
         </div>
 
-        <br>
-        <a href="{{ url_for('main.index') }}">
-            <button type="submit">Publish</button>
-        </a>
-        </form>
-    </section>
+        <div class="form-step" id="step-3">
+            <h2 class="step-header">Step 3 - Preferences (Optional)</h2>
+            <div class="form-entries">
+                <div class="single-entry3">
+                    <input type="checkbox" id="budgetToggle">
+                    <label for="budget" class="disabled">Budget:</label>
+                    <input type="number" id="budget" name="budget">
+                </div>
+                <div class="single-entry3">
+                    <input type="checkbox" id="maxMembersToggle">
+                    <label for="max_members" class="disabled">Maximum Trip Members:</label>
+                    <input type="number" id="max_members" name="max_members">
+                </div>
+                <div class="single-entry3">
+                    <input type="checkbox" id="ageToJoinToggle">
+                    <label class="disabled">Age to Join:</label>
+                    <div class="double-range">
+                        <div class="slider-container">
+                            <div class="range-slider">
+                                <span class="range-fill"></span>
+                            </div>
+                            <div class="range-input">
+                                <input type="range" class="min" min="0" max="100" value="30" step="1">
+                                <input type="range" class="max" min="0" max="100" value="70" step="1">
+                            </div>
+                            <div class="text-input">
+                                <label class="range-label">From:</label>
+                                <input type="number" name="min" id="min-age" value="30">
+                                <label class="range-label max-label">To:</label>
+                                <input type="number" name="max" id="max-age" value="70">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="prevStep" class="navigation-button">Back</button>
+                <div class="progress">○&nbsp;&nbsp;○&nbsp;&nbsp;⬤</div>
+                <button type="submit" class="navigation-button" id="submit-button">Submit</button>
+            </div>
+        </div>
+    </form>
 </div>
-<br>
 
-<a href="{{ url_for('main.index') }}">
-    <button type="submit">Return</button>
-</a>
 
 {% endblock %}
+

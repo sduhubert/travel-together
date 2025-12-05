@@ -48,7 +48,7 @@
 /*BUTTONS*/
 
 .trapezoid-overlay button {
-    width: 100%;
+    width: 15vw;
     padding: 1vh 2vw;
     border: none;
     border-radius: 5px;
@@ -58,21 +58,21 @@
     font-size: 0.9vw;
 }
 
-.trapezoid-overlay .primary-button {
+.primary-button {
     background-color: #D6C6AF;
     color: black;
 }
 
-.trapezoid-overlay .primary-button:hover {
+.primary-button:hover {
     background-color: #BBAA95;
 }
 
-.trapezoid-overlay .secondary-button {
+.secondary-button {
     background-color: white;
     color: #D6C6AF;
 }
 
-.trapezoid-overlay .secondary-button:hover {
+.secondary-button:hover {
     background-color: #f0f0f0;
 }
 
@@ -91,4 +91,18 @@
 .trip-contents p {
     text-align: justify;
     font-size: 0.8vw;
+}
+
+/*=========================== FORM POPUP MODAL ===========================*/
+
+#formPopupOverlay {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    bottom: 0;
+    width: 100%; 
+    height: calc(100% - 60px - 0.2vh); 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.3); 
 }

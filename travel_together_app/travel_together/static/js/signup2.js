@@ -21,10 +21,10 @@ $(function() {
         $fileText.text('Choose a file');
         $fileClear.hide();
     });
-});
 
-// Preview selected profile picture
-$(document).ready(function() {
+
+
+    // Preview selected profile picture
     const originalSrc = $('#pfp-preview').attr('src'); // store original image
 
     $('#profile-pic').on('change', function() {
