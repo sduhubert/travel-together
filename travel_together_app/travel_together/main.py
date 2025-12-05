@@ -265,3 +265,17 @@ def new_trip_meetup(trip_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success':False, 'error': str(e)}), 400
+    
+@bp.route('/trip/<int:trip_id>/meetups/<int:meetup_id>', methods=['DELETE'])
+@flask_login.login_required
+def delete_meetup(trip_id, meetup_id):
+    trip = model.TripProposal.query.get_or_404(trip_id)
+    meetup = model.Meetup.query.get_or_404(meetup_id)
+
+    try:
+        db.session.delete(meetup)
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500

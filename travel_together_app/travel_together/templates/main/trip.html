@@ -212,6 +212,22 @@
           </form>
         </div>
       </div>
+      <div id="existing-meetup-popup" class="existing-meetup-popup">
+        <div class="existing-meetup-popup-content">
+          <h3>Meetup Details</h3>
+          <br>
+          <p><strong>Location: </strong><span id="detail-location"></span></p>
+          <p><strong>Description: </strong><span id="detail-description"></span></p>
+          <p><strong>Link: </strong><a id="detail-link" href="#" target="_blank"></a></p>
+
+          <div class="existing-meetup-popup-buttons">
+            <!-- display: none here so that the link doesnt appear if not added -->
+            <button id = "open-link" style="display:none;">Open Link</button>
+            <button id = "delete-event">Delete Event</button>
+            <button id = "close-event">Close</button>
+          </div>
+        </div>
+      </div>
     {% endif %}
 </div>
 {% endblock %}
