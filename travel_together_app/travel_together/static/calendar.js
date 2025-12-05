@@ -79,6 +79,9 @@ function showMeetupArea(date){
   const meetupArea = document.getElementById('meetup-area');
   const dateInput = document.getElementById('meetup-date');
 
+  //fixing the timezone offset, otherwise meetups will schedule for one day earlier than you clicked
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+
   const formattedDate = date.toISOString().split('T')[0];
 
   dateInput.value = formattedDate;
