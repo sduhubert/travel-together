@@ -16,7 +16,7 @@ class FollowingAssociation(db.Model):
     
 class TripProposalParticipation(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
-    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"), primary_key=True)
+    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id", ondelete="CASCADE"), primary_key=True)
     is_editor: Mapped[bool] = mapped_column(Boolean, default=False)
     
 class TripProposalMessage(db.Model):
