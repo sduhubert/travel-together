@@ -75,6 +75,47 @@ $(document).ready(function() {
 
     dRange(range, range_input, text_input, step);
 
+    //to avoid minimum age and maximum age from crossing over on the slider
+    function preventSliderCrossing() {
+        const sliderMin = document.querySelector(".range-input .min");
+        const sliderMax = document.querySelector(".range-input .max");
+        const minAge = document.getElementById("min-age");
+        const maxAge = document.getElementById("max-age");
+
+        function sliderUpdate() {
+            let min = parseInt(sliderMin.value);
+            let max = parseInt(sliderMax.value);
+
+            if(min > max) {
+                min = max;
+                sliderMin.value = min;
+            }
+
+            minAge.value = min;
+            maxAge.value = max;
+        }
+
+        function numUpdate() {
+            let min = parseInt(minAge.value);
+            let max = parseInt(maxAge.value);
+
+            if(min > max) {
+                min = max;
+                minAge.value = min;
+            }
+
+            sliderMin.value = min;
+            sliderMax.value = max;
+        }
+
+        sliderMin.addEventListener("input", sliderUpdate);
+        sliderMax.addEventListener("input", sliderUpdate);
+        minAge.addEventListener("input", numUpdate);
+        maxAge.addEventListener("input", numUpdate);
+
+    }
+
+    preventSliderCrossing();
 
      const controls = [
         { checkbox: "#budgetToggle", inputs: ["#budget"] },
