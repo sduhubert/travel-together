@@ -1,136 +1,142 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
 {% block head %}
-  {{ super() }}
-  <style>
-    /* Basic FullCalendar styles - inline to avoid CORS */
-    #calendar {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
-      background: white;
-      height: 600px;
-    }
-    
-    .fc {
-      direction: ltr;
-      text-align: left;
-    }
-    
-    .fc-theme-standard td,
-    .fc-theme-standard th {
-      border: 1px solid #ddd;
-    }
-    
-    .fc-scrollgrid {
-      border-collapse: separate;
-      border-right-width: 1px;
-      border-bottom-width: 1px;
-    }
-    
-    .fc .fc-daygrid-day-number {
-      padding: 4px;
-      position: relative;
-      z-index: 4;
-    }
-    
-    .fc .fc-daygrid-day-top {
-      display: flex;
-      flex-direction: row-reverse;
-    }
-    
-    .fc .fc-toolbar-title {
-      font-size: 1.75em;
-      margin: 0;
-    }
-    
-    .fc .fc-button {
-      padding: 0.4em 0.65em;
-      font-size: 1em;
-    }
-    
-    .fc-header-toolbar {
-      margin-bottom: 1.5em;
-    }
-  </style>
+{{ super() }}
+<style>
+  /* Basic FullCalendar styles - inline to avoid CORS */
+  #calendar {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    height: 600px;
+  }
+
+  .fc {
+    direction: ltr;
+    text-align: left;
+  }
+
+  .fc-theme-standard td,
+  .fc-theme-standard th {
+    border: 1px solid #ddd;
+  }
+
+  .fc-scrollgrid {
+    border-collapse: separate;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  .fc .fc-daygrid-day-number {
+    padding: 4px;
+    position: relative;
+    z-index: 4;
+  }
+
+  .fc .fc-daygrid-day-top {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.75em;
+    margin: 0;
+  }
+
+  .fc .fc-button {
+    padding: 0.4em 0.65em;
+    font-size: 1em;
+  }
+
+  .fc-header-toolbar {
+    margin-bottom: 1.5em;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="single_trip_container">
   <img class="trip-photo" src="{{ url_for('static', filename='resources/example-trip-1.jpg') }}" alt="Avatar">
-        <h2 class="trip-title">{{ trip.title }}</h2>    
-        <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by 
-          <a href="{{ url_for('main.profile', user_id=trip.creator.id) }}" style="text-decoration: none; color: inherit;"> 
-            {{ trip.creator.name }}
-          </a></p>
-        <p class="trip-description">{{ trip.description }}</p>
-        <p class="trip-origin">Origin: {{ trip.origin }}</p>
-        <p class="trip-destinations">Destination(s): {{ trip.destinations }}</p>
+  <h2 class="trip-title">{{ trip.title }}</h2>
+  <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by
+    <a href="{{ url_for('main.profile', user_id=trip.creator.id) }}" style="text-decoration: none; color: inherit;">
+      {{ trip.creator.name }}
+    </a>
+  </p>
+  <p class="trip-description">{{ trip.description }}</p>
+  <p class="trip-origin">Origin: {{ trip.origin }}</p>
+  <p class="trip-destinations">
+    Destination(s): {{ trip.destinations.replace(',', ', ') }}
+  </p>
 
   {% set max_travelers = trip.max_travelers or 999999 %}
-    {% if max_travelers != 999999 %}
-        <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
-    {% else %}
-        <P class="member-amount-details">This trip has no specified member capacity.</P>
-    {% endif %}
-    {% if trip.participants|length >= max_travelers %}
-        <p class="cannot-join-alerts">This trip is full, and is currently not accepting new members.</p>
-    {% endif %}
-    {% set min_age = trip.min_age or 0 %}
-    {% set max_age = trip.max_age or 999999 %}
-    {% if min_age == 0 and max_age == 999999 %}
-        <p class="age-range">There is no specified age range for this trip.</p>
-    {% else %}
-        <p class="age-range">Age Range: {{ min_age }} - {{ max_age }} years old</p>
-    {% endif %}
-    {% if current_user.age < min_age or current_user.age > max_age %}
-        <p class="cannot-join-alerts">
-            You are not within the specified age range for this trip, and unfortunately cannot join.
-        </p>
+  {% if max_travelers != 999999 %}
+  <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
+  {% else %}
+  <P class="member-amount-details">This trip has no specified member capacity.</P>
+  {% endif %}
+  {% if trip.participants|length >= max_travelers %}
+  <p class="cannot-join-alerts">This trip is full, and is currently not accepting new members.</p>
+  {% endif %}
+  {% set min_age = trip.min_age or 0 %}
+  {% set max_age = trip.max_age or 999999 %}
+  {% if min_age == 0 and max_age == 999999 %}
+  <p class="age-range">There is no specified age range for this trip.</p>
+  {% else %}
+  <p class="age-range">Age Range: {{ min_age }} - {{ max_age }} years old</p>
+  {% endif %}
+  {% if current_user.age < min_age or current_user.age> max_age %}
+    <p class="cannot-join-alerts">
+      You are not within the specified age range for this trip, and unfortunately cannot join.
+    </p>
     {% endif %}
     {% if trip.budget %}
-        <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
+    <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
     {% endif %}
 
-    <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{ trip.end_date.strftime('%B %d, %Y') }}</p>
-    
+    <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{
+      trip.end_date.strftime('%B %d, %Y') }}</p>
+
     <div>
       <h2>Current Trip Members</h2>
       {% for participant in trip.participants %}
-        <a href="{{ url_for('main.profile', user_id=participant.id) }}" style="text-decoration: none; color: inherit;">
-          <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" alt="Profile" class="header-icon" />
-          <p>{{ participant.name }}</p>
-        </a>
+      <a href="{{ url_for('main.profile', user_id=participant.id) }}" style="text-decoration: none; color: inherit;">
+        <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" alt="Profile"
+          class="header-icon" />
+        <p>{{ participant.name }}</p>
+      </a>
       {% endfor %}
     </div>
     {% if trip.status != 0 %}
-        <p class="cannot-join-alerts">This trip is not open now, as is not taking new members.</p>
+    <p class="cannot-join-alerts">This trip is not open now, as is not taking new members.</p>
     {% endif %}
-    
-    {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age > max_age) %}
+
+    {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age> max_age)
+      %}
       {% if not already_joined %}
-        <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
-            <button type="submit">Join Trip!</button>
-        </form>
+      <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+        <button type="submit">Join Trip!</button>
+      </form>
       {% else %}
-        <p>You are an active member of this trip.</p>
+      <p>You are an active member of this trip.</p>
       {% endif %}
-    {% endif %}
+      {% endif %}
 
 
 
-    {% if already_joined %}
-    <div id="message-board-area" class="message-board-area">
-      <h2>Message Board</h2>
-      <h4>Chat With Your Tripmates</h4>
+      {% if already_joined %}
+      <div id="message-board-area" class="message-board-area">
+        <h2>Message Board</h2>
+        <h4>Chat With Your Tripmates</h4>
         <div class="forums">
           <div class="forum-tabs">
             <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic='Main') }}#message-board-area">Main</a>
 
             {% for topic in forum_topics %}
-              {% if topic != 'Main' %}
-                <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic=topic) }}#message-board-area">{{ topic }}</a>
-              {% endif %}
+            {% if topic != 'Main' %}
+            <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic=topic) }}#message-board-area">{{ topic }}</a>
+            {% endif %}
             {% endfor %}
 
             <button id="new-topic-button">Add New Topic...</button>
@@ -140,28 +146,31 @@
         <div id="message-board" class="message-board">
           <h4>{{ active_topic }}</h4>
           <div class="messages-container">
-          {% if active_forum_messages %}
+            {% if active_forum_messages %}
             {% for message in active_forum_messages %}
-            <a href="{{ url_for('main.profile', user_id=message.user.id) }}" style="text-decoration: none; color: inherit;">
-                <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
-                <div class="messages">
-                  <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
-                  <p>{{ message.content }}</p>
-                </div>
-              </a>
+            <a href="{{ url_for('main.profile', user_id=message.user.id) }}"
+              style="text-decoration: none; color: inherit;">
+              <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile"
+                class="header-icon" />
+              <div class="messages">
+                <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
+                <p>{{ message.content }}</p>
+              </div>
+            </a>
             {% endfor %}
-          {% else %}
-              <p>Write the first message for this forum...</p>
-          {% endif %}
-        </div>
+            {% else %}
+            <p>Write the first message for this forum...</p>
+            {% endif %}
+          </div>
 
           <form action="{{ url_for('main.new_message', trip_id = trip.id)}}" method="post">
-            <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input" data-active-topic="{{ active_topic }}">
-              <div id="new-forum-topic-input" style="display: none">
-                <label>Name your new forum topic:</label>
-                <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
-                <button type="button" id="cancel-new-forum-topic">Cancel</button>
-              </div>
+            <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input"
+              data-active-topic="{{ active_topic }}">
+            <div id="new-forum-topic-input" style="display: none">
+              <label>Name your new forum topic:</label>
+              <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
+              <button type="button" id="cancel-new-forum-topic">Cancel</button>
+            </div>
             <textarea name="message-content" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
             <br>
             <button type="submit" #message-board-area>Send</button>
@@ -175,7 +184,7 @@
       <div id="calendar"></div>
 
       <div id="meetup-area">
-        <div class = "meetup-area-content">
+        <div class="meetup-area-content">
           <h3>Create a Meetup...</h3>
           <form id="meetup-form">
 
@@ -202,7 +211,8 @@
 
             <div class="form-group">
               <label>Description:</label>
-              <textarea name="description" rows="5" maxlength="1024" required placeholder="Describe your meetup/event..."></textarea>
+              <textarea name="description" rows="5" maxlength="1024" required
+                placeholder="Describe your meetup/event..."></textarea>
             </div>
 
             <div class="meetup-area-buttons">
@@ -222,38 +232,38 @@
 
           <div class="existing-meetup-popup-buttons">
             <!-- display: none here so that the link doesnt appear if not added -->
-            <button id = "open-link" style="display:none;">Open Link</button>
-            <button id = "delete-event">Delete Event</button>
-            <button id = "close-event">Close</button>
+            <button id="open-link" style="display:none;">Open Link</button>
+            <button id="delete-event">Delete Event</button>
+            <button id="close-event">Close</button>
           </div>
         </div>
       </div>
-    {% endif %}
+      {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('static', filename='travel-together.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/trip.js') }}"></script>
+<script src="{{ url_for('static', filename='travel-together.js') }}"></script>
+<script src="{{ url_for('static', filename='js/trip.js') }}"></script>
 
-  {% if already_joined %}
-    <!-- Load FullCalendar libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
+{% if already_joined %}
+<!-- Load FullCalendar libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
 
-    <!-- Set the initial date variable for calendar_init.js -->
-    <script>
-      var initialDateValue = "{{ trip.start_date.strftime('%Y-%m-%d') }}";
-      var tripId = "{{ trip.id }}"
-    </script>
+<!-- Set the initial date variable for calendar_init.js -->
+<script>
+  var initialDateValue = "{{ trip.start_date.strftime('%Y-%m-%d') }}";
+  var tripId = "{{ trip.id }}"
+</script>
 
-    <!-- Load the external calendar initialization script -->
-    <script src="{{ url_for('static', filename='calendar.js') }}"></script>
-  {% endif %}
+<!-- Load the external calendar initialization script -->
+<script src="{{ url_for('static', filename='calendar.js') }}"></script>
+{% endif %}
 
-  <div>
-    <a href="{{ url_for('main.index') }}">
-      <button type="submit">Return</button>
-    </a>
-  </div>
+<div>
+  <a href="{{ url_for('main.index') }}">
+    <button type="submit">Return</button>
+  </a>
+</div>
 
 {% endblock %}
