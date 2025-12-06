@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 
 from . import db
 from . import model
-from travel_together.constants import COUNTRIES, COUNTRY_NAMES, UNIVERSITIES, COUNTRY_OF_UNIVERSITIES
+from travel_together.constants import COUNTRIES, COUNTRY_NAMES, UNIVERSITIES, COUNTRY_OF_UNIVERSITIES, MAX_DESC_LENGTH
 
 bp = Blueprint("auth", __name__)
 
@@ -71,12 +71,18 @@ def signup2_post():
         profile_pic.save(save_path)
     else:
         filename = signup_data["profile_pic"]
-
+        
+    desc = request.form.get("description") or ""
+    
+    if desc and len(desc) > MAX_DESC_LENGTH:
+        flash(f"Maximum description length is {MAX_DESC_LENGTH} characters.")
+        return redirect(url_for("auth.signup2"))
+    
     new_user = model.User(
         email=signup_data["email"],
         name=signup_data["username"],
         password=signup_data["password_hash"],
-        desc=request.form.get("description") or "",
+        desc=desc,
         birthday=request.form.get("birthday"),
         home_uni=request.form.get("home_uni"),
         visiting_uni=request.form.get("visiting_uni"),

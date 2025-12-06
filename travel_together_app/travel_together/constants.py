@@ -263,3 +263,5 @@ def load_universities():
     
 UNIVERSITIES = load_universities()
 COUNTRY_OF_UNIVERSITIES = {uni: country for country, uni in UNIVERSITIES}
+
+MAX_DESC_LENGTH = 512
