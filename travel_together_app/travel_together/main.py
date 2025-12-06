@@ -128,14 +128,14 @@ def trip(trip_id, forum_topic=None):
     user = flask_login.current_user
     already_joined = user in trip.participants
 
-    topics_query = (db.select(model.TripProposalMessage.forum_topic).where(model.TripProposal.id == trip_id).distinct().order_by(model.TripProposalMessage.forum_topic))
+    topics_query = (db.select(model.TripProposalMessage.forum_topic).where(model.TripProposalMessage.trip_proposal_id == trip_id).distinct().order_by(model.TripProposalMessage.forum_topic))
     forum_topics = db.session.execute(topics_query).scalars().all()
     if forum_topic:
         active_topic = forum_topic
     else:
         active_topic = "Main"
 
-    active_forum_messages_query = (db.select(model.TripProposalMessage).where(model.TripProposal.id == trip_id, model.TripProposalMessage.forum_topic == active_topic).order_by(model.TripProposalMessage.timestamp.asc()))
+    active_forum_messages_query = (db.select(model.TripProposalMessage).where(model.TripProposalMessage.trip_proposal_id == trip_id, model.TripProposalMessage.forum_topic == active_topic).order_by(model.TripProposalMessage.timestamp.asc()))
     active_forum_messages = db.session.execute(active_forum_messages_query).scalars().all()
 
     return render_template("main/trip.html", trip=trip, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)

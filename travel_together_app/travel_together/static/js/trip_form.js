@@ -150,6 +150,7 @@ $(document).ready(function() {
     // Additional form validation
     $("#submit-button").click (function(e) {
         let missingFields = [];
+        invalidInput = false;
 
         if ($("#title").val().trim() === "") missingFields.push("Trip Title");
         if ($("#description").val().trim() === "") missingFields.push("Trip Description");
@@ -171,9 +172,42 @@ $(document).ready(function() {
             }
         }
 
-        if (missingFields.length > 0) {
-            e.preventDefault();
-            alert("Please fill in the following fields: " + missingFields.join(", "));
+        if ($("#budgetToggle").is(":checked") && parseFloat($("#budget").val()) < 0) {
+            invalidInput = true;
         }
+        if ($("#maxMembersToggle").is(":checked") && parseInt($("#max_members").val()) <= 0) {
+            invalidInput = true;
+        }
+
+        if($("#ageToJoinToggle").is(":checked")) {
+            const minAge = parseInt($("#min-age").val());
+            const maxAge = parseInt($("#max-age").val());
+            if (minAge > maxAge) {
+                invalidInput = true;
+            }
+        }
+
+        const startDate = new Date($("#start").val());
+        const endDate = new Date($("#end").val());
+        const today = new Date();
+        today.setHours(0,0,0,0); //to handle time zone fix
+
+        if(startDate < today || endDate < today || endDate < startDate) {
+            invalidInput = true;
+        }
+
+        if(invalidInput || missingFields.length > 0) {
+            e.preventDefault();
+            alert("One or more of your inputs is invalid. Please correct them before resubmitting.")
+        }
+    });
+
+    //makes sure trips are in the future and end date is after start date
+    const todayDate = new Date().toISOString().split("T")[0];
+    $("#start").attr("min", todayDate);
+    $("#end").attr("min", todayDate);
+
+    $("#start").on("change", function() {
+        $("#end").attr("min", $(this).val());
     });
 });

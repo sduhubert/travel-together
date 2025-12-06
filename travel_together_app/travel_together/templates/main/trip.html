@@ -71,7 +71,7 @@
   </p>
 
   {% set max_travelers = trip.max_travelers or 999999 %}
-  {% if max_travelers != 999999 %}
+  {% if max_travelers != 999999 and max_travelers > 0%}
   <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
   {% else %}
   <P class="member-amount-details">This trip has no specified member capacity.</P>
@@ -91,7 +91,7 @@
       You are not within the specified age range for this trip, and unfortunately cannot join.
     </p>
     {% endif %}
-    {% if trip.budget %}
+    {% if trip.budget and trip.budget > 0 %}
     <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
     {% endif %}
 
