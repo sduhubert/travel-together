@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Blueprint, current_app, render_template, request, redirect, url_for, flash, session
 import flask_login
 
@@ -78,12 +79,18 @@ def signup2_post():
         flash(f"Maximum description length is {MAX_DESC_LENGTH} characters.")
         return redirect(url_for("auth.signup2"))
     
+    birthday = request.form.get("birthday")
+    birthday = datetime.strptime(birthday, "%Y-%m-%d").date() if birthday else None
+    if birthday and birthday > datetime.now().date():
+        flash("Provided birthday is invalid.")
+        return redirect(url_for("auth.signup2"))
+    
     new_user = model.User(
         email=signup_data["email"],
         name=signup_data["username"],
         password=signup_data["password_hash"],
         desc=desc,
-        birthday=request.form.get("birthday"),
+        birthday=birthday,
         home_uni=request.form.get("home_uni"),
         visiting_uni=request.form.get("visiting_uni"),
         country=request.form.get("country"),
@@ -110,7 +117,6 @@ def login_post():
     query = db.select(model.User).where(model.User.email == email)
     user = db.session.execute(query).scalar_one_or_none()
     if user and check_password_hash(user.password, password):
-        flash("Login successful!")
         flask_login.login_user(user)
         return redirect(url_for("main.index"))
     else:
