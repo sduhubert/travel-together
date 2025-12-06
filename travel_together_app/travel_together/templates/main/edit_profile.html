@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 {% block head %}
-    <title> Edit Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_profile.css') }}"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.min.js"></script>
-    <script id="universities-json" type="application/json">
+<title> Edit Profile</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/edit_profile.css') }}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slim-select/dist/slimselect.min.js"></script>
+<script id="universities-json" type="application/json">
         {{ universities | tojson | safe }}
     </script>
-    <script src="{{ url_for('static', filename='js/universities.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/signup2.js') }}"></script>
+<script src="{{ url_for('static', filename='js/universities.js') }}"></script>
+<script src="{{ url_for('static', filename='js/signup2.js') }}"></script>
 {% endblock %}
 
 {% if current_user.is_authenticated %}
-    <div>User: {{current_user.name}}</div>
+<div>User: {{current_user.name}}</div>
 {% endif %}
 {% block content %}
-    <div class="main-container">
-        <h2 class="title-header">Edit Profile</h2>
-        <form action="{{ url_for('auth.edit_profile_post') }}" method="post" enctype="multipart/form-data">
+<div class="main-container">
+    <h2 class="title-header">Edit Profile</h2>
+    <form action="{{ url_for('auth.edit_profile_post') }}" method="post" enctype="multipart/form-data">
         <div class="edit-container">
             <div class="lefthand-inputs input-flex">
                 <h2>Personal information</h2>
@@ -26,21 +26,26 @@
                     <label for="country">Country:</label>
                     <select id="country" name="country" required>
                         {% for code, name in countries %}
-                        <option value="{{ code }}" {% if code == current_user.country %}selected{% endif %} >{{ name }}</option>
+                        <option value="{{ code }}" {% if code==current_user.country %}selected{% endif %}>{{ name }}
+                        </option>
                         {% endfor %}
                     </select>
                     <label for="birthday">Birthday:</label>
-                    <input type="date" name="birthday" placeholder="Birthday" value = "{{ current_user.birthday or '' }}" required />
+                    <input type="date" name="birthday" placeholder="Birthday" value="{{ current_user.birthday or '' }}"
+                        required />
+                    <p>{{ current_user.birthday or '' }}</p>
                     <label for="description">Description:</label>
-                    <textarea name="description" placeholder = "{{ current_user.desc or "Tell us something about yourself" }}"></textarea>
+                    <textarea name="description" placeholder="{{ current_user.desc or " Tell us something about
+                        yourself" }}"></textarea>
                 </div>
             </div>
             <div class="profile-pic-input">
                 <label for="profile-pic">
-                    <img class="pfp" id="pfp-preview" src="{{ url_for('static', filename='resources/' ~ (current_user.profile_pic or 'Defaultpfp.png')) }}">
+                    <img class="pfp" id="pfp-preview"
+                        src="{{ url_for('static', filename='resources/' ~ (current_user.profile_pic or 'Defaultpfp.png')) }}">
                 </label>
                 <label for="profile-pic">Change picture</label>
-                <input type="file" id="profile-pic" name="profile-pic" accept="image/*" >
+                <input type="file" id="profile-pic" name="profile-pic" accept="image/*">
             </div>
             <div class="righthand-inputs input-flex">
                 <h2>Universities</h2>
@@ -74,10 +79,10 @@
                     <a href="{{ url_for('main.profile', user_id=current_user.id) }}">
                         <button class="submit-button" type="button">Cancel</button>
                     </a>
-                    <input class="submit-button" type="submit" value="Save Changes"/>
+                    <input class="submit-button" type="submit" value="Save Changes" />
                 </div>
             </div>
-        </form>
-        </div>
-    </div>
+    </form>
+</div>
+</div>
 {% endblock %}
