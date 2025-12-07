@@ -33,7 +33,6 @@
                     <label for="birthday">Birthday:</label>
                     <input type="date" name="birthday" placeholder="Birthday" value="{{ current_user.birthday or '' }}"
                         required />
-                    <p>{{ current_user.birthday or '' }}</p>
                     <label for="description">Description:</label>
                     <textarea name="description" placeholder="{{ current_user.desc or " Tell us something about
                         yourself" }}"></textarea>
@@ -74,6 +73,11 @@
                             <option value="" disabled selected>University</option>
                         </select>
                     </div>
+                </div>
+                <div class="flash-messages">
+                    {% for message in get_flashed_messages() %}
+                    <p class="flash-message">{{ message }}</p>
+                    {% endfor %}
                 </div>
                 <div class="edit-profile-buttons">
                     <a href="{{ url_for('main.profile', user_id=current_user.id) }}">

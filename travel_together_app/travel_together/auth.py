@@ -85,14 +85,21 @@ def signup2_post():
         flash("Provided birthday is invalid.")
         return redirect(url_for("auth.signup2"))
     
+    home_uni=request.form.get("home_uni")
+    visiting_uni=request.form.get("visiting_uni")
+    
+    if home_uni and visiting_uni and home_uni == visiting_uni:
+        flash("Home and visiting universities must be different.")
+        return redirect(url_for("auth.signup2"))
+    
     new_user = model.User(
         email=signup_data["email"],
         name=signup_data["username"],
         password=signup_data["password_hash"],
         desc=desc,
         birthday=birthday,
-        home_uni=request.form.get("home_uni"),
-        visiting_uni=request.form.get("visiting_uni"),
+        home_uni=home_uni,
+        visiting_uni=visiting_uni,
         country=request.form.get("country"),
         profile_pic=filename
     )
@@ -144,17 +151,24 @@ def edit_profile_post():
     user = flask_login.current_user
 
     birthday = request.form.get('birthday')
-    country = request.form.get('country')
-    
     if birthday:
+        birthday = datetime.strptime(birthday, "%Y-%m-%d").date()
+        
+        if birthday > datetime.now().date():
+            flash("Provided birthday is invalid.")
+            return redirect(url_for("auth.edit_profile"))
+        
         user.birthday = birthday
+    
+    country = request.form.get('country')
     if country:
         user.country = country
 
     # Optional desc, otherwise stick to the old one
     desc = request.form.get('description')
-    if desc:
-        user.desc = desc
+    if desc and len(desc) > MAX_DESC_LENGTH:
+        flash(f"Maximum description length is {MAX_DESC_LENGTH} characters.")
+        return redirect(url_for("auth.edit_profile"))
 
     # Optional home and visiting uni, otherwise stick to the old ones
     home_uni = request.form.get('home_uni')
