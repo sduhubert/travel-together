@@ -105,6 +105,16 @@ def new_trip():
     
     db.session.add(new_trip)
     db.session.commit()
+    
+    db.session.update(model.TripProposalParticipation).set(
+        {
+            model.TripProposalParticipation.is_editor: True
+        }
+    ).where(
+        model.TripProposalParticipation.user_id == user.id,
+        model.TripProposalParticipation.trip_proposal_id == new_trip.id
+    )
+    db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=new_trip.id))
 
@@ -127,6 +137,17 @@ def trip(trip_id, forum_topic=None):
     responses = db.session.execute(query).scalars().all()
     user = flask_login.current_user
     already_joined = user in trip.participants
+    
+    trip_admin = False
+    if already_joined:
+        is_editor_query = db.select(model.TripProposalParticipation.is_editor).where(
+            model.TripProposalParticipation.user_id == user.id,
+            model.TripProposalParticipation.trip_proposal_id == trip.id
+        )
+        is_editor = db.session.execute(is_editor_query).scalar_one_or_none()
+        print(is_editor)
+        if is_editor:
+            trip_admin = True
 
     topics_query = (db.select(model.TripProposalMessage.forum_topic).where(model.TripProposalMessage.trip_proposal_id == trip_id).distinct().order_by(model.TripProposalMessage.forum_topic))
     forum_topics = db.session.execute(topics_query).scalars().all()
