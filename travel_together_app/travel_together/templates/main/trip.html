@@ -53,13 +53,25 @@
     margin-bottom: 1.5em;
   }
 </style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
 
 {% block content %}
 <div class="single_trip_container">
   <img class="trip-photo" src="{{ url_for('static', filename='resources/example-trip-1.jpg') }}" alt="Avatar">
   <h2 class="trip-title">{{ trip.title }}</h2>
-  <button id="modify-trip-button">Modify Trip</button>
+  <button class="primary-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
+  <div class="container">
+    <div id="formPopupOverlay" style="display:none;"></div>
+
+    <div id="formPopupModal" style="display:none;">
+      <div id="formPopupContent">
+        {% include 'main/edit_trip_form.html' %}
+      </div>
+      <button id="closeFormPopup">Close</button>
+    </div>
+  </div>
   <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by
     <a href="{{ url_for('main.profile', user_id=trip.creator.id) }}" style="text-decoration: none; color: inherit;">
       {{ trip.creator.name }}

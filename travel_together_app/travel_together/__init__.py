@@ -22,7 +22,8 @@ def create_app(test_config=None):
     app.config[
         "SQLALCHEMY_DATABASE_URI"
     #] = "mysql+pymysql://traveltogether:waDBlog@localhost/TravelTogether"
-    ] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00b"
+    #] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00b"
+    ] = "mysql+pymysql://travel_together:12345@localhost/travel_together"
     
     # app.config[
     #   "SQLALCHEMY_DATABASE_URI"
