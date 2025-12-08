@@ -105,15 +105,14 @@ def new_trip():
     
     db.session.add(new_trip)
     db.session.commit()
-    
-    db.session.update(model.TripProposalParticipation).set(
-        {
-            model.TripProposalParticipation.is_editor: True
-        }
-    ).where(
-        model.TripProposalParticipation.user_id == user.id,
-        model.TripProposalParticipation.trip_proposal_id == new_trip.id
+
+    db.session.query(model.TripProposalParticipation).filter_by(
+        user_id=user.id,
+        trip_proposal_id=new_trip.id
+    ).update(
+        {"is_editor": True}
     )
+    
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=new_trip.id))
@@ -185,6 +184,26 @@ def join_trip(trip_id):
         is_editor=False,
     )
     db.session.add(joining_user)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
+@bp.route("/trip/<int:trip_id>/leave", methods=["POST"])
+@flask_login.login_required
+def leave_trip(trip_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    if user not in trip.participants:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    user_participation = (
+        db.session.query(model.TripProposalParticipation)
+        .filter_by(user_id=user.id, trip_proposal_id=trip.id)
+        .first()
+    )
+        
+    db.session.delete(user_participation)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=trip_id))

@@ -2,269 +2,196 @@
 
 {% block head %}
 {{ super() }}
-<style>
-  /* Basic FullCalendar styles - inline to avoid CORS */
-  #calendar {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-    background: white;
-    height: 600px;
-  }
-
-  .fc {
-    direction: ltr;
-    text-align: left;
-  }
-
-  .fc-theme-standard td,
-  .fc-theme-standard th {
-    border: 1px solid #ddd;
-  }
-
-  .fc-scrollgrid {
-    border-collapse: separate;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-  }
-
-  .fc .fc-daygrid-day-number {
-    padding: 4px;
-    position: relative;
-    z-index: 4;
-  }
-
-  .fc .fc-daygrid-day-top {
-    display: flex;
-    flex-direction: row-reverse;
-  }
-
-  .fc .fc-toolbar-title {
-    font-size: 1.75em;
-    margin: 0;
-  }
-
-  .fc .fc-button {
-    padding: 0.4em 0.65em;
-    font-size: 1em;
-  }
-
-  .fc-header-toolbar {
-    margin-bottom: 1.5em;
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trip.css') }}"/>
 {% endblock %}
 
 {% block content %}
-<div class="single_trip_container">
-  <img class="trip-photo" src="{{ url_for('static', filename='resources/example-trip-1.jpg') }}" alt="Avatar">
-  <h2 class="trip-title">{{ trip.title }}</h2>
-  <button id="modify-trip-button">Modify Trip</button>
-  <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by
-    <a href="{{ url_for('main.profile', user_id=trip.creator.id) }}" style="text-decoration: none; color: inherit;">
-      {{ trip.creator.name }}
-    </a>
-  </p>
-  <p class="trip-description">{{ trip.description }}</p>
-  <p class="trip-origin">Origin: {{ trip.origin }}</p>
-  <p class="trip-destinations">
-    Destination(s): {{ trip.destinations.replace(',', ', ') }}
-  </p>
-
-  {% set max_travelers = trip.max_travelers or 999999 %}
-  {% if max_travelers != 999999 and max_travelers > 0%}
-  <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
-  {% else %}
-  <P class="member-amount-details">This trip has no specified member capacity.</P>
-  {% endif %}
-  {% if trip.participants|length >= max_travelers %}
-  <p class="cannot-join-alerts">This trip is full, and is currently not accepting new members.</p>
-  {% endif %}
-  {% set min_age = trip.min_age or 0 %}
-  {% set max_age = trip.max_age or 999999 %}
-  {% if min_age == 0 and max_age == 999999 %}
-  <p class="age-range">There is no specified age range for this trip.</p>
-  {% else %}
-  <p class="age-range">Age Range: {{ min_age }} - {{ max_age }} years old</p>
-  {% endif %}
-  {% if current_user.age < min_age or current_user.age> max_age %}
-    <p class="cannot-join-alerts">
-      You are not within the specified age range for this trip, and unfortunately cannot join.
-    </p>
-    {% endif %}
-    {% if trip.budget and trip.budget > 0 %}
-    <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
-    {% endif %}
-
-    <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{
-      trip.end_date.strftime('%B %d, %Y') }}</p>
-
-    <div>
-      <h2>Current Trip Members</h2>
-      {% for participant in trip.participants %}
-      <a href="{{ url_for('main.profile', user_id=participant.id) }}" style="text-decoration: none; color: inherit;">
-        <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" alt="Profile"
-          class="header-icon" />
-        <p>{{ participant.name }}</p>
-      </a>
-      {% endfor %}
+{% set max_travelers = trip.max_travelers or 999999 %}
+{% set min_age = trip.min_age or 0 %}
+{% set max_age = trip.max_age or 200 %}
+<div class="top-container">
+  <div class="trip-photo-container">
+    <img src="{{ url_for('static', filename='resources/example-trip-2.jpg') }}" id="trip-bg" alt="Trip photo">
+    <div class="trip-title-wrapper">
+        <h2>{{ trip.title }}</h2>
+        <p>Created {{ trip.timestamp|time_ago }} by
+          <a href="{{ url_for('main.profile', user_id=trip.creator.id) }}">
+            {{ trip.creator.name }}
+          </a>
+        </p>
+        <p class="trip-description">{{ trip.description }}</p>
     </div>
-    {% if trip.status != 0 %}
-    <p class="cannot-join-alerts">This trip is not open now, as is not taking new members.</p>
-    {% endif %}
+    <div class="details">
+      <div class="trip-info">
+        <p class="trip-origin">Origin: {{ trip.origin }}</p>
+        <p class="trip-destinations">Destination(s): {{ trip.destinations.replace(',', ', ') }}</p>
+        {% if max_travelers != 999999 and max_travelers > 0 %}
+          <p class="member-amount-details">Member Capacity: {{ trip.participants|length }}/{{ max_travelers }}</p>
+        {% else %}
+          <p class="member-amount-details">This trip has no specified member capacity.</p>
+        {% endif %}
+        {% if trip.participants|length >= max_travelers %}
+          <p class="cannot-join-alerts">This trip is full, and is currently not accepting new members.</p>
+        {% endif %}
+        {% if current_user.age < min_age or current_user.age > max_age %}
+          <p class="cannot-join-alerts">You are not within the specified age range for this trip.</p>
+        {% endif %}
+        {% if trip.budget and trip.budget > 0 %}
+          <p class="trip-budget">Trip Budget: {{ trip.budget }}</p>
+        {% endif %}
+        <p class="trip-date-range">Planned Date Range: {{ trip.start_date.strftime('%B %d, %Y') }} to {{ trip.end_date.strftime('%B %d, %Y') }}</p>
+        {% if trip.status != 0 %}
+        <p class="cannot-join-alerts">This trip is not open now and not taking new members.</p>
+        {% endif %}
 
-    {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age> max_age)
-      %}
-      {% if not already_joined %}
-      <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
-        <button type="submit">Join Trip!</button>
-      </form>
-      {% else %}
-      <p>You are an active member of this trip.</p>
-      {% endif %}
-      {% endif %}
+      </div>
+     
 
-
-
-      {% if already_joined %}
-      <div id="message-board-area" class="message-board-area">
-        <h2>Message Board</h2>
-        <h4>Chat With Your Tripmates</h4>
-        <div class="forums">
-          <div class="forum-tabs">
-            <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic='Main') }}#message-board-area">Main</a>
-
-            {% for topic in forum_topics %}
-            {% if topic != 'Main' %}
-            <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic=topic) }}#message-board-area">{{ topic }}</a>
-            {% endif %}
-            {% endfor %}
-
-            <button id="new-topic-button">Add New Topic...</button>
-          </div>
-        </div>
-
-        <div id="message-board" class="message-board">
-          <h4>{{ active_topic }}</h4>
-          <div class="messages-container">
-            {% if active_forum_messages %}
-            {% for message in active_forum_messages %}
-            <a href="{{ url_for('main.profile', user_id=message.user.id) }}"
-              style="text-decoration: none; color: inherit;">
-              <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile"
-                class="header-icon" />
-              <div class="messages">
-                <p><strong>{{ message.user.name }}: {{message.timestamp.strftime('%b %d, %Y, %H:%M')}}</strong></p>
-                <p>{{ message.content }}</p>
-              </div>
-            </a>
-            {% endfor %}
-            {% else %}
-            <p>Write the first message for this forum...</p>
-            {% endif %}
-          </div>
-
-          <form action="{{ url_for('main.new_message', trip_id = trip.id)}}" method="post">
-            <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input"
-              data-active-topic="{{ active_topic }}">
-            <div id="new-forum-topic-input" style="display: none">
-              <label>Name your new forum topic:</label>
-              <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
-              <button type="button" id="cancel-new-forum-topic">Cancel</button>
-            </div>
-            <textarea name="message-content" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
-            <br>
-            <button type="submit" #message-board-area>Send</button>
+      <div class="buttons">
+        {% if already_joined %}
+        <button id="modify-trip-button">Modify Trip</button>
+        {% endif %}
+        {% if trip.participants|length < max_travelers and current_user.age >= min_age and current_user.age <= max_age %}
+          {% if not already_joined %}
+          <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+            <button type="submit">Join Trip!</button>
           </form>
-        </div>
-      </div>
-
-      <h2>Event Calendar</h2>
-      <h4>See What Events/Meetups Are Scheduled For This Trip</h4>
-
-      <div id="calendar"></div>
-
-      <div id="meetup-area">
-        <div class="meetup-area-content">
-          <h3>Create a Meetup...</h3>
-          <form id="meetup-form">
-
-            <div class="form-group">
-              <label>Location:</label>
-              <input type="text" name="location" required placeholder="e.g., School libary or Zoom call">
-            </div>
-
-            <div class="form-group">
-              <label>Date:</label>
-              <input type="date" name="date" id="meetup-date" required placeholder="Set a date...">
-            </div>
-
-            <div class="form-group">
-              <label>Time:</label>
-              <input type="time" name="time" required placeholder="Set a time...">
-            </div>
-
-            <div class="form-group">
-              <label>Link (optional):</label>
-              <input type="text" name="link" placeholder="Add a link if needed...">
-              <small>Add a link for online meetings, such as Zoom, Google Meet, etc.</small>
-            </div>
-
-            <div class="form-group">
-              <label>Description:</label>
-              <textarea name="description" rows="5" maxlength="1024" required
-                placeholder="Describe your meetup/event..."></textarea>
-            </div>
-
-            <div class="meetup-area-buttons">
-              <button type="button" id="cancel-meetup-creation-button">Cancel</button>
-              <button type="submit">Create Meetup</button>
-            </div>
+          {% else %}
+          <form action="{{ url_for('main.leave_trip', trip_id=trip.id) }}" method="POST">
+            <button type="submit">Leave trip</button>
           </form>
-        </div>
+          {% endif %}
+        {% endif %}
       </div>
-      <div id="existing-meetup-popup" class="existing-meetup-popup">
-        <div class="existing-meetup-popup-content">
-          <h3>Meetup Details</h3>
-          <br>
-          <p><strong>Location: </strong><span id="detail-location"></span></p>
-          <p><strong>Description: </strong><span id="detail-description"></span></p>
-          <p><strong>Link: </strong><a id="detail-link" href="#" target="_blank"></a></p>
-
-          <div class="existing-meetup-popup-buttons">
-            <!-- display: none here so that the link doesnt appear if not added -->
-            <button id="open-link" style="display:none;">Open Link</button>
-            <button id="delete-event">Delete Event</button>
-            <button id="close-event">Close</button>
-          </div>
-        </div>
-      </div>
-      {% endif %}
+    </div>
+  </div> 
 </div>
+
+<div>
+  <h2>Current Trip Members</h2>
+  {% for participant in trip.participants %}
+  <a href="{{ url_for('main.profile', user_id=participant.id) }}" style="text-decoration: none; color: inherit;">
+    <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" class="header-icon" />
+    <p>{{ participant.name }}</p>
+  </a>
+  {% endfor %}
+</div>
+
+{% if already_joined %}
+<div id="message-board-area" class="message-board-area">
+  <h2>Message Board</h2>
+  <h4>Chat With Your Tripmates</h4>
+  <div class="forums">
+    <div class="forum-tabs">
+      <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic='Main') }}#message-board-area">Main</a>
+      {% for topic in forum_topics %}
+        {% if topic != 'Main' %}
+          <a href="{{ url_for('main.trip', trip_id=trip.id, forum_topic=topic) }}#message-board-area">{{ topic }}</a>
+        {% endif %}
+      {% endfor %}
+      <button id="new-topic-button">Add New Topic...</button>
+    </div>
+  </div>
+  <div id="message-board" class="message-board">
+    <h4>{{ active_topic }}</h4>
+    <div class="messages-container">
+      {% if active_forum_messages %}
+        {% for message in active_forum_messages %}
+          <a href="{{ url_for('main.profile', user_id=message.user.id) }}" style="text-decoration: none; color: inherit;">
+            <img src="{{ url_for('static', filename='resources/' ~ message.user.profile_pic) }}" alt="Profile" class="header-icon" />
+            <div class="messages">
+              <p><strong>{{ message.user.name }}: {{ message.timestamp.strftime('%b %d, %Y, %H:%M') }}</strong></p>
+              <p>{{ message.content }}</p>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <p>Write the first message for this forum...</p>
+      {% endif %}
+    </div>
+    <form action="{{ url_for('main.new_message', trip_id=trip.id) }}" method="post">
+      <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input" data-active-topic="{{ active_topic }}">
+      <div id="new-forum-topic-input" style="display: none">
+        <label>Name your new forum topic:</label>
+        <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
+        <button type="button" id="cancel-new-forum-topic">Cancel</button>
+      </div>
+      <textarea name="message-content" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
+      <br>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<h2>Event Calendar</h2>
+<h4>See What Events/Meetups Are Scheduled For This Trip</h4>
+
+<div id="calendar"></div>
+
+<div id="meetup-area">
+  <div class="meetup-area-content">
+    <h3>Create a Meetup...</h3>
+    <form id="meetup-form">
+      <div class="form-group">
+        <label>Location:</label>
+        <input type="text" name="location" required placeholder="e.g., School library or Zoom call">
+      </div>
+      <div class="form-group">
+        <label>Date:</label>
+        <input type="date" name="date" id="meetup-date" required>
+      </div>
+      <div class="form-group">
+        <label>Time:</label>
+        <input type="time" name="time" required>
+      </div>
+      <div class="form-group">
+        <label>Link (optional):</label>
+        <input type="text" name="link" placeholder="Add a link if needed...">
+        <small>Add a link for online meetings, such as Zoom, Google Meet, etc.</small>
+      </div>
+      <div class="form-group">
+        <label>Description:</label>
+        <textarea name="description" rows="5" maxlength="1024" required placeholder="Describe your meetup/event..."></textarea>
+      </div>
+      <div class="meetup-area-buttons">
+        <button type="button" id="cancel-meetup-creation-button">Cancel</button>
+        <button type="submit">Create Meetup</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="existing-meetup-popup" class="existing-meetup-popup">
+  <div class="existing-meetup-popup-content">
+    <h3>Meetup Details</h3>
+    <br>
+    <p><strong>Location: </strong><span id="detail-location"></span></p>
+    <p><strong>Description: </strong><span id="detail-description"></span></p>
+    <p><strong>Link: </strong><a id="detail-link" href="#" target="_blank"></a></p>
+    <div class="existing-meetup-popup-buttons">
+      <button id="open-link" style="display:none;">Open Link</button>
+      <button id="delete-event">Delete Event</button>
+      <button id="close-event">Close</button>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='travel-together.js') }}"></script>
 <script src="{{ url_for('static', filename='js/trip.js') }}"></script>
-
 {% if already_joined %}
-<!-- Load FullCalendar libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
-
-<!-- Set the initial date variable for calendar_init.js -->
 <script>
   var initialDateValue = "{{ trip.start_date.strftime('%Y-%m-%d') }}";
   var tripId = "{{ trip.id }}"
 </script>
-
-<!-- Load the external calendar initialization script -->
 <script src="{{ url_for('static', filename='calendar.js') }}"></script>
 {% endif %}
-
 <div>
   <a href="{{ url_for('main.index') }}">
     <button type="submit">Return</button>
   </a>
 </div>
-
 {% endblock %}
