@@ -144,4 +144,46 @@ $(document).ready(function () {
             return;
         }
     });
+
 });
+
+$(document).on("click", "#show-joinable-trips", function() {
+
+    const userAge = parseInt(window.USER_AGE);
+
+    // Loop through each trip link
+    $(".trip-link").each(function() {
+        const tripItem = $(this).find(".trip-item");
+
+        const minAge = parseInt(tripItem.data("min-age")) || 0;
+        const maxAge = parseInt(tripItem.data("max-age")) || 999999;
+        const currentParticipants = parseInt(tripItem.data("current-participants")) || 0;
+        const maxTravelers = parseInt(tripItem.data("max-travelers")) || 999999;
+        const status = parseInt(tripItem.data("status")) || 0; // 0 = open, 1 = closed, etc.
+
+        const inAgeRange = userAge >= minAge && userAge <= maxAge;
+        const full = currentParticipants >= maxTravelers;
+        const open = status === 0;
+
+        // Show only trips that are joinable
+        $(this).toggle(inAgeRange && !full && open);
+    });
+
+    // Clear other filters
+    $("#max-budget-filter, #start-date-filter, #end-date-filter, #min-age-filter, #max-age-filter, #origin-filter, #destination-filter").val('');
+});
+
+$(document).on("click", "#show-all-trips", function(e){
+    e.preventDefault();
+    //reload page to remove any filters applied, and have it scroll down to trip-list automatically
+    window.location.href = window.SHOW_ALL_TRIPS_URL;
+
+    $(".trip-link").show();
+
+    // Clear other filters
+    $("#max-budget-filter, #start-date-filter, #end-date-filter, #min-age-filter, #max-age-filter, #origin-filter, #destination-filter").val('');
+
+});
+
+
+
