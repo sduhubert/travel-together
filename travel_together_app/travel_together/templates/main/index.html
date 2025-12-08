@@ -23,7 +23,9 @@
       <h1>Welcome!</h1>
       <p>Start your great adventure now.</p>
       <button class="primary-button" id="openFormPopup">Create a new trip!</button>
-      <button class="secondary-button">Browse trips</button>
+      <a href="{{url_for('main.browse_trips')}}">
+        <button class="secondary-button">Browse trips</button>
+      </a>
     </div>
 
     <img src="../../static/resources/index-background.jpeg"/>
@@ -32,7 +34,7 @@
   
   <div class="trip-contents">
     <h1>Recently added trips</h1>
-    {% set trips = latest_trips %}
+    {% set trips = latest_trips[:8] %}
     {% include 'trips_template.html' %}
   </div>
 

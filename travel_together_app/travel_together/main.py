@@ -87,7 +87,6 @@ def new_trip():
 
     new_trip = model.TripProposal(
         creator=user,
-        participants={user}, 
         title=title, 
         description=description,
         response_to_id=0, 
@@ -268,7 +267,6 @@ def follow(user_id):
         db.session.commit()
     return redirect(url_for("main.profile", user_id=user_id))
 
-
 @bp.route("/unfollow/<int:user_id>", methods=["POST"])
 @flask_login.login_required
 def unfollow(user_id):
@@ -345,3 +343,39 @@ def delete_meetup(trip_id, meetup_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+    
+@bp.route("/browse_trips")
+@flask_login.login_required
+def browse_trips():
+    trips_query = model.TripProposal.query
+
+    max_budget = request.args.get("max_budget", type=float)
+    if max_budget:
+        trips_query = trips_query.filter(model.TripProposal.budget <= max_budget)
+
+    min_age = request.args.get("min_age", type=int)
+    max_age = request.args.get("max_age", type=int)
+    if min_age:
+        trips_query = trips_query.filter(model.TripProposal.min_age >= min_age)
+    if min_age:
+        trips_query = trips_query.filter(model.TripProposal.max_age <= max_age)
+
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+    if start_date:
+        trips_query = trips_query.filter(model.TripProposal.start_date >= start_date)
+    if end_date:
+        trips_query = trips_query.filter(model.TripProposal.end_date <= end_date)
+
+    origin = request.args.get("origin")
+    if origin:
+        trips_query = trips_query.filter(model.TripProposal.origin.ilike(f"%{origin}%")) 
+        #referenced ChatGPT for 'ilike', which compares with case insensitive values
+
+    destination = request.args.get("destination")
+    if destination:
+        trips_query = trips_query.filter(model.TripProposal.destinations.ilike(f"%{destination}%"))
+
+    trips = trips_query.order_by(model.TripProposal.timestamp.desc()).all()
+
+    return render_template("main/browse_trips.html", trips=trips)

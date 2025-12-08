@@ -18,12 +18,18 @@ def create_app(test_config=None):
     # A secret for signing session cookies
     app.config["SECRET_KEY"] = "93220d9b340cf9a6c39bac99cce7daf220167498f91fa"
 
-    # Code to place inside create_app, after the other app.config assignment
+
     app.config[
         "SQLALCHEMY_DATABASE_URI"
     #] = "mysql+pymysql://traveltogether:waDBlog@localhost/TravelTogether"
     #] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00b"
     ] = "mysql+pymysql://travel_together:12345@localhost/travel_together"
+    #] = "mysql+pymysql://adam:Tq6qlpko@localhost/travel_together"
+    # Code to place inside create_app, after the other app.config assignment
+    # app.config[
+    #     "SQLALCHEMY_DATABASE_URI"
+    # #] = "mysql+pymysql://traveltogether:waDBlog@localhost/TravelTogether"
+    # ] = "mysql+pymysql://26_webapp_00:Tq6qlpko@mysql.lab.it.uc3m.es/26_webapp_00b"
     
     # app.config[
     #   "SQLALCHEMY_DATABASE_URI"

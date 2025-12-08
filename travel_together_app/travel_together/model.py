@@ -60,6 +60,14 @@ class User(flask_login.UserMixin, db.Model):
     def age(user):
         today = datetime.date.today()
         return(today.year - user.birthday.year - ((today.month, today.day) < (user.birthday.month, user.birthday.day)))
+    def is_editor_for(self, trip):
+        participation = db.session.scalar(
+            db.select(TripProposalParticipation.is_editor).where(
+                TripProposalParticipation.user_id == self.id,
+                TripProposalParticipation.trip_proposal_id == trip.id
+            )
+        )
+        return bool(participation)
     
 class TripProposalStatus(enum.Enum):
     OPEN = 0
