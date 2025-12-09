@@ -61,11 +61,9 @@
 <div class="single_trip_container">
   <img class="trip-photo" src="{{ url_for('static', filename='resources/example-trip-1.jpg') }}" alt="Avatar">
   <h2 class="trip-title">{{ trip.title }}</h2>
-  
+
   {% if current_user.is_editor_for(trip) %}
-    <a href="{{url_for('auth.edit_profile')}}">
-      <button class="primary-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
-    </a>
+  <button class="primary-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
   {% endif %}
 
   <div class="container">
@@ -131,7 +129,8 @@
     <p class="cannot-join-alerts">This trip is not open now, as is not taking new members.</p>
     {% endif %}
 
-    {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age> max_age) %}
+    {% if not (trip.participants|length >= max_travelers) or (current_user.age < min_age and current_user.age> max_age)
+      %}
       {% if not already_joined %}
       <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
         <button type="submit">Join Trip!</button>
