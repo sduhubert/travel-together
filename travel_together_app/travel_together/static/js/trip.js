@@ -14,6 +14,7 @@ $(document).ready(function() {
             e.preventDefault();
             newTopicInput.style.display = 'block';
             forumTopicInput.value = '';
+            $(".send-message-area").attr("placeholder", "Enter your first message for the new topic...")
         });
     }
 
@@ -23,6 +24,7 @@ $(document).ready(function() {
             newTopicInput.style.display = 'none';
             forumTopicInput.value = forumTopicInput.dataset.activeTopic;
             if (newTopic) newTopic.value = '';
+            $(".send-message-area").attr("placeholder", "What's on your mind?")
         });
     }
 
@@ -39,5 +41,31 @@ $(document).ready(function() {
             }
         });
     }
+
+    // Open trip participants popup
+    $(".open-members-popup").click(function() {
+        $("#members-popup").fadeIn();
+        $("body").css("overflow", "hidden");
+    });
+
+    // Close popup by clicking X
+    $(".popup .close").click(function() {
+        $(this).closest(".popup").fadeOut();
+        $("body").css("overflow", "auto");
+    });
+
+    // Close popup by clicking outside of it
+    $(".popup").click(function(e) {
+        if (e.target === this) {
+            $(this).closest(".popup").fadeOut();
+            $("body").css("overflow", "auto");
+        }
+    });
+
+    scrollChatToBottom();
 });
 
+function scrollChatToBottom() {
+    var chatBox = $('.messages-container');
+    chatBox.scrollTop(chatBox[0].scrollHeight);
+}

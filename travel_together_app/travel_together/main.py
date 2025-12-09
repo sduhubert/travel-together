@@ -248,6 +248,26 @@ def join_trip(trip_id):
 
     return redirect(url_for("main.trip", trip_id=trip_id))
 
+@bp.route("/trip/<int:trip_id>/leave", methods=["POST"])
+@flask_login.login_required
+def leave_trip(trip_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    if user not in trip.participants:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    user_participation = (
+        db.session.query(model.TripProposalParticipation)
+        .filter_by(user_id=user.id, trip_proposal_id=trip.id)
+        .first()
+    )
+        
+    db.session.delete(user_participation)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
 @bp.route("/trip/<int:trip_id>/message", methods=["POST"])
 @flask_login.login_required
 def new_message(trip_id):
