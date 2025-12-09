@@ -380,6 +380,20 @@ def browse_trips():
     destination = request.args.get("destination")
     if destination:
         trips_query = trips_query.filter(model.TripProposal.destinations.ilike(f"%{destination}%"))
+    
+    status = request.args.get("status")
+    if status:
+        status_map = {
+            "OPEN" : model.TripProposalStatus.OPEN.value,
+            "APPROVAL_REQUIRED" : model.TripProposalStatus.APPROVAL_REQUIRED.value, # type: ignore
+            "CLOSED" : model.TripProposalStatus.CLOSED.value, # type: ignore
+            "FINALIZED" : model.TripProposalStatus.FINALIZED.value, # type: ignore
+            "CANCELLED" : model.TripProposalStatus.CANCELLED.value, # type: ignore
+        }
+
+        status_value = status_map.get(status)
+        if status_value:
+            trips_query = trips_query.filter(model.TripProposal.status == status_value)
 
     trips = trips_query.order_by(model.TripProposal.timestamp.desc()).all()
 
