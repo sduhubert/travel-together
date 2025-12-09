@@ -105,8 +105,13 @@ def new_trip():
     db.session.add(new_trip)
     db.session.commit()
     
-    participation = model.TripProposalParticipation.query.get((user.id, new_trip.id))
-    participation.is_editor = True
+    participation = model.TripProposalParticipation(
+    user_id=user.id,
+    trip_proposal_id=new_trip.id,
+    is_editor=True
+)
+
+    db.session.add(participation)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=new_trip.id))
