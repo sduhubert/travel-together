@@ -134,24 +134,24 @@
                     <input type="checkbox" id="budgetToggle">
                     <label for="budget" class="disabled">Budget:</label>
                     <input type="number" id="budget" name="budget" value="{{ trip.budget or '' }}">
-                </div>
-                <div class="checkbox-wrapper">
-                    <label>
-                        <input type="checkbox" name="budget_finalized" {% if trip.budget_finalized %}checked{% endif %}>
-                        Finalize
-                    </label>
+                    <div class="checkbox-wrapper">
+                        <label>
+                            <input type="checkbox" name="budget_finalized" {% if trip.budget_finalized %}checked{% endif %}>
+                            Finalize
+                        </label>
+                    </div>
                 </div>
                 <div class="single-entry3">
                     <input type="checkbox" id="maxMembersToggle">
                     <label for="max_members" class="disabled">Maximum Trip Members:</label>
                     <input type="number" id="max_members" name="max_members" value="{{ trip.max_travelers or '' }}">
-                </div>
-                <div class="checkbox-wrapper">
-                    <label>
-                        <input type="checkbox" name="max_travelers_finalized" {% if trip.max_travelers_finalized
-                            %}checked{% endif %}>
-                        Finalize
-                    </label>
+                    <div class="checkbox-wrapper">
+                        <label>
+                            <input type="checkbox" name="max_travelers_finalized" {% if trip.max_travelers_finalized
+                                %}checked{% endif %}>
+                            Finalize
+                        </label>
+                    </div>
                 </div>
                 <div class="single-entry3">
                     <input type="checkbox" id="ageToJoinToggle" name="use_age_range">
@@ -178,13 +178,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="checkbox-wrapper">
-                    <label>
-                        <input type="checkbox" name="age_range_finalized" {% if trip.age_range_finalized %}checked{%
-                            endif %}>
-                        Finalize
-                    </label>
+                    <div class="checkbox-wrapper">
+                        <label>
+                            <input type="checkbox" name="age_range_finalized" {% if trip.age_range_finalized %}checked{%
+                                endif %}>
+                            Finalize
+                        </label>
+                    </div>
                 </div>
                 <div class="single-entry3">
                     <label class="trip-image">Trip Image: </label>
