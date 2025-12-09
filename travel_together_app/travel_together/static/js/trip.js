@@ -13,7 +13,6 @@ $(document).ready(function() {
         newTopicButton.addEventListener('click', function (e) {
             e.preventDefault();
             newTopicInput.style.display = 'block';
-            forumTopicInput.value = '';
             $(".send-message-area").attr("placeholder", "Enter your first message for the new topic...")
         });
     }
@@ -33,11 +32,13 @@ $(document).ready(function() {
             // Only block submission if:
             // 1. new-topic box is visible
             // 2. new-topic field is empty
-            if (newTopicInput.style.display === 'block' &&
-                newTopic.value.trim() === '') 
-            {
-                e.preventDefault();
-                alert("Please enter a new forum topic name or click Cancel.");
+            if (newTopicInput.style.display === 'block' && newTopic.value.trim() === '') {
+                newTopicInput.style.display = 'none';
+                forumTopicInput.value = forumTopicInput.dataset.activeTopic;
+                if (newTopic){
+                    newTopic.value = '';
+                }
+                $(".send-message-area").attr("placeholder", "What's on your mind?")
             }
         });
     }
