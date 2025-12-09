@@ -147,30 +147,21 @@ $(document).ready(function () {
 
 });
 
-$(document).on("click", "#show-joinable-trips", function() {
+$(document).ready(function() {
+    // Check if we need to apply joinable filter on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_joinable') === 'true') {
+        filterJoinableTrips();
+    }
+});
 
-    const userAge = parseInt(window.USER_AGE);
-
-    // Loop through each trip link
-    $(".trip-link").each(function() {
-        const tripItem = $(this).find(".trip-item");
-
-        const minAge = parseInt(tripItem.data("min-age")) || 0;
-        const maxAge = parseInt(tripItem.data("max-age")) || 999999;
-        const currentParticipants = parseInt(tripItem.data("current-participants")) || 0;
-        const maxTravelers = parseInt(tripItem.data("max-travelers")) || 999999;
-        const status = parseInt(tripItem.data("status")) || 0; // 0 = open, 1 = closed, etc.
-
-        const inAgeRange = userAge >= minAge && userAge <= maxAge;
-        const full = currentParticipants >= maxTravelers;
-        const open = status === 0;
-
-        // Show only trips that are joinable
-        $(this).toggle(inAgeRange && !full && open);
-    });
-
-    // Clear other filters
-    $("#max-budget-filter, #start-date-filter, #end-date-filter, #min-age-filter, #max-age-filter, #origin-filter, #destination-filter").val('');
+//referenced Claude to figure out how properly show ALL joinable trips after a filter was previously applied
+$(document).on("click", "#show-joinable-trips", function(e) {
+    e.preventDefault();
+    
+    // Reload page with joinable flag
+    const baseUrl = window.SHOW_ALL_TRIPS_URL.split('#')[0].split('?')[0];
+    window.location.href = baseUrl + '?show_joinable=true#trip-list';
 });
 
 $(document).on("click", "#show-all-trips", function(e){
@@ -184,6 +175,26 @@ $(document).on("click", "#show-all-trips", function(e){
     $("#max-budget-filter, #start-date-filter, #end-date-filter, #min-age-filter, #max-age-filter, #origin-filter, #destination-filter").val('');
 
 });
+
+function filterJoinableTrips() {
+    const userAge = parseInt(window.USER_AGE);
+    
+    $(".trip-link").each(function() {
+        const tripItem = $(this).find(".trip-item");
+
+        const minAge = parseInt(tripItem.data("min-age")) || 0;
+        const maxAge = parseInt(tripItem.data("max-age")) || 999999;
+        const currentParticipants = parseInt(tripItem.data("current-participants")) || 0;
+        const maxTravelers = parseInt(tripItem.data("max-travelers")) || 999999;
+        const status = parseInt(tripItem.data("status")) || 0;
+
+        const inAgeRange = userAge >= minAge && userAge <= maxAge;
+        const full = currentParticipants >= maxTravelers;
+        const open = status === 0;
+
+        $(this).toggle(inAgeRange && !full && open);
+    });
+}
 
 
 

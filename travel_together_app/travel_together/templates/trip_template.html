@@ -12,7 +12,7 @@
              data-max-travelers="{{ trip.max_travelers or 999 }}"
              data-status="{{ trip.status }}">
             
-            <img class="trip-photo" src="../static/resources/example-trip-1.jpg" alt="Avatar">
+            <img class="trip-photo" src="{{ url_for('static', filename='resources/' ~ trip.image) }}" alt="{{ trip.title }}">
             <h2 class="trip-title">{{ trip.title }}</h2>    
             <p class="trip-time-created">Created {{ trip.timestamp|time_ago }} by {{ trip.creator.name }}</p>
             <p class="trip-description">{{ trip.description }}</p>

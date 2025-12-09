@@ -1,9 +1,12 @@
 from datetime import datetime
+import os
 import dateutil.tz
 
 
-from flask import Blueprint, flash, jsonify, render_template, request, redirect, url_for, abort
+from flask import Blueprint, current_app, flash, jsonify, render_template, request, redirect, url_for, abort
 import flask_login
+
+from werkzeug.utils import secure_filename
 
 from . import model, db
 
@@ -75,6 +78,13 @@ def new_trip():
     minAge = request.form.get("min")
     maxAge = request.form.get("max")
     status=model.TripProposalStatus.OPEN.value
+    image = request.files.get("trip_image")
+    if image and image.filename != "":
+        filename = secure_filename(image.filename)
+        save_path = os.path.join(current_app.static_folder, "resources", filename)
+        image.save(save_path)
+    else:
+        filename = "example-trip-1.jpg"
 
     #since our model stores 'destinations' as a comma separated string
     destinations_str = ",".join(destinations) 
@@ -99,14 +109,20 @@ def new_trip():
         min_age=minAge,
         max_age=maxAge,
         timestamp=datetime.now(dateutil.tz.tzlocal()),
-        status=status
+        status=status,
+        image=filename
         )
     
     db.session.add(new_trip)
     db.session.commit()
     
-    participation = model.TripProposalParticipation.query.get((user.id, new_trip.id))
-    participation.is_editor = True
+    participation = model.TripProposalParticipation(
+    user_id=user.id,
+    trip_proposal_id=new_trip.id,
+    is_editor=True
+)
+
+    db.session.add(participation)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=new_trip.id))
@@ -229,6 +245,26 @@ def join_trip(trip_id):
         is_editor=False,
     )
     db.session.add(joining_user)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
+@bp.route("/trip/<int:trip_id>/leave", methods=["POST"])
+@flask_login.login_required
+def leave_trip(trip_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    if user not in trip.participants:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    user_participation = (
+        db.session.query(model.TripProposalParticipation)
+        .filter_by(user_id=user.id, trip_proposal_id=trip.id)
+        .first()
+    )
+        
+    db.session.delete(user_participation)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=trip_id))
@@ -357,7 +393,7 @@ def browse_trips():
     max_age = request.args.get("max_age", type=int)
     if min_age:
         trips_query = trips_query.filter(model.TripProposal.min_age >= min_age)
-    if min_age:
+    if max_age:
         trips_query = trips_query.filter(model.TripProposal.max_age <= max_age)
 
     start_date = request.args.get("start_date")
@@ -375,6 +411,20 @@ def browse_trips():
     destination = request.args.get("destination")
     if destination:
         trips_query = trips_query.filter(model.TripProposal.destinations.ilike(f"%{destination}%"))
+    
+    status = request.args.get("status")
+    if status:
+        status_map = {
+            "OPEN" : model.TripProposalStatus.OPEN.value,
+            "APPROVAL_REQUIRED" : model.TripProposalStatus.APPROVAL_REQUIRED.value, # type: ignore
+            "CLOSED" : model.TripProposalStatus.CLOSED.value, # type: ignore
+            "FINALIZED" : model.TripProposalStatus.FINALIZED.value, # type: ignore
+            "CANCELLED" : model.TripProposalStatus.CANCELLED.value, # type: ignore
+        }
+
+        status_value = status_map.get(status)
+        if status_value:
+            trips_query = trips_query.filter(model.TripProposal.status == status_value)
 
     trips = trips_query.order_by(model.TripProposal.timestamp.desc()).all()
 

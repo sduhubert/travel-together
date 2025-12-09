@@ -7,7 +7,7 @@
 
 
 {% block content %}<div id="formPopupModal">
-    <form id="trip-form" data-user-age="{{ current_user.age }}" action="{{ url_for('main.new_trip') }}" method="post">
+    <form id="trip-form" data-user-age="{{ current_user.age }}" action="{{ url_for('main.new_trip') }}" method="post" enctype="multipart/form-data">
         <h2 class="form-header">Create a travel proposal!</h2>
 
         <div class="form-step active-step" id="step-1">
@@ -92,6 +92,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="single-entry3">
+                    <label class="trip-image">Trip Image: </label>
+                    <input type="file" id="trip_image" name="trip_image" accept="image/*">
                 </div>
             </div>
             <div class="navigation-buttons">

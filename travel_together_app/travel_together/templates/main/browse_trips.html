@@ -62,9 +62,18 @@
         <label>Destination:</label>
         <input type="text" id="destination-filter" name="destination" placeholder="Enter somewhere you'd like to visit...">
 
+        <label>Trip Status: </label>
+        <select id="status-filter" name="status">
+          <option value="OPEN">OPEN</option>
+          <option value="APPROVAL_REQUIRED">APPROVAL_REQUIRED</option>
+          <option value="CLOSED">CLOSED</option>
+          <option value="FINALIZED">FINALIZED</option>
+          <option value="CANCELLED">CANCELLED</option>
+        </select>
+
         <button type="submit">Filter Trips</button>
     </form>
-  
+    <br>
     <button id="show-joinable-trips">Show All Joinable Trips</button>
     <button id="show-all-trips">Show All Trips</button>
 

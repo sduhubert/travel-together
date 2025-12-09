@@ -23,7 +23,8 @@ a.trip-link {
 
 .trip-container img.trip-photo {
     width: 100%;
-    height: auto;
+    height: 13vw;
+    object-fit: cover;
     border-radius: 8px;
 }
 
