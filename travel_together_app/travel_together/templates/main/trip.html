@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/trip.css') }}"/>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -58,8 +60,8 @@
      
 
       <div class="button-container">
-        {% if already_joined %}
-          <button id="modify-trip-button" class="trip-button">Modify Trip</button>
+        {% if current_user.is_editor_for(trip) %}
+          <button class="trip-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
         {% endif %}
         {% if trip.participants|length < max_travelers and current_user.age >= min_age and current_user.age <= max_age %}
           {% if not already_joined %}
@@ -93,6 +95,15 @@
       </a>
       {% endfor %}
     </div>
+  </div>
+</div>
+
+<div id="formPopupOverlay" style="display:none;">
+  <div id="formPopupModal" style="display:none;">
+    <div id="formPopupContent">
+      {% include 'main/edit_trip_form.html' %}
+    </div>
+    <button id="closeFormPopup">Close</button>
   </div>
 </div>
 

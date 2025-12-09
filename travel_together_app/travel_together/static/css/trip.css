@@ -446,9 +446,11 @@
 
 .send-message-area {
     flex:1;
+    height: 5em;
     box-sizing: border-box;
     padding: 0.5vw;
     background-color: #f2e0c3;
+    border-radius: 0;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     border: 1px solid darkgrey;

@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const popup = document.getElementById("existing-meetup-popup");
 
         document.getElementById("detail-location").textContent = info.event.title;
+        document.getElementById("detail-start").textContent = info.event.start;
         document.getElementById("detail-description").textContent = info.event.extendedProps.description || "None";
 
         const eventLink = document.getElementById("detail-link");

@@ -105,12 +105,13 @@ def new_trip():
     db.session.add(new_trip)
     db.session.commit()
     
-    joining_user = model.TripProposalParticipation(
-        user_id=user.id,
-        trip_proposal_id=new_trip.id,
-        is_editor=True,
-    )   
-    db.session.add(joining_user)
+    participation = model.TripProposalParticipation(
+    user_id=user.id,
+    trip_proposal_id=new_trip.id,
+    is_editor=True
+)
+
+    db.session.add(participation)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=new_trip.id))
@@ -121,6 +122,57 @@ def new_trip():
    # else:
        # return redirect(url_for("main.trip", trip_id=new_trip.id))
 
+@bp.route("/trip/<int:trip_id>", methods=["PATCH"])
+@flask_login.login_required
+def edit_trip(trip_id):
+    trip = db.session.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+    
+    if not trip or (user not in trip.participants and not model.TripProposalParticipation.query.get((user.id, trip.id)).is_editor):
+        print("You do not have permission to edit this trip.", "error")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    # title = request.form.get("title")
+    # description = request.form.get("description")
+    # origin = request.form.get("departure_location")
+    # destinations = request.form.getlist("destination")
+    # start = request.form.get("start")
+    # end = request.form.get("end")
+    # budget = request.form.get("budget")
+    # max_members = request.form.get("max_members")
+    # minAge = request.form.get("min")
+    # maxAge = request.form.get("max")
+    # status=request.form.get("status")
+
+    # #since our model stores 'destinations' as a comma separated string
+    # destinations_str = ",".join(destinations) 
+
+    # new_trip = model.TripProposal(
+    #     creator=user,
+    #     participants={user}, 
+    #     title=title, 
+    #     description=description,
+    #     response_to_id=0, 
+    #     origin=origin, 
+    #     destinations=destinations_str, 
+    #     start_date=start, 
+    #     end_date=end, 
+    #     budget= budget, 
+    #     max_travelers=max_members,
+    #     min_age=minAge,
+    #     max_age=maxAge,
+    #     timestamp=datetime.now(dateutil.tz.tzlocal()),
+    #     status=status
+    #     )
+    
+    # db.session.add(new_trip)
+    # db.session.commit()
+    
+    # participation = model.TripProposalParticipation.query.get((user.id, new_trip.id))
+    # participation.is_editor = True
+    # db.session.commit()
+
+    #return redirect(url_for("main.trip", trip_id=trip_id))
        
 
 @bp.route("/trip/<int:trip_id>")
@@ -348,8 +400,21 @@ def browse_trips():
     destination = request.args.get("destination")
     if destination:
         trips_query = trips_query.filter(model.TripProposal.destinations.ilike(f"%{destination}%"))
+    
+    status = request.args.get("status")
+    if status:
+        status_map = {
+            "OPEN" : model.TripProposalStatus.OPEN.value,
+            "APPROVAL_REQUIRED" : model.TripProposalStatus.APPROVAL_REQUIRED.value, # type: ignore
+            "CLOSED" : model.TripProposalStatus.CLOSED.value, # type: ignore
+            "FINALIZED" : model.TripProposalStatus.FINALIZED.value, # type: ignore
+            "CANCELLED" : model.TripProposalStatus.CANCELLED.value, # type: ignore
+        }
+
+        status_value = status_map.get(status)
+        if status_value:
+            trips_query = trips_query.filter(model.TripProposal.status == status_value)
 
     trips = trips_query.order_by(model.TripProposal.timestamp.desc()).all()
 
     return render_template("main/browse_trips.html", trips=trips)
-
