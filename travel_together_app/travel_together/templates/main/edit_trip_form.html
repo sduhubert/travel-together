@@ -14,6 +14,10 @@
         gap: 6px;
         font-size: 1rem;
     }
+
+    select {
+        margin-top: 0;
+    }
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ url_for('static', filename='js/trip_form.js') }}"></script>
@@ -27,7 +31,6 @@
         <h2 class="form-header">Edit your travel proposal!</h2>
 
         <div class="form-step active-step" id="step-1">
-            <h2 class="step-header">Name and Description</h2>
             <div class="form-entries">
                 <div class="single-entry">
                     <label for="title">Trip Title</label>
@@ -39,6 +42,24 @@
                     <label for="description">Trip Description</label>
                     <textarea id="description" name="description" placeholder="Trip Description"
                         required>{{ trip.description }}</textarea>
+                </div>
+
+                <div class="single-entry">
+                    <div class="entry-header">
+                        <label for="status">Status</label>
+
+                        <label class="checkbox-wrapper">
+                            <span>Finalize</span>
+                            <input type="checkbox" name="status_finalized" {% if trip.status_finalized %}checked{% endif
+                                %}>
+                        </label>
+                    </div>
+                    <select id="status" name="status" placeholder="Trip Status" required>{{ trip.status }}
+                        {% for status in statuses %}
+                        <option value="{{ status }}" {% if status==trip.status.name %}selected{% endif %}>
+                            {{ status.name.replace('_', ' ').title()}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
             <div class="navigation-buttons">

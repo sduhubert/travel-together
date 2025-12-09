@@ -140,7 +140,7 @@ def edit_trip(trip_id):
     user = flask_login.current_user
     
     if not trip or (user not in trip.participants and not model.TripProposalParticipation.query.get((user.id, trip.id)).is_editor):
-        print("You do not have permission to edit this trip.", "error")
+        flash("You do not have permission to edit this trip.", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
     
     # title = request.form.get("title")
@@ -219,7 +219,7 @@ def trip(trip_id, forum_topic=None):
     active_forum_messages_query = (db.select(model.TripProposalMessage).where(model.TripProposalMessage.trip_proposal_id == trip_id, model.TripProposalMessage.forum_topic == active_topic).order_by(model.TripProposalMessage.timestamp.asc()))
     active_forum_messages = db.session.execute(active_forum_messages_query).scalars().all()
 
-    return render_template("main/trip.html", trip=trip, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
+    return render_template("main/trip.html", trip=trip, statuses=model.TripProposalStatus, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
 
 
 
