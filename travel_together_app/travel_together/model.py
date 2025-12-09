@@ -100,6 +100,7 @@ class TripProposal(db.Model):
     min_age: Mapped[Optional[int]] = mapped_column(Integer)
     max_age: Mapped[Optional[int]] = mapped_column(Integer)
     status: Mapped["TripProposalStatus"] = mapped_column(Integer)  # Use TripProposalStatus enum values
+    image: Mapped[str] = mapped_column(String(256))
     timestamp: Mapped[datetime.datetime] = mapped_column(
         # pylint: disable=not-callable
         DateTime(timezone=True), server_default=func.now()

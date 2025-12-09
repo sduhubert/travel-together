@@ -1,9 +1,12 @@
 from datetime import datetime
+import os
 import dateutil.tz
 
 
-from flask import Blueprint, flash, jsonify, render_template, request, redirect, url_for, abort
+from flask import Blueprint, current_app, flash, jsonify, render_template, request, redirect, url_for, abort
 import flask_login
+
+from werkzeug.utils import secure_filename
 
 from . import model, db
 
@@ -75,6 +78,13 @@ def new_trip():
     minAge = request.form.get("min")
     maxAge = request.form.get("max")
     status=model.TripProposalStatus.OPEN.value
+    image = request.files.get("trip_image")
+    if image and image.filename != "":
+        filename = secure_filename(image.filename)
+        save_path = os.path.join(current_app.static_folder, "resources", filename)
+        image.save(save_path)
+    else:
+        filename = "example-trip-1.jpg"
 
     #since our model stores 'destinations' as a comma separated string
     destinations_str = ",".join(destinations) 
@@ -362,7 +372,7 @@ def browse_trips():
     max_age = request.args.get("max_age", type=int)
     if min_age:
         trips_query = trips_query.filter(model.TripProposal.min_age >= min_age)
-    if min_age:
+    if max_age:
         trips_query = trips_query.filter(model.TripProposal.max_age <= max_age)
 
     start_date = request.args.get("start_date")
