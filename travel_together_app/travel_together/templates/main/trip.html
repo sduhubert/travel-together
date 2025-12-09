@@ -72,7 +72,7 @@
           <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
             <button type="submit" class="trip-button">Join Trip!</button>
           </form>
-          {% else %}
+          {% elif current_user.id != trip.creator_id %}
           <form action="{{ url_for('main.leave_trip', trip_id=trip.id) }}" method="POST">
             <button type="submit" class="trip-button">Leave trip</button>
           </form>
