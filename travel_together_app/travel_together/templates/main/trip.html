@@ -53,6 +53,7 @@
     margin-bottom: 1.5em;
   }
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
@@ -245,11 +246,12 @@
           <h3>Meetup Details</h3>
           <br>
           <p><strong>Location: </strong><span id="detail-location"></span></p>
+          <p><strong>Start Time: </strong><span id="detail-start"></span></p>
           <p><strong>Description: </strong><span id="detail-description"></span></p>
           <p><strong>Link: </strong><a id="detail-link" href="#" target="_blank"></a></p>
 
           <div class="existing-meetup-popup-buttons">
-            <!-- display: none here so that the link doesnt appear if not added -->
+            <!-- 'display: none' here so that the link doesnt appear if not added -->
             <button id="open-link" style="display:none;">Open Link</button>
             <button id="delete-event">Delete Event</button>
             <button id="close-event">Close</button>
