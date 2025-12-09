@@ -109,7 +109,8 @@ def new_trip():
         min_age=minAge,
         max_age=maxAge,
         timestamp=datetime.now(dateutil.tz.tzlocal()),
-        status=status
+        status=status,
+        image=filename
         )
     
     db.session.add(new_trip)

@@ -12,7 +12,7 @@
 {% block content %}
 {% set max_travelers = trip.max_travelers or 999999 %}
 {% set min_age = trip.min_age or 0 %}
-{% set max_age = trip.max_age or 200 %}
+{% set max_age = trip.max_age or 999999 %}
 <div class="top-container">
   <div class="back-arrow">
     <a href="{{ url_for('main.index') }}">
@@ -20,7 +20,7 @@
     </a>
   </div>
   <div class="trip-photo-container">
-    <img class="trip-photo" src="{{ url_for('static', filename='resources/' ~ trip.image) }}" alt="{{ trip.title }}">
+    <img class="trip-photo" id="trip-bg" src="{{ url_for('static', filename='resources/' ~ trip.image) }}" alt="{{ trip.title }}">
     <div class="trip-title-wrapper">
         <h2>{{ trip.title }}</h2>
         <p>Created {{ trip.timestamp|time_ago }} by
@@ -39,10 +39,14 @@
         {% elif trip.participants|length >= max_travelers%}
         <p>Member Capacity: <span class="criteria red">{{ trip.participants|length }}/{{ max_travelers }}</span></p>
         {% endif %}
-        {% if current_user.age < min_age or current_user.age > max_age %}
-        <p>Age range: <span class="criteria red">{{min_age}} to {{max_age}} years old</span></p>
+        {% if not (min_age == 0 and max_age == 999999) %}
+          {% if current_user.age < min_age or current_user.age > max_age %}
+          <p>Age range: <span class="criteria red">{{min_age}} to {{max_age}} years old</span></p>
+          {% else %}
+          <p>Age range: <span class="criteria">{{min_age}} to {{max_age}} years old</span></p>
+          {% endif %}
         {% else %}
-        <p>Age range: <span class="criteria">{{min_age}} to {{max_age}} years old</span></p>
+          <p>Age range: <span class="criteria">N/A</span></p>
         {% endif %}
         {% if trip.budget and trip.budget > 0 %}
         <p>Trip Budget: <span class="criteria">€{{ trip.budget }}</span></p>
@@ -154,7 +158,7 @@
         </div>
       </div>
 
-      <form action="{{ url_for('main.new_message', trip_id=trip.id) }}" method="post">
+      <form action="{{ url_for('main.new_message', trip_id=trip.id) }}#message-board-area" method="post">
         <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input" data-active-topic="{{ active_topic }}">
 
         <div id="new-forum-topic-input" style="display: none">

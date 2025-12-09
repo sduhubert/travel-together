@@ -31,7 +31,7 @@ $(document).ready(function() {
     });
 
     // Close popup
-    $("#closeFormPopup, #formPopupOverlay").click(function() {
+    $("#closeFormPopup","#formPopupModal").click(function() {
         $("#formPopupOverlay").hide();
         $("#formPopupModal").hide();
     });
