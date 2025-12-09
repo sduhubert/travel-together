@@ -133,57 +133,75 @@ def new_trip():
    # else:
        # return redirect(url_for("main.trip", trip_id=new_trip.id))
 
-@bp.route("/trip/<int:trip_id>", methods=["PATCH"])
+@bp.route("/edit_trip/<int:trip_id>", methods=["POST"])
 @flask_login.login_required
 def edit_trip(trip_id):
-    trip = db.session.get_or_404(model.TripProposal, trip_id)
+    trip = model.TripProposal.query.get_or_404(trip_id)
     user = flask_login.current_user
     
-    if not trip or (user not in trip.participants and not model.TripProposalParticipation.query.get((user.id, trip.id)).is_editor):
+    participation = model.TripProposalParticipation.query.get((user.id, trip.id))
+
+    if (user not in trip.participants) and not (participation and participation.is_editor):
         flash("You do not have permission to edit this trip.", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
     
-    # title = request.form.get("title")
-    # description = request.form.get("description")
-    # origin = request.form.get("departure_location")
-    # destinations = request.form.getlist("destination")
-    # start = request.form.get("start")
-    # end = request.form.get("end")
-    # budget = request.form.get("budget")
-    # max_members = request.form.get("max_members")
-    # minAge = request.form.get("min")
-    # maxAge = request.form.get("max")
-    # status=request.form.get("status")
-
-    # #since our model stores 'destinations' as a comma separated string
-    # destinations_str = ",".join(destinations) 
-
-    # new_trip = model.TripProposal(
-    #     creator=user,
-    #     participants={user}, 
-    #     title=title, 
-    #     description=description,
-    #     response_to_id=0, 
-    #     origin=origin, 
-    #     destinations=destinations_str, 
-    #     start_date=start, 
-    #     end_date=end, 
-    #     budget= budget, 
-    #     max_travelers=max_members,
-    #     min_age=minAge,
-    #     max_age=maxAge,
-    #     timestamp=datetime.now(dateutil.tz.tzlocal()),
-    #     status=status
-    #     )
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
     
-    # db.session.add(new_trip)
-    # db.session.commit()
+    status = request.form.get("status")
     
-    # participation = model.TripProposalParticipation.query.get((user.id, new_trip.id))
-    # participation.is_editor = True
-    # db.session.commit()
+    origin = request.form.get("departure_location", "").strip()
+    
+    destinations = [d.strip() for d in request.form.getlist("destination") if d.strip()]
+    destinations_str = ",".join(destinations) 
+    
+    start = request.form.get("start")
+    end = request.form.get("end")
+    
+    budget = request.form.get("budget")
+    max_members = request.form.get("max_members")
+    minAge = request.form.get("min")
+    maxAge = request.form.get("max")
+    
+    image = request.files.get("trip_image")
+    
+    if trip.title != title:
+        trip.title = title
 
-    #return redirect(url_for("main.trip", trip_id=trip_id))
+    if trip.description != description:
+        trip.description = description
+        
+    if status and trip.status != status:
+        trip.status = status
+
+    if not trip.origin_finalized and origin and trip.origin != origin:
+        trip.origin = origin
+
+    if not trip.destinations_finalized and destinations_str and trip.destinations != destinations_str:
+        trip.destinations = destinations_str
+
+    if not trip.dates_finalized:
+        if start and trip.start_date != start:
+            trip.start_date = start
+        if end and trip.end_date != end:
+            trip.end_date = end
+    if not trip.budget_finalized and budget and trip.budget != budget:
+        trip.budget = budget
+    if not trip.max_travelers_finalized and max_members and trip.max_travelers != max_members:
+        trip.max_travelers = max_members
+    if not trip.age_range_finalized:
+        if minAge and trip.min_age != minAge:
+            trip.min_age = minAge
+        if maxAge and trip.max_age != maxAge:
+            trip.max_age = maxAge
+    if image.filename and image.filename != trip.image:
+        filename = secure_filename(image.filename)
+        save_path = os.path.join(current_app.static_folder, "resources", filename)
+        image.save(save_path)
+    
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
        
 
 @bp.route("/trip/<int:trip_id>")

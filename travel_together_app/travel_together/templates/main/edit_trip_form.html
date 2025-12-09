@@ -20,14 +20,14 @@
     }
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{{ url_for('static', filename='js/trip_form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/edit_trip_form.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/gh/jahiidh/double-range-slider/d.slider.js"></script>
 {% endblock %}
 
 
 {% block content %}<div id="formPopupModal">
     <form id="trip-form" data-user-age="{{ current_user.age }}"
-        action="{{ url_for('main.edit_trip', trip_id=trip.id) }}" method="patch">
+        action="{{ url_for('main.edit_trip', trip_id=trip.id) }}" method="POST" enctype="multipart/form-data">
         <h2 class="form-header">Edit your travel proposal!</h2>
 
         <div class="form-step active-step" id="step-1">
@@ -55,9 +55,10 @@
                         </label>
                     </div>
                     <select id="status" name="status" placeholder="Trip Status" required>{{ trip.status }}
+
                         {% for status in statuses %}
-                        <option value="{{ status }}" {% if status==trip.status.name %}selected{% endif %}>
-                            {{ status.name.replace('_', ' ').title()}}</option>
+                        <option value="{{ status.value }}" {% if status==trip.status.name %}selected{% endif %}>
+                            {{ status.name.replace('_', ' ').title() }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -95,10 +96,13 @@
                         </label>
                     </div>
                     <div id="destination-container">
+                        {% set dest_list = trip.destinations.split(',') if trip.destinations else [] %}
+                        {% for dest in dest_list %}
                         <div class="destination-entry">
                             <input type="text" class="destination" name="destination" placeholder="Destination"
-                                required>
+                                value="{{ dest }}" required>
                         </div>
+                        {% endfor %}
                     </div>
                     <span id="add-destination" class="add-destination">Add another destination</span>
                 </div>
@@ -114,9 +118,11 @@
                     </div>
                     <div class="date-entries">
                         <label for="start">From:</label>
-                        <input type="date" id="start" name="start" value="{{ trip.start_date or '' }}" required>
+                        <input type="date" id="start" name="start"
+                            value="{{ trip.start_date if trip.start_date else '' }}" required>
                         <label for="end">To:</label>
-                        <input type="date" id="end" name="end" value="{{ trip.end_date or '' }}" required>
+                        <input type="date" id="end" name="end" value="{{ trip.end_date if trip.end_date else '' }}"
+                            required>
                     </div>
                 </div>
             </div>
