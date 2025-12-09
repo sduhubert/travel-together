@@ -21,7 +21,8 @@
   <div class="top-container">
     <div class="trapezoid-overlay">
       <h1>Welcome!</h1>
-      <p>Start your great adventure now.</p>
+      <p>Travel with classmates...</p>
+      <p>Or make new lifelong friends.</p>
       <button class="primary-button" id="openFormPopup">Create a new trip!</button>
       <a href="{{url_for('main.browse_trips')}}">
         <button class="secondary-button">Browse trips</button>
@@ -33,7 +34,7 @@
 
   
   <div class="trip-contents">
-    <h1>Recently added trips</h1>
+    <h1>Recently Added Trips</h1>
     {% set trips = latest_trips[:4] %}
     {% include 'trips_template.html' %}
   </div>
