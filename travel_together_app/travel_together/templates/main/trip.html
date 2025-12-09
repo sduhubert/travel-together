@@ -10,16 +10,17 @@
 {% endblock %}
 
 {% block content %}
+<div id="formPopupOverlay" style="display:none;"></div>
+<div id="formPopupModal" style="display:none;">
+  <div id="formPopupContent">
+    {% include 'main/edit_trip_form.html' %}
+  </div>
+  <button id="closeFormPopup">Close</button>
+</div>
+
 <div class="single_trip_container">
   <div class="container">
-    <div id="formPopupOverlay" style="display:none;"></div>
 
-    <div id="formPopupModal" style="display:none;">
-      <div id="formPopupContent">
-        {% include 'main/edit_trip_form.html' %}
-      </div>
-      <button id="closeFormPopup">Close</button>
-    </div>
     {% set max_travelers = trip.max_travelers or 999999 %}
     {% set min_age = trip.min_age or 0 %}
     {% set max_age = trip.max_age or 999999 %}

@@ -26,7 +26,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 5vw;
+    padding: 5vw 3vw;
     box-sizing: border-box;
 }
 
