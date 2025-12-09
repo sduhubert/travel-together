@@ -34,7 +34,7 @@
 .step-header {
     position: fixed;
     padding-top: 1vw;
-    font-size: 1.3vw;
+    font-size: 1.2vw;
     align-self: center;
 }
 
@@ -275,7 +275,7 @@ input.additional-destination {
 .double-range {
     display: flex;
     align-items: center;
-    width: 100%;
+    flex: 1;
     gap: 1vw;
 }
 
@@ -286,4 +286,10 @@ input.additional-destination {
     gap: 1vh;
     flex: 1;
     min-width: 0;
+}
+
+/* ================= CHECKBOXES/FINALIZATION ================= */
+
+.single-entry3 .checkbox-wrapper {
+    margin-left: 0;
 }

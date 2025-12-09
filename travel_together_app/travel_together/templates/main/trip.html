@@ -10,16 +10,17 @@
 {% endblock %}
 
 {% block content %}
+<div id="formPopupOverlay" style="display:none;"></div>
+<div id="formPopupModal" style="display:none;">
+  <div id="formPopupContent">
+    {% include 'main/edit_trip_form.html' %}
+  </div>
+  <button id="closeFormPopup">Close</button>
+</div>
+
 <div class="single_trip_container">
   <div class="container">
-    <div id="formPopupOverlay" style="display:none;"></div>
 
-    <div id="formPopupModal" style="display:none;">
-      <div id="formPopupContent">
-        {% include 'main/edit_trip_form.html' %}
-      </div>
-      <button id="closeFormPopup">Close</button>
-    </div>
     {% set max_travelers = trip.max_travelers or 999999 %}
     {% set min_age = trip.min_age or 0 %}
     {% set max_age = trip.max_age or 999999 %}
@@ -118,16 +119,29 @@
       </div>
     </div>
 
-    {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)
-      %}
+    {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)%}
       {% if not already_joined %}
-      <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
-        <button type="submit">Join Trip!</button>
-      </form>
+        <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+          <button type="submit">Join Trip!</button>
+        </form>
       {% else %}
-      <p>You are an active member of this trip.</p>
+          <p class="member-specifics">You are an active member of this trip.</p>
+        {% if current_user.is_editor_for(trip) %}
+          <p class="member-specifics membership-level">Membership Level: Editor</p>
+        {% else %}
+          <p class="member-specifics membership-level">Membership Level: Member</p>
+        {% endif %}
       {% endif %}
-      {% endif %}
+    {% endif %}
+
+      <div id="formPopupOverlay" style="display:none;">
+        <div id="formPopupModal" style="display:none;">
+          <div id="formPopupContent">
+            {% include 'main/edit_trip_form.html' %}
+          </div>
+          <button id="closeFormPopup">Close</button>
+        </div>
+      </div>
 
       <div class="page-contents">
         {% if already_joined %}
@@ -253,6 +267,7 @@
               <h3>Meetup Details</h3>
               <br>
               <p><strong>Location: </strong><span id="detail-location"></span></p>
+              <p><strong>Start date: </strong><span id="detail-start"></span></p>
               <p><strong>Description: </strong><span id="detail-description"></span></p>
               <p><strong>Link: </strong><a id="detail-link" href="#" target="_blank"></a></p>
 

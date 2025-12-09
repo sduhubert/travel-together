@@ -188,11 +188,13 @@ function filterJoinableTrips() {
         const maxTravelers = parseInt(tripItem.data("max-travelers")) || 999999;
         const status = parseInt(tripItem.data("status")) || 0;
 
+        const member = tripItem.attr("data-is-member") === "true";
+
         const inAgeRange = userAge >= minAge && userAge <= maxAge;
         const full = currentParticipants >= maxTravelers;
         const open = status === 0;
 
-        $(this).toggle(inAgeRange && !full && open);
+        $(this).toggle(!member && inAgeRange && !full && open);
     });
 }
 

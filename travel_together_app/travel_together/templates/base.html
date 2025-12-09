@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Travel together</title>
+    <title>SchoolTrip</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='travel-together.css') }}"
@@ -19,7 +19,7 @@
         <a href="{{ url_for('main.index') }}">
           <img src="{{ url_for('static', filename='resources/logo-full.png') }}"  alt="Home" class="header-icon header-logo" />
         </a>
-        <h1>Travel Together!</h1>
+        <h1>SchoolTrip</h1>
         <div class="spacer">
           {% if current_user.is_authenticated: %}
           <a href="{{ url_for('main.profile', user_id=current_user.id) }}">

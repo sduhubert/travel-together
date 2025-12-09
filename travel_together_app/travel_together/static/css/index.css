@@ -26,18 +26,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 5vw;
+    padding: 5vw 3vw;
     box-sizing: border-box;
 }
 
 .trapezoid-overlay h1 {
     margin: 0 0 10px 0;
-    font-size: 3vw;
+    font-size: 3.5vw;
 }
 
 .trapezoid-overlay p {
     margin: 0 0 20px 0;
-    font-size: 1.2vw;
+    font-size: 1vw;
 }
 
 .trapezoid-overlay a {
