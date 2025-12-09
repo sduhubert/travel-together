@@ -119,16 +119,21 @@
       </div>
     </div>
 
-    {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)
-      %}
+    {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)%}
       {% if not already_joined %}
-      <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
-        <button type="submit">Join Trip!</button>
-      </form>
+        <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+          <button type="submit">Join Trip!</button>
+        </form>
       {% else %}
-      <p>You are an active member of this trip.</p>
+          <p class="member-specifics">You are an active member of this trip.</p>
+        {% if current_user.is_editor_for(trip) %}
+          <p class="member-specifics membership-level">Membership Level: Editor</p>
+        {% else %}
+          <p class="member-specifics membership-level">Membership Level: Member</p>
+        {% endif %}
       {% endif %}
-      {% endif %}
+    {% endif %}
+
       <div id="formPopupOverlay" style="display:none;">
         <div id="formPopupModal" style="display:none;">
           <div id="formPopupContent">
