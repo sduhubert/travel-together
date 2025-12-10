@@ -129,17 +129,28 @@ $(document).ready(function () {
         const $inputs = control.inputs.map(selector => $(selector));
 
         const toggleInputs = () => {
-            const isFinalized = $finalized.is(":checked");
+            const isFinalized = $finalized.is(":checked"); 
 
             $inputs.forEach($input => {
                 $input.prop("disabled", isFinalized);
                 $input.toggleClass("disabled", isFinalized);
             });
+
+            if ($finalized.data("locked")) {
+                $finalized.on("change", function () {
+                    if (!this.checked) {
+                        this.checked = true;
+                    }
+                    toggleInputs();
+                });
+            }
         };
 
         toggleInputs();
+
         $finalized.on("change", toggleInputs);
     });
+
 
     const optionalControls = [
         { checkbox: "#budgetToggle", finalized: "#budgetFinalizedToggle", inputs: ["#budget"] },
@@ -154,7 +165,7 @@ $(document).ready(function () {
                 ".range-input .max"
             ]
         }
-    ];
+        ];
 
     optionalControls.forEach(control => {
         const $checkbox = $(control.checkbox);
@@ -166,19 +177,25 @@ $(document).ready(function () {
             const isEnabled = $checkbox.is(":checked") && !isFinalized;
 
             $inputs.forEach($input => {
-                $input.prop("disabled", !$checkbox.is(":checked"));
-                $input.toggleClass("disabled", !$checkbox.is(":checked"));
+                $input.prop("disabled", !isEnabled);
+                $input.toggleClass("disabled", !isEnabled);
             });
-
-            if (isFinalized) {
-                $checkbox.prop("disabled", true);
-            }
         };
 
+        if ($finalized.data("locked")) {
+            $finalized.on("change", function () {
+                if (!this.checked) {
+                    this.checked = true;
+                }
+                toggleInputs();
+            });
+        }
+
         toggleInputs();
-        $checkbox.on("change", toggleInputs);
+
         $finalized.on("change", toggleInputs);
     });
+
 
 
     // Additional form validation

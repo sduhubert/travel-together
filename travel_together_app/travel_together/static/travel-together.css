@@ -115,14 +115,3 @@ p, span, label, input, textarea, select {
 /* MIGRATED TO TRIPS_TEMPLATE.CSS */
 
 /*============================== FORM ==============================*/
-.range-slider {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  width: 100%;
-}
-
-.range-slider input[type="range"] {
-  width: 100%;
-  /* or 100% */
-}
