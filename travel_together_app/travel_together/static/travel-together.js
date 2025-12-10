@@ -189,11 +189,10 @@ function filterJoinableTrips() {
         const status = parseInt(tripItem.data("status")) || 0;
 
         const member = tripItem.attr("data-is-member") === "true";
-        const university = tripItem.attr("")
 
         const inAgeRange = userAge >= minAge && userAge <= maxAge;
         const full = currentParticipants >= maxTravelers;
-        const open = status === 0;
+        const open = (status === 0) || (status === 1);
 
 
         $(this).toggle(!member && inAgeRange && !full && open);
