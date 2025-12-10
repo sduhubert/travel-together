@@ -46,9 +46,9 @@
 
                 <div class="single-entry">
                     <label for="status">Status</label>
-                    <select id="status" name="status" placeholder="Trip Status" required>{{ trip.status }}
+                    <select id="status" name="status" placeholder="Trip Status" required>
                         {% for status in statuses %}
-                        <option value="{{ status.value }}" {% if status==trip.status.name %}selected{% endif %}>
+                        <option value="{{ status.value }}" {% if status.value==trip.status %}selected{% endif %}>
                             {{ status.name.replace('_', ' ').title() }}</option>
                         {% endfor %}
                     </select>
