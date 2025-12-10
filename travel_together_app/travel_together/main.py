@@ -151,6 +151,9 @@ def edit_trip(trip_id):
     description = request.form.get("description", "").strip()
     
     status = request.form.get("status")
+    if trip.status in [2, 3, 4]:
+        flash("This trip is closed and cannot be modified.", "error")
+        return redirect(url_for('main.trip', trip_id=trip.id))
     
     origin = request.form.get("departure_location", "").strip()
     

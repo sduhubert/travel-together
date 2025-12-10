@@ -139,13 +139,14 @@
                 {% else %}
                 <p>Status:<span class="criteria red"> {{ status_map[trip.status] }}</span></p>
                 {% endif %}
+                {% set trip_readonly = trip.status in [2, 3, 4] %}
           </div>
 
 
 
           <div class="button-container">
             {% if current_user.is_editor_for(trip) %}
-            {% if not (trip.status == 3 or trip.status == 4) %}
+            {% if not (trip.status in [2, 3, 4]) %}
             <button class="trip-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
             {% endif %}
             {% if trip.status == 1 %}
@@ -321,11 +322,11 @@
                   {% endif %}
                 </div>
               </div>
-
-              <form action="{{ url_for('main.new_message', trip_id=trip.id) }}#message-board-area" method="post">
+              
+              
+              <form {% if not trip_readonly %} action="{{ url_for('main.new_message', trip_id=trip.id) }}#message-board-area" method="post"{% endif %}>
                 <input type="hidden" name="forum_topic" value="{{ active_topic }}" id="forum-topic-input"
                   data-active-topic="{{ active_topic }}">
-
                 <div id="new-forum-topic-input" style="display: none">
                   <label>Name your new forum topic:</label>
                   <input type="text" name="new_forum_topic" placeholder="Enter new forum topic name..." maxlength="64">
@@ -334,8 +335,13 @@
 
                 <div class="send-message">
                   <textarea class="send-message-area" maxlength="200" name="message-content"
-                    placeholder="What's on your mind?"></textarea>
-                  <button class="send-message-button" type="submit">Send</button>
+                    {% if not trip_readonly %}
+                      placeholder="What's on your mind?"
+                    {% else %}
+                      disabled placeholder="Can't send new messages in an archivised trip"
+                    {% endif %}
+                  ></textarea>
+                  <button class="send-message-button"{% if trip_readonly %}disabled{%endif%} type="submit">Send</button>
                 </div>
               </form>
             </div>
@@ -346,7 +352,7 @@
               <h2>Event Calendar</h2>
               <h4>See What Events/Meetups Are Scheduled For This Trip</h4>
             </div>
-            <div id="calendar"></div>
+            <div id="calendar" data-readonly="{{trip_readonly}}"></div>
           </div>
 
           <div id="meetup-area">
