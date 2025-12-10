@@ -9,20 +9,16 @@ from sqlalchemy.sql import func
 
 
 from . import db
-
-class FollowingAssociation(db.Model):
-    follower_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
-    followed_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     
 class TripProposalParticipation(db.Model):
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id", ondelete="CASCADE"), primary_key=True)
     is_editor: Mapped[bool] = mapped_column(Boolean, default=False)
     
 class TripProposalMessage(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"))
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id", ondelete="CASCADE"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
     user: Mapped["User"] = relationship("User")
     forum_topic: Mapped[str] = mapped_column(String(64), default="Main")
     content: Mapped[str] = mapped_column(String(512))
@@ -42,20 +38,8 @@ class User(flask_login.UserMixin, db.Model):
     visiting_uni: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     country: Mapped[str] = mapped_column(String(2))
     profile_pic: Mapped[str] = mapped_column(String(256))
-    #sex: Mapped[Optional["TripSexPreference"]] = mapped_column(Integer) # Use SexPreference enum values
     trip_proposals: Mapped[Set["TripProposal"]] = relationship("TripProposal", secondary="trip_proposal_participation", back_populates="participants")
-    # following: Mapped[List["User"]] = relationship(
-    #     secondary=FollowingAssociation.__table__,
-    #     primaryjoin=FollowingAssociation.follower_id == id,
-    #     secondaryjoin=FollowingAssociation.followed_id == id,
-    #     back_populates="followers",
-    # )
-    # followers: Mapped[List["User"]] = relationship(
-    #     secondary=FollowingAssociation.__table__,
-    #     primaryjoin=FollowingAssociation.followed_id == id,
-    #     secondaryjoin=FollowingAssociation.follower_id == id,
-    #     back_populates="following",
-    # )
+
     @property
     def age(user):
         today = datetime.date.today()
@@ -91,8 +75,8 @@ class TripSexPreference(enum.Enum):
     MALE = 1
     
 class TripProposalJoinRequest(db.Model):
-    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"), primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     timestamp: Mapped[datetime.datetime] = mapped_column(
         # pylint: disable=not-callable
         DateTime(timezone=True), server_default=func.now()
@@ -100,21 +84,18 @@ class TripProposalJoinRequest(db.Model):
     
 class TripProposal(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
     creator: Mapped["User"] = relationship("User")
     participants: Mapped[Set["User"]] = relationship("User", secondary="trip_proposal_participation", back_populates="trip_proposals")
     messages: Mapped[List["TripProposalMessage"]] = relationship("TripProposalMessage", backref="trip", order_by="TripProposalMessage.timestamp.asc()")
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(512))
-    response_to_id: Mapped[int] = mapped_column(Integer)
     origin: Mapped[str] = mapped_column(String(128))
     destinations: Mapped[str] = mapped_column(String(512))  # Comma-separated list
     start_date: Mapped[datetime.date] = mapped_column(DateTime(timezone=True))
     end_date: Mapped[datetime.date] = mapped_column(DateTime(timezone=True))
     budget: Mapped[Optional[int]] = mapped_column(Integer) # in EUR
     max_travelers: Mapped[Optional[int]] = mapped_column(Integer)
-    sex_preference: Mapped[Optional["TripSexPreference"]] = mapped_column(Integer) # Use SexPreference enum values
-    activities: Mapped[Optional[str]] = mapped_column(String(512))  # Comma-separated list
     min_age: Mapped[Optional[int]] = mapped_column(Integer)
     max_age: Mapped[Optional[int]] = mapped_column(Integer)
     university: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
@@ -129,8 +110,6 @@ class TripProposal(db.Model):
     dates_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     budget_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     max_travelers_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
-    sex_preference_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
-    activities_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     age_range_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     university_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     
@@ -144,8 +123,8 @@ class TripProposal(db.Model):
     
 class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"))
-    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id", ondelete="CASCADE"))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
     location: Mapped[str] = mapped_column(String(128))
     date_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     description: Mapped[Optional[str]] = mapped_column(String(512))
