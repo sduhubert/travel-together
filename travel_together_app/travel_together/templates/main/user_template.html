@@ -8,6 +8,11 @@
 {% block content %}
 <div class="content">
   <div class="profile-container">
+    <div class="return-button-area">
+      <a href="{{ url_for('main.index') }}">
+        <button type="submit" id="return-button">← Return</button>
+      </a>
+    </div>
     <div class="profile-container-lefthand">
       <img class="pfp" src="{{ url_for('static', filename='resources/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
       <div class="lefthand-contents">
@@ -55,10 +60,5 @@
     <h1> Trips {{ user.name }} participates in: </h1>
     <section>{% include 'trips_template.html' %}</section>
   </div>
-</div>
-<div>
-  <a href="{{ url_for('main.index') }}">
-    <button type="submit">Return</button>
-  </a>
 </div>
 {% endblock %}
