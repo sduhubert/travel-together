@@ -1,13 +1,21 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block head %}
-    <title>{{user.name}}'s profile - Travel together</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}"/>
-    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<title>{{user.name}}'s profile - Travel together</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}" />
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 {% endblock %}
 
 {% block content %}
+{% for message in get_flashed_messages() %}
+<script>alert("{{ message }}");</script>
+{% endfor %}
 <div class="content">
   <div class="profile-container">
+    <div class="return-button-area">
+      <a href="{{ url_for('main.index') }}">
+        <button type="submit" id="return-button">← Return</button>
+      </a>
+    </div>
     <div class="profile-container-lefthand">
       <img class="pfp" src="{{ url_for('static', filename='resources/' ~ (user.profile_pic or 'Defaultpfp.png')) }}">
       <div class="lefthand-contents">
@@ -24,9 +32,9 @@
         </div>
         <div class="user-description">
           {% if user.desc %}
-            "{{ user.desc }}"
+          "{{ user.desc }}"
           {% else %}
-            {{ user.name }} has not yet added a description...
+          {{ user.name }} has not yet added a description...
           {% endif %}
         </div>
       </div>
@@ -42,23 +50,18 @@
       </div>
       <div class="righthand-line">
         {% if user.visiting_uni %}
-          <p>{{ user.visiting_uni }}</p>
+        <p>{{ user.visiting_uni }}</p>
         {% else %}
-          <p>N/A</p> 
+        <p>N/A</p>
         {% endif %}
         <img class=icon src="{{ url_for('static', filename='resources/visiting-uni.png') }}">
       </div>
     </div>
-      
+
   </div>
   <div class="trip-contents">
     <h1> Trips {{ user.name }} participates in: </h1>
     <section>{% include 'trips_template.html' %}</section>
   </div>
-</div>
-<div>
-  <a href="{{ url_for('main.index') }}">
-    <button type="submit">Return</button>
-  </a>
 </div>
 {% endblock %}
