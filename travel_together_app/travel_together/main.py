@@ -87,7 +87,6 @@ def new_trip():
         creator=user,
         title=title, 
         description=description,
-        response_to_id=0, 
         origin=origin, 
         destinations=destinations_str, 
         start_date=start, 
@@ -230,10 +229,6 @@ def edit_trip(trip_id):
 @flask_login.login_required
 def trip(trip_id, forum_topic=None):
     trip = db.get_or_404(model.TripProposal, trip_id)
-    #if (trip.response_to_id is not None):
-    #    abort(403)
-    query = db.select(model.TripProposal).filter_by(response_to_id=trip_id).order_by(model.TripProposal.timestamp.desc())
-    responses = db.session.execute(query).scalars().all()
     user = flask_login.current_user
     already_joined = user in trip.participants
     
@@ -266,7 +261,7 @@ def trip(trip_id, forum_topic=None):
     active_forum_messages_query = (db.select(model.TripProposalMessage).where(model.TripProposalMessage.trip_proposal_id == trip_id, model.TripProposalMessage.forum_topic == active_topic).order_by(model.TripProposalMessage.timestamp.asc()))
     active_forum_messages = db.session.execute(active_forum_messages_query).scalars().all()
 
-    return render_template("main/trip.html", trip=trip, statuses=model.TripProposalStatus, join_requests=join_requests, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
+    return render_template("main/trip.html", trip=trip, statuses=model.TripProposalStatus, join_requests=join_requests, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
 
 @bp.route("/trip/<int:trip_id>/join", methods=["POST"])
 @flask_login.login_required
