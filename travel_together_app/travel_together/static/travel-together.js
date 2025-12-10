@@ -196,10 +196,10 @@ function filterJoinableTrips() {
 
         let validUni = true;
 
-        if (uniRestriction === "home_uni"){
+        if (uniRestriction === "home_only"){
             validUni = (userHomeUni === creatorHomeUni) || (userVisitingUni === creatorHomeUni);
         }
-        else if (uniRestriction === "visiting_uni"){
+        else if (uniRestriction === "visiting_only"){
             validUni = (userHomeUni === creatorVisitingUni) || (userVisitingUni === creatorVisitingUni);
         }
         else if (uniRestriction === "both"){

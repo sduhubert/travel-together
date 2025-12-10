@@ -510,6 +510,8 @@ def delete_meetup(trip_id, meetup_id):
 @bp.route("/browse_trips")
 @flask_login.login_required
 def browse_trips():
+    user = flask_login.current_user
+
     trips_query = model.TripProposal.query
 
     max_budget = request.args.get("max_budget", type=float)
@@ -538,6 +540,41 @@ def browse_trips():
     destination = request.args.get("destination")
     if destination:
         trips_query = trips_query.filter(model.TripProposal.destinations.ilike(f"%{destination}%"))
+
+    university = request.args.get("university")
+    if university:
+       trips_query = trips_query.join(model.User, model.TripProposal.creator_id == model.User.id)
+
+       trips_query = trips_query.filter(
+        db.or_(
+            # Trip is for user's home university
+            db.and_(
+                model.TripProposal.university == "home_uni",
+                db.or_(
+                    model.User.home_uni == user.home_uni,
+                    model.User.visiting_uni == user.home_uni
+                )
+            ),
+            # Trip is for user's visiting university
+            db.and_(
+                model.TripProposal.university == "visiting_uni",
+                db.or_(
+                    model.User.home_uni == user.visiting_uni,
+                    model.User.visiting_uni == user.visiting_uni
+                )
+            ),
+            # Trip is for both universities
+            db.and_(
+                model.TripProposal.university == "both",
+                db.or_(
+                    model.User.home_uni == user.home_uni,
+                    model.User.visiting_uni == user.home_uni,
+                    model.User.home_uni == user.visiting_uni,
+                    model.User.visiting_uni == user.visiting_uni
+                )
+            )
+        )
+    )
     
     status = request.args.get("status")
     if status:
