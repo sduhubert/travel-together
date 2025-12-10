@@ -164,11 +164,12 @@ def edit_profile_post():
     if country:
         user.country = country
 
-    # Optional desc, otherwise stick to the old one
     desc = request.form.get('description')
     if desc and len(desc) > MAX_DESC_LENGTH:
         flash(f"Maximum description length is {MAX_DESC_LENGTH} characters.")
         return redirect(url_for("auth.edit_profile"))
+    
+    user.desc = desc or user.desc
 
     # Optional home and visiting uni, otherwise stick to the old ones
     home_uni = request.form.get('home_uni')

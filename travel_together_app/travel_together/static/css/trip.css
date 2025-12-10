@@ -455,7 +455,7 @@
       align-items: stretch;
       padding: 5vh 10vw;
 
-      height: 95vh;
+      height: auto;
       min-height: 0;
   }
 
@@ -521,7 +521,7 @@
       display: flex;
       background-color: #f2e0c3;
       flex: 1;
-      width: calc(100% - 1vw - 2px);
+      width: calc(100% - 1vw - 1px);
       display: flex;
       border-bottom-left-radius: 15px;
       border-bottom-right-radius: 15px;

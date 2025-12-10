@@ -12,6 +12,8 @@
  -->
 <script>
   window.USER_AGE = "{{ current_user.age }}";
+  window.USER_HOME_UNI = "{{ current_user.home_uni }}";
+  window.USER_VISITING_UNI = "{{ current_user.visiting_uni }}";
   window.SHOW_ALL_TRIPS_URL = "{{ url_for('main.browse_trips') }}#trip-list";
 </script>
 
@@ -61,6 +63,9 @@
 
     <label>Destination:</label>
     <input type="text" id="destination-filter" name="destination" placeholder="Enter somewhere you'd like to visit...">
+
+    <label>At Your Universities:</label>
+    <input type="checkbox" id="university-filter" name="university" value="1">
 
     <label>Trip Status: </label>
     <select id="status-filter" name="status">

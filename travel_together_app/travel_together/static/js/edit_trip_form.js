@@ -122,8 +122,9 @@ $(document).ready(function () {
     const controls = [
         { finalized: "#originFinalizedToggle", inputs: ["#departure_location"] },
         { finalized: "#destinationsFinalizedToggle", inputs: ["#destination-container .destination"] },
-        { finalized: "#datesFinalizedToggle", inputs: ["#start", "#end"] }
-
+        { finalized: "#datesFinalizedToggle", inputs: ["#start", "#end"] },
+        { checkbox: "#budgetToggle", finalized: "input[name='budget_finalized']", inputs: ["#budget"] },
+        { checkbox: "#maxMembersToggle", finalized: "input[name='max_travelers_finalized']", inputs: ["#max_members"] }
     ];
 
     controls.forEach(control => {
@@ -185,19 +186,16 @@ $(document).ready(function () {
             });
         };
 
-        if ($finalized.data("locked")) {
-            $finalized.on("change", function () {
-                if (!this.checked) {
-                    this.checked = true;
-                }
-                toggleInputs();
-            });
-        }
+        $finalized.on("change", function () {
+            if ($finalized.data("locked") && !this.checked) {
+                this.checked = true;
+            }
+            setTimeout(toggleInputs, 0);
+        });
 
         toggleInputs();
-        
-        $finalized.on("change", toggleInputs);
     });
+
 
 
 

@@ -151,6 +151,9 @@ def edit_trip(trip_id):
     description = request.form.get("description", "").strip()
     
     status = request.form.get("status")
+    if trip.status in [2, 3, 4]:
+        flash("This trip is closed and cannot be modified.", "error")
+        return redirect(url_for('main.trip', trip_id=trip.id))
     
     origin = request.form.get("departure_location", "").strip()
     
@@ -271,25 +274,40 @@ def join_trip(trip_id):
     trip = db.get_or_404(model.TripProposal, trip_id)
     user = flask_login.current_user
 
-    if user in trip.participants or trip.status != model.TripProposalStatus.OPEN:
+    if trip.status != model.TripProposalStatus.OPEN.value:
+        flash("This trip is not open for joining.", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
-    
+
+    if user in trip.participants:
+        flash("You are already part of this trip!", "info")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+
     if trip.max_travelers is not None and len(trip.participants) >= trip.max_travelers:
+        flash("Trip is already full!", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
-    
-    if trip.max_age is not None and trip.min_age is not None:
-        if trip.min_age > user.age or trip.max_age < user.age:
+
+    if trip.age_range_finalized:
+        if trip.min_age and user.age < trip.min_age:
+            flash("You are too young for this trip.", "error")
+            return redirect(url_for("main.trip", trip_id=trip_id))
+        if trip.max_age and user.age > trip.max_age:
+            flash("You are too old for this trip.", "error")
             return redirect(url_for("main.trip", trip_id=trip_id))
 
-    joining_user = model.TripProposalParticipation(
+    if trip.university_finalized and trip.university:
+        if not user.university or user.university != trip.university:
+            flash("This trip is restricted to a specific university.", "error")
+            return redirect(url_for("main.trip", trip_id=trip_id))
+
+    participation = model.TripProposalParticipation(
         user_id=user.id,
         trip_proposal_id=trip.id,
         is_editor=False,
     )
-
-    db.session.add(joining_user)
+    db.session.add(participation)
     db.session.commit()
 
+    flash("Successfully joined the trip!", "success")
     return redirect(url_for("main.trip", trip_id=trip_id))
 
 @bp.route("/trip/<int:trip_id>/request_join", methods=["POST"])
@@ -495,6 +513,8 @@ def delete_meetup(trip_id, meetup_id):
 @bp.route("/browse_trips")
 @flask_login.login_required
 def browse_trips():
+    user = flask_login.current_user
+
     trips_query = model.TripProposal.query
 
     max_budget = request.args.get("max_budget", type=float)
@@ -523,6 +543,41 @@ def browse_trips():
     destination = request.args.get("destination")
     if destination:
         trips_query = trips_query.filter(model.TripProposal.destinations.ilike(f"%{destination}%"))
+
+    university = request.args.get("university")
+    if university:
+       trips_query = trips_query.join(model.User, model.TripProposal.creator_id == model.User.id)
+
+       trips_query = trips_query.filter(
+        db.or_(
+            # Trip is for user's home university
+            db.and_(
+                model.TripProposal.university == "home_uni",
+                db.or_(
+                    model.User.home_uni == user.home_uni,
+                    model.User.visiting_uni == user.home_uni
+                )
+            ),
+            # Trip is for user's visiting university
+            db.and_(
+                model.TripProposal.university == "visiting_uni",
+                db.or_(
+                    model.User.home_uni == user.visiting_uni,
+                    model.User.visiting_uni == user.visiting_uni
+                )
+            ),
+            # Trip is for both universities
+            db.and_(
+                model.TripProposal.university == "both",
+                db.or_(
+                    model.User.home_uni == user.home_uni,
+                    model.User.visiting_uni == user.home_uni,
+                    model.User.home_uni == user.visiting_uni,
+                    model.User.visiting_uni == user.visiting_uni
+                )
+            )
+        )
+    )
     
     status = request.args.get("status")
     if status:

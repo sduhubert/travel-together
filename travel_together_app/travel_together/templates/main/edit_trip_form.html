@@ -134,7 +134,7 @@
                     <input type="number" id="budget" name="budget" value="{{ trip.budget or '' }}">
                     <div class="checkbox-wrapper">
                         <label>
-                            <input type="checkbox" name="budget_finalized" {% if trip.budget_finalized %}checked{% endif
+                            <input type="checkbox" name="budget_finalized" id="budgetFinalizedToggle" {% if trip.budget_finalized %}checked{% endif
                                 %} data-locked="{{ 'true' if trip.budget_finalized else 'false' }}">
                             Finalize
                         </label>
@@ -147,7 +147,7 @@
                     <input type="number" id="max_members" name="max_members" value="{{ trip.max_travelers or '' }}">
                     <div class="checkbox-wrapper">
                         <label>
-                            <input type="checkbox" name="max_travelers_finalized" {% if trip.max_travelers_finalized
+                            <input type="checkbox" name="max_travelers_finalized" id="maxMembersFinalizedToggle" {% if trip.max_travelers_finalized
                                 %}checked{% endif %} data-locked="{{ 'true' if trip.max_travelers_finalized else 'false' }}">
                             Finalize
                         </label>

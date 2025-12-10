@@ -158,8 +158,3 @@
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     transform: translateY(-2px);
 }
-
-#trip-filters button:active {
-    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
-    transform: translateY(2px);
-}

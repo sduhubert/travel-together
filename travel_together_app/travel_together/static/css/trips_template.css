@@ -39,7 +39,7 @@ a.trip-link {
     height: 3vw;
 }
 
-/*text overflow handling (with help of generative AI*/
+/*text overflow handling with help of generative AI*/
 .trip-title,
 .trip-origin,
 .trip-destinations {

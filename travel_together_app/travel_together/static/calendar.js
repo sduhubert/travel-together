@@ -1,6 +1,7 @@
 //referenced ClaudeAI for support creating event listener for calendar, allowing users to click onto calendar to add events/meetups
 document.addEventListener("DOMContentLoaded", function () {
   const calendarElement = document.getElementById("calendar");
+  var trip_readonly = $('#calendar').data("readonly");
 
   if (calendarElement) {
     const options = {
@@ -15,9 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
       },
 
       //calls the event listener so that the meetup area shows when the user clicks a date
+
+
       dateClick: function(info) {
-        showMeetupArea(info.date);
+        console.log(trip_readonly);
+        if(trip_readonly == "False") {
+          showMeetupArea(info.date);
+        }
       },
+
 
       eventClick: function(info) {
         const popup = document.getElementById("existing-meetup-popup");
