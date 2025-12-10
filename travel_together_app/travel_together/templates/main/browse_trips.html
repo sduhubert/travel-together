@@ -12,6 +12,8 @@
  -->
 <script>
   window.USER_AGE = "{{ current_user.age }}";
+  window.USER_HOME_UNI = "{{ current_user.home_uni }}";
+  window.USER_VISITING_UNI = "{{ current_user.visiting_uni }}";
   window.SHOW_ALL_TRIPS_URL = "{{ url_for('main.browse_trips') }}#trip-list";
 </script>
 

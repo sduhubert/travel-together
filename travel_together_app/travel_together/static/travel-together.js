@@ -178,6 +178,8 @@ $(document).on("click", "#show-all-trips", function(e){
 
 function filterJoinableTrips() {
     const userAge = parseInt(window.USER_AGE);
+    const userHomeUni = window.USER_HOME_UNI || "";
+    const userVisitingUni = window.USER_VISITING_UNI || "";
     
     $(".trip-link").each(function() {
         const tripItem = $(this).find(".trip-item");
@@ -187,15 +189,31 @@ function filterJoinableTrips() {
         const currentParticipants = parseInt(tripItem.data("current-participants")) || 0;
         const maxTravelers = parseInt(tripItem.data("max-travelers")) || 999999;
         const status = parseInt(tripItem.data("status")) || 0;
-
+        const creatorHomeUni = tripItem.data("home-uni") || "";
+        const creatorVisitingUni = tripItem.data("visiting-uni") || "";
+        const uniRestriction = tripItem.data("university-restriction") || "";
         const member = tripItem.attr("data-is-member") === "true";
+
+        let validUni = true;
+
+        if (uniRestriction === "home_uni"){
+            validUni = (userHomeUni === creatorHomeUni) || (userVisitingUni === creatorHomeUni);
+        }
+        else if (uniRestriction === "visiting_uni"){
+            validUni = (userHomeUni === creatorVisitingUni) || (userVisitingUni === creatorVisitingUni);
+        }
+        else if (uniRestriction === "both"){
+            validUni = (userHomeUni === creatorHomeUni) || (userVisitingUni === creatorHomeUni) || (userHomeUni === creatorVisitingUni) || (userVisitingUni === creatorVisitingUni);
+        }
+
+
 
         const inAgeRange = userAge >= minAge && userAge <= maxAge;
         const full = currentParticipants >= maxTravelers;
         const open = (status === 0) || (status === 1);
 
 
-        $(this).toggle(!member && inAgeRange && !full && open);
+        $(this).toggle(!member && inAgeRange && !full && open && validUni);
     });
 }
 

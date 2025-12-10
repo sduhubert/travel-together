@@ -455,7 +455,7 @@
       align-items: stretch;
       padding: 5vh 10vw;
 
-      height: 95vh;
+      height: auto;
       min-height: 0;
   }
 
