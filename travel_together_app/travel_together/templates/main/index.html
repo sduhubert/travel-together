@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
 
 
@@ -11,33 +11,33 @@
   <div id="formPopupOverlay" style="display:none;"></div>
 
   <div id="formPopupModal" style="display:none;">
-      <div id="formPopupContent">
-          {% include 'main/trip_form.html' %}
-      </div>
-      <button id="closeFormPopup">Close</button>
+    <div id="formPopupContent">
+      {% include 'main/trip_form.html' %}
+    </div>
+    <button id="closeFormPopup">Close</button>
   </div>
 </div>
 
-  <div class="top-container">
-    <div class="trapezoid-overlay">
-      <h1>Welcome!</h1>
-      <p>Travel with classmates...</p>
-      <p>Or make new lifelong friends.</p>
-      <button class="primary-button" id="openFormPopup">Create a new trip!</button>
-      <a href="{{url_for('main.browse_trips')}}">
-        <button class="secondary-button">Browse trips</button>
-      </a>
-    </div>
-
-    <img src="../../static/resources/banner2.jpg"/>
+<div class="top-container">
+  <div class="trapezoid-overlay">
+    <h1>Welcome!</h1>
+    <p>Travel with classmates...</p>
+    <p>Or make new lifelong friends.</p>
+    <button class="primary-button" id="openFormPopup">Create a new trip!</button>
+    <a href="{{url_for('main.browse_trips')}}">
+      <button class="secondary-button">Browse trips</button>
+    </a>
   </div>
 
-  
-  <div class="trip-contents">
-    <h1>Recently Added Trips</h1>
-    {% set trips = latest_trips[:4] %}
-    {% include 'trips_template.html' %}
-  </div>
+  <img src="../../static/resources/banner2.jpg" />
+</div>
+
+
+<div class="trip-contents">
+  <h1>Recently Added Trips</h1>
+  {% set trips = latest_trips %}
+  {% include 'trips_template.html' %}
+</div>
 
 </div>
 {% endblock %}
