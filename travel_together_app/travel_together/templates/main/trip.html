@@ -91,7 +91,7 @@
                 </form>
                 {% elif current_user.id != trip.creator_id %}
                 <form action="{{ url_for('main.leave_trip', trip_id=trip.id) }}" method="POST">
-                  <button type="submit" class="trip-button">Leave trip</button>
+                  <button type="submit" class="trip-button">Leave Trip</button>
                 </form>
                 {% endif %}
                 {% else %}
@@ -110,10 +110,25 @@
         <h2>Current Trip Members</h2>
         <div class="participant-list">
           {% for participant in trip.participants %}
-          <a class="single-participant" href="{{ url_for('main.profile', user_id=participant.id) }}">
-            <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" class="header-icon" />
-            <p>{{ participant.name }}</p>
-          </a>
+          <div class="participant">
+            <a class="single-participant" href="{{ url_for('main.profile', user_id=participant.id) }}">
+              <img src="{{ url_for('static', filename='resources/' ~ participant.profile_pic) }}" class="header-icon" />
+              <span>{{ participant.name }}</span>
+            </a>
+
+            <span class="participant-role">
+              {% if participant.is_editor_for(trip) %}
+              <span class="editor-badge">Editor</span>
+              {% elif current_user.is_editor_for(trip) %}
+              <form method="POST"
+                action="{{ url_for('main.make_editor', trip_id=trip.id, participant_id=participant.id) }}">
+                <button type="submit" class="make-editor-btn">Make Editor</button>
+              </form>
+              {% else %}
+              <span class="member-badge">Member</span>
+              {% endif %}
+            </span>
+          </div>
           {% endfor %}
         </div>
       </div>

@@ -133,6 +133,21 @@ def new_trip():
    # else:
        # return redirect(url_for("main.trip", trip_id=new_trip.id))
 
+@bp.route("/make_editor/<int:trip_id>/<int:participant_id>", methods=["POST"])
+@flask_login.login_required
+def make_editor(trip_id, participant_id):
+    trip = model.TripProposal.query.get_or_404(trip_id)
+    user = flask_login.current_user
+    
+    if not user.is_editor_for(trip):
+        flash("You do not have permission to promote editors for this trip.", "error")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    editor = model.TripProposalParticipation.query.get((participant_id, trip.id))
+    editor.is_editor = True
+    db.session.commit()
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
 @bp.route("/edit_trip/<int:trip_id>", methods=["POST"])
 @flask_login.login_required
 def edit_trip(trip_id):
