@@ -81,15 +81,37 @@
 
 
           <div class="button-container">
-            {% if current_user.is_editor_for(trip) and not (trip.status == 3 or trip.status == 4) %}
+            {% if current_user.is_editor_for(trip) %}
+            {% if not (trip.status == 3 or trip.status == 4) %}
             <button class="trip-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
             {% endif %}
+            {% if trip.status == 1 %}
+            <button class="trip-button" id="open-join-requests-popup">View Join Requests</button>
+            {% endif %}
+            {% endif %}
             {% if trip.participants|length < max_travelers and current_user.age>= min_age and current_user.age <=
-                max_age %} {% if not already_joined %} <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}"
-                method="POST">
-                <button type="submit" class="trip-button">Join Trip!</button>
+                max_age %} {% if not already_joined %} {% if trip.status==0 %} <form
+                action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+                <button type="submit" class="trip-button">
+                  Join Trip
+                </button>
                 </form>
-                {% elif current_user.id != trip.creator_id %}
+                {% elif trip.status == 1 %}
+                {% if not current_user.has_pending_request_for(trip) %}
+                <form action="{{ url_for('main.request_join_trip', trip_id=trip.id) }}" method="POST">
+                  <button type="submit" class="trip-button">
+                    Request to Join Trip
+                  </button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('main.cancel_join_request', trip_id=trip.id) }}" method="POST">
+                  <button type="submit" class="trip-button">
+                    Cancel Join Request
+                  </button>
+                </form>
+                {% endif %}
+                {% endif %}
+                {% elif current_user.is_editor_for(trip) == False or trip.num_editors() > 1 %}
                 <form action="{{ url_for('main.leave_trip', trip_id=trip.id) }}" method="POST">
                   <button type="submit" class="trip-button">Leave Trip</button>
                 </form>
@@ -133,6 +155,44 @@
         </div>
       </div>
     </div>
+
+    <div id="join-requests-popup" class="popup">
+      <div class="popup-content">
+        <span class="close">&times;</span>
+        <h2>Active Join Requests</h2>
+        <div class="join-request-list">
+          {% if join_requests|length == 0 %}
+          <p>No active join requests.</p>
+          {% endif %}
+          {% for req, user in join_requests %}
+          <div class="join-request">
+            <a class="single-participant" href="{{ url_for('main.profile', user_id=req.user_id) }}">
+              <img src="{{ url_for('static', filename='resources/' ~ user.profile_pic) }}" class="header-icon" />
+              <span>{{ user.name }}</span>
+            </a>
+
+            <div class="buttons-container">
+              <form method="POST"
+                action="{{ url_for('main.update_join_request', trip_id=trip.id, requesting_user_id=req.user_id) }}">
+                <button type="submit" class="approve-btn" name="approval_status" value="approve">Approve</button>
+                <button type="submit" class="deny-btn" name="approval_status" value="deny">Deny</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
 
     {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)%}
       {% if already_joined %}

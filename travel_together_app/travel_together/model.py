@@ -70,6 +70,15 @@ class User(flask_login.UserMixin, db.Model):
         )
         return bool(participation)
     
+    def has_pending_request_for(self, trip):
+        pending_request = db.session.scalar(
+            db.select(func.count()).select_from(TripProposalJoinRequest).where(
+                TripProposalJoinRequest.user_id == self.id,
+                TripProposalJoinRequest.trip_proposal_id == trip.id
+            )
+        )
+        return pending_request > 0
+    
 class TripProposalStatus(enum.Enum):
     OPEN = 0
     APPROVAL_REQUIRED = 1
@@ -80,6 +89,14 @@ class TripProposalStatus(enum.Enum):
 class TripSexPreference(enum.Enum):
     FEMALE = 0
     MALE = 1
+    
+class TripProposalJoinRequest(db.Model):
+    trip_proposal_id: Mapped[int] = mapped_column(ForeignKey("trip_proposal.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    timestamp: Mapped[datetime.datetime] = mapped_column(
+        # pylint: disable=not-callable
+        DateTime(timezone=True), server_default=func.now()
+    )
     
 class TripProposal(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

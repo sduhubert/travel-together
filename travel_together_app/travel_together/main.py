@@ -244,6 +244,9 @@ def trip(trip_id, forum_topic=None):
     already_joined = user in trip.participants
     
     trip_admin = False
+    join_requests = []
+    requesting_users = []
+    
     if already_joined:
         is_editor_query = db.select(model.TripProposalParticipation.is_editor).where(
             model.TripProposalParticipation.user_id == user.id,
@@ -252,6 +255,12 @@ def trip(trip_id, forum_topic=None):
         is_editor = db.session.execute(is_editor_query).scalar_one_or_none()
         if is_editor:
             trip_admin = True
+            if trip.status == model.TripProposalStatus.APPROVAL_REQUIRED.value:
+                join_requests_query = db.select(model.TripProposalJoinRequest).where(model.TripProposalJoinRequest.trip_proposal_id == trip.id).order_by(model.TripProposalJoinRequest.timestamp.asc())
+                join_requests = db.session.execute(join_requests_query).scalars().all()
+                for req in join_requests:
+                    requesting_users.append(db.get_or_404(model.User, req.user_id))
+                join_requests = [(req, user) for req, user in zip(join_requests, requesting_users)]
 
     topics_query = (db.select(model.TripProposalMessage.forum_topic).where(model.TripProposalMessage.trip_proposal_id == trip_id).distinct().order_by(model.TripProposalMessage.forum_topic))
     forum_topics = db.session.execute(topics_query).scalars().all()
@@ -263,9 +272,7 @@ def trip(trip_id, forum_topic=None):
     active_forum_messages_query = (db.select(model.TripProposalMessage).where(model.TripProposalMessage.trip_proposal_id == trip_id, model.TripProposalMessage.forum_topic == active_topic).order_by(model.TripProposalMessage.timestamp.asc()))
     active_forum_messages = db.session.execute(active_forum_messages_query).scalars().all()
 
-    return render_template("main/trip.html", trip=trip, statuses=model.TripProposalStatus, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
-
-
+    return render_template("main/trip.html", trip=trip, statuses=model.TripProposalStatus, join_requests=join_requests, responses=responses, already_joined = already_joined, forum_topics = forum_topics, active_topic = active_topic, active_forum_messages = active_forum_messages)
 
 @bp.route("/trip/<int:trip_id>/join", methods=["POST"])
 @flask_login.login_required
@@ -273,7 +280,7 @@ def join_trip(trip_id):
     trip = db.get_or_404(model.TripProposal, trip_id)
     user = flask_login.current_user
 
-    if user in trip.participants:
+    if user in trip.participants or trip.status != model.TripProposalStatus.OPEN:
         return redirect(url_for("main.trip", trip_id=trip_id))
     
     if trip.max_travelers is not None and len(trip.participants) >= trip.max_travelers:
@@ -289,6 +296,71 @@ def join_trip(trip_id):
         is_editor=False,
     )
     db.session.add(joining_user)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
+@bp.route("/trip/<int:trip_id>/request_join", methods=["POST"])
+@flask_login.login_required
+def request_join_trip(trip_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    if user in trip.participants:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    existing_request = db.session.get(model.TripProposalJoinRequest, (trip.id, user.id))
+    if existing_request:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    join_request = model.TripProposalJoinRequest(
+        trip_proposal_id=trip.id,
+        user_id=user.id,
+    )
+    db.session.add(join_request)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
+@bp.route("/trip/<int:trip_id>/update_join_request/<int:requesting_user_id>", methods=["POST"])
+@flask_login.login_required
+def update_join_request(trip_id, requesting_user_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    if not user.is_editor_for(trip):
+        flash("You do not have permission to manage join requests for this trip.", "error")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    action = request.form.get("approval_status")
+    join_request = db.session.get(model.TripProposalJoinRequest, (trip.id, requesting_user_id))
+    if not join_request:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    if action == "approve":
+        joining_user = model.TripProposalParticipation(
+            user_id=requesting_user_id,
+            trip_proposal_id=trip.id,
+            is_editor=False,
+        )
+        db.session.add(joining_user)
+    
+    db.session.delete(join_request)
+    db.session.commit()
+
+    return redirect(url_for("main.trip", trip_id=trip_id))
+
+@bp.route("/trip/<int:trip_id>/cancel_join", methods=["POST"])
+@flask_login.login_required
+def cancel_join_request(trip_id):
+    trip = db.get_or_404(model.TripProposal, trip_id)
+    user = flask_login.current_user
+
+    existing_request = db.session.get(model.TripProposalJoinRequest, (trip.id, user.id))
+    if not existing_request:
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
+    db.session.delete(existing_request)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=trip_id))

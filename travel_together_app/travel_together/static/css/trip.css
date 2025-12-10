@@ -357,16 +357,19 @@
       cursor: pointer;
   }
 
-  .open-members-popup {
+  .open-members-popup,
+  .open-join-requests-popup {
       color: lightgrey;
   }
 
-  .open-members-popup:hover {
+  .open-members-popup:hover,
+  .open-join-requests-popup:hover {
       text-decoration: underline;
       cursor: pointer;
   }
 
-  .single-participant {
+  .single-participant,
+  .single-requestor {
       display: flex;
       flex-direction: row;
       gap: 0.5vw;
@@ -398,7 +401,9 @@
 
   .editor-badge,
   .member-badge,
-  .make-editor-btn {
+  .make-editor-btn,
+  .approve-btn,
+  .deny-btn {
       font-size: 0.9rem;
       padding: 2px 10px;
       border-radius: 999px;
@@ -412,12 +417,34 @@
       color: #555;
   }
 
-  .make-editor-btn {
+  .make-editor-btn,
+  .approve-btn,
+  .deny-btn {
       cursor: pointer;
   }
 
-  .make-editor-btn:hover {
+  .make-editor-btn:hover,
+  .approve-btn:hover,
+  .deny-btn:hover {
       background: rgba(100, 100, 100, 0.3);
+  }
+
+  .join-request {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+  }
+
+  .join-request .single-participant {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .join-request form {
+      display: inline-flex;
+      gap: 8px;
   }
 
   .page-contents {
