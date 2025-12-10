@@ -288,6 +288,17 @@ def join_trip(trip_id):
         if trip.min_age > user.age or trip.max_age < user.age:
             return redirect(url_for("main.trip", trip_id=trip_id))
         
+    if trip.university is not None:
+        if trip.university == 'home_uni':
+            if (user.home_uni or user.visiting_uni) != trip.creator.home_uni:
+                return redirect(url_for("main.trip", trip_id=trip_id))
+        if trip.university == 'visiting_uni':
+            if (user.home_uni or user.visiting_uni) != trip.creator.visiting_uni:
+                return redirect(url_for("main.trip", trip_id=trip_id))
+        if trip.university == 'both':
+            if (user.home_uni or user.visiting_uni) != (trip.creator.home_uni or trip.creator.visiting_uni):
+                return redirect(url_for("main.trip", trip_id=trip_id))
+        
     joining_user = model.TripProposalParticipation(
         user_id=user.id,
         trip_proposal_id=trip.id,
