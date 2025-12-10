@@ -9,7 +9,7 @@ import flask_login
 from werkzeug.utils import secure_filename
 
 from . import model, db
-
+from sqlalchemy import or_
 
 bp = Blueprint("main", __name__)
 
@@ -19,17 +19,10 @@ upload_folder = "static/resources"
 @bp.route("/")
 @flask_login.login_required
 def index():
-    query = db.select(model.TripProposal).where(model.TripProposal.status == model.TripProposalStatus.OPEN).order_by(model.TripProposal.timestamp.desc()).limit(9)
-    # messages = db.session.execute(query).scalars().all()
-    # trip_proposals = db.aliased(model.User)
-    # following_query = (
-    #     db.select(model.TripProposal)
-    #     .join(model.User)
-    #     .join(trip_proposals, model.User.trip_proposals)
-    #     .where(trip_proposals.id == flask_login.current_user.id)
-    #     .order_by(model.TripProposal.timestamp.desc())
-    #     .limit(10)
-    # )
+    query = db.select(model.TripProposal).where(or_(
+        model.TripProposal.status == model.TripProposalStatus.OPEN.value,
+        model.TripProposal.status == model.TripProposalStatus.APPROVAL_REQUIRED.value)
+    ).order_by(model.TripProposal.timestamp.desc()).limit(4)
     latest_trips = db.session.execute(query).scalars().all()
     
     return render_template("main/index.html", latest_trips=latest_trips)
@@ -304,6 +297,7 @@ def join_trip(trip_id):
         trip_proposal_id=trip.id,
         is_editor=False,
     )
+
     db.session.add(joining_user)
     db.session.commit()
 
