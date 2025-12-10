@@ -74,11 +74,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="flash-messages">
-                    {% for message in get_flashed_messages() %}
-                    <p class="flash-message">{{ message }}</p>
-                    {% endfor %}
-                </div>
+                {% for message in get_flashed_messages() %}
+                <script>alert("{{ message }}");</script>
+                {% endfor %}
                 <div class="edit-profile-buttons">
                     <a href="{{ url_for('main.profile', user_id=current_user.id) }}">
                         <button class="submit-button" type="button">Cancel</button>
