@@ -280,12 +280,13 @@ def join_trip(trip_id):
     if trip.max_age is not None and trip.min_age is not None:
         if trip.min_age > user.age or trip.max_age < user.age:
             return redirect(url_for("main.trip", trip_id=trip_id))
-        
+
     joining_user = model.TripProposalParticipation(
         user_id=user.id,
         trip_proposal_id=trip.id,
         is_editor=False,
     )
+
     db.session.add(joining_user)
     db.session.commit()
 
