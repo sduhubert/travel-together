@@ -60,6 +60,7 @@ class User(flask_login.UserMixin, db.Model):
     def age(user):
         today = datetime.date.today()
         return(today.year - user.birthday.year - ((today.month, today.day) < (user.birthday.month, user.birthday.day)))
+    
     def is_editor_for(self, trip):
         participation = db.session.scalar(
             db.select(TripProposalParticipation.is_editor).where(
@@ -113,6 +114,14 @@ class TripProposal(db.Model):
     sex_preference_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     activities_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     age_range_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    def num_editors(self):
+        return db.session.scalar(
+            db.select(func.count()).select_from(TripProposalParticipation).where(
+                TripProposalParticipation.trip_proposal_id == self.id,
+                TripProposalParticipation.is_editor == True
+            )
+        )
     
 class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

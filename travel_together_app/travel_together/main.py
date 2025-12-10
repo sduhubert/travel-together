@@ -302,6 +302,10 @@ def leave_trip(trip_id):
     if user not in trip.participants:
         return redirect(url_for("main.trip", trip_id=trip_id))
     
+    if user.is_editor_for(trip) and trip.num_editors() <= 1:
+        flash("The last editor cannot leave the trip.", "error")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+    
     user_participation = (
         db.session.query(model.TripProposalParticipation)
         .filter_by(user_id=user.id, trip_proposal_id=trip.id)
