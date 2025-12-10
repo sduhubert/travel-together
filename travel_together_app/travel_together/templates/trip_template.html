@@ -11,7 +11,9 @@
              data-current-participants="{{ trip.participants|length }}"
              data-max-travelers="{{ trip.max_travelers or 999 }}"
              data-status="{{ trip.status }}"
-             data-is-member="{{'true' if current_user in trip.participants else 'false' }}">
+             data-is-member="{{'true' if current_user in trip.participants else 'false' }}"
+             data-home-uni="{{trip.creator.home_uni or ''}}"
+             data-visiting-uni="{{trip.creator.visiting_uni or ''}}">
             
             <img class="trip-photo" src="{{ url_for('static', filename='resources/' ~ trip.image) }}" alt="{{ trip.title }}">
             <h2 class="trip-title">{{ trip.title }}</h2>    
