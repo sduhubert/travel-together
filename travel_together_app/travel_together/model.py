@@ -117,6 +117,7 @@ class TripProposal(db.Model):
     activities: Mapped[Optional[str]] = mapped_column(String(512))  # Comma-separated list
     min_age: Mapped[Optional[int]] = mapped_column(Integer)
     max_age: Mapped[Optional[int]] = mapped_column(Integer)
+    university: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     status: Mapped["TripProposalStatus"] = mapped_column(Integer)  # Use TripProposalStatus enum values
     image: Mapped[str] = mapped_column(String(256))
     timestamp: Mapped[datetime.datetime] = mapped_column(
@@ -131,6 +132,7 @@ class TripProposal(db.Model):
     sex_preference_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     activities_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     age_range_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
+    university_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     
     def num_editors(self):
         return db.session.scalar(

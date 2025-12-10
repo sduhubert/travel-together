@@ -60,8 +60,9 @@ $(document).ready(function () {
     });
 
     // Merge all destinations into string - referenced ChatGPT for help
-    $('#trip-form').submit(function () {
-        const dests = $('.single-destination').map(function () {
+    $('#trip-form').submit(function() {
+
+        const dests = $('.destination').map(function () {
             return $(this).val().trim();
         }).get().filter(v => v.length > 0);
 
@@ -122,6 +123,7 @@ $(document).ready(function () {
         { finalized: "#originFinalizedToggle", inputs: ["#departure_location"] },
         { finalized: "#destinationsFinalizedToggle", inputs: ["#destination-container .destination"] },
         { finalized: "#datesFinalizedToggle", inputs: ["#start", "#end"] }
+
     ];
 
     controls.forEach(control => {
@@ -164,7 +166,8 @@ $(document).ready(function () {
                 ".range-input .min",
                 ".range-input .max"
             ]
-        }
+        },
+        {checkbox: "#universitySpecificToggle", finalized: "#universityFinalizedToggle", inputs: ["#university_specific"]}
         ];
 
     optionalControls.forEach(control => {
@@ -192,7 +195,7 @@ $(document).ready(function () {
         }
 
         toggleInputs();
-
+        
         $finalized.on("change", toggleInputs);
     });
 
@@ -236,6 +239,10 @@ $(document).ready(function () {
             if (minAge > maxAge) {
                 invalidInput = true;
             }
+        }
+
+        if ($("universityRestrictionToggle").is(":checked") && parseInt($("#university_specific").val()) <= 0) {
+            invalidInput = true;
         }
 
         const startDate = new Date($("#start").val());

@@ -21,7 +21,7 @@ $(document).ready(function() {
         if (currentStep > 0) {
             currentStep--;
             showStep(currentStep);
-        }
+        }x
     });
 
     // Open popup
@@ -128,7 +128,8 @@ $(document).ready(function() {
                 ".range-input .min", 
                 ".range-input .max"
             ] 
-        }
+        },
+        { checkbox: "#universitySpecificToggle", inputs: ["#university_specific"]}
     ];
 
     controls.forEach(control => {
@@ -187,6 +188,10 @@ $(document).ready(function() {
             }
         }
 
+        if($("#universitySpecificToggle").is(":checked") && $("#university_select").val().trim() === "") {
+            missingFields.push("University Preference");
+        }
+
         const startDate = new Date($("#start").val());
         const endDate = new Date($("#end").val());
         const today = new Date();
@@ -211,3 +216,4 @@ $(document).ready(function() {
         $("#end").attr("min", $(this).val());
     });
 });
+

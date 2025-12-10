@@ -94,6 +94,17 @@
                     </div>
                 </div>
                 <div class="single-entry3">
+                    <input type="checkbox" id="universitySpecificToggle">
+                    <label for="university_specific" class="disabled">Restrict to a Specific University:</label> 
+
+                    <select id="university_specific" name="university_specific" disabled>
+                        <option value="" disabled selected>Select restriction</option>
+                        <option value="home_only">Home university only</option>
+                        <option value="visiting_only">Visiting university only</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+                <div class="single-entry3">
                     <label class="trip-image">Trip Image: </label>
                     <input type="file" id="trip_image" name="trip_image" accept="image/*">
                 </div>

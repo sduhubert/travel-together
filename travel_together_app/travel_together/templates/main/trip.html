@@ -91,6 +91,35 @@
                 {% if trip.budget_finalized %}
                   <img src="{{ url_for('static', filename='resources/finalized.png') }}" class="lock-icon" alt="Finalized">
                 {% endif %}
+
+                {% set valid_uni = True %}
+
+                {% if trip.university %}
+                    {% if trip.university == 'home_only' %}
+                        {% set allowed_uni = trip.creator.home_uni %}
+                        {% set valid_uni = (current_user.home_uni == trip.creator.home_uni or
+                                            current_user.visiting_uni == trip.creator.home_uni) %}
+                        <p>University Restriction: {{ allowed_uni }}</p>
+
+                    {% elif trip.university == 'visiting_only' %}
+                        {% set allowed_uni = trip.creator.visiting_uni %}
+                        {% set valid_uni = (current_user.home_uni == trip.creator.visiting_uni or
+                                            current_user.visiting_uni == trip.creator.visiting_uni) %}
+                        <p>University Restriction: {{ allowed_uni }}</p>
+
+                    {% elif trip.university == 'both' %}
+                        {% set allowed_uni_1 = trip.creator.home_uni %}
+                        {% set allowed_uni_2 = trip.creator.visiting_uni %}
+                        {% set valid_uni = (
+                            current_user.home_uni in [allowed_uni_1, allowed_uni_2] or
+                            current_user.visiting_uni in [allowed_uni_1, allowed_uni_2]
+                        ) %}
+                        <p>University Restriction: {{ allowed_uni_1 }} or {{ allowed_uni_2 }}</p>
+                    {% endif %}
+                {% else %}
+                    <p>University Restriction: None</p>
+                {% endif %}
+
               </p>
             {% endif %}
 
@@ -102,13 +131,15 @@
               {% endif %}
             </p>
 
-            {% set status_map = {0: 'Open for joining', 1: 'Open (approval required)', 2: 'Closed', 3: 'Finalized', 4: 'Cancelled'} %}
-            <p>
-              Status: 
-              <span class="criteria {% if trip.status == 0 %}green{% elif trip.status == 1 %}yellow{% else %}red{% endif %}">
-                {{ status_map[trip.status] }}
-              </span>
-            </p>
+            {% set status_map = {0: 'Open for joining', 1: 'Open (approval required)', 2: 'Closed', 3: 'Finalized',
+                4: 'Cancelled'} %}
+                {% if trip.status == 0 %}
+                <p>Status:<span class="criteria green"> {{ status_map[trip.status] }}</span></p>
+                {% elif trip.status == 1 %}
+                <p>Status:<span class="criteria yellow"> {{ status_map[trip.status] }}</span></p>
+                {% else %}
+                <p>Status:<span class="criteria red"> {{ status_map[trip.status] }}</span></p>
+                {% endif %}
           </div>
 
 
@@ -122,8 +153,8 @@
             <button class="trip-button" id="open-join-requests-popup">View Join Requests</button>
             {% endif %}
             {% endif %}
-            {% if trip.participants|length < max_travelers and current_user.age>= min_age and current_user.age <=
-                max_age %} {% if not already_joined %} {% if trip.status==0 %} <form
+            {% if (trip.participants|length < max_travelers) and (current_user.age>= min_age) and (current_user.age <= max_age) and valid_uni %} 
+              {% if not already_joined %} {% if trip.status==0 %} <form
                 action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
                 <button type="submit" class="trip-button">
                   Join Trip

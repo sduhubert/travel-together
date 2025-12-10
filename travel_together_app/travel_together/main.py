@@ -77,7 +77,8 @@ def new_trip():
     max_members = request.form.get("max_members")
     minAge = request.form.get("min")
     maxAge = request.form.get("max")
-    status=model.TripProposalStatus.OPEN.value
+    university = request.form.get("university_specific")
+    status =model.TripProposalStatus.OPEN.value
     image = request.files.get("trip_image")
     if image and image.filename != "":
         filename = secure_filename(image.filename)
@@ -102,6 +103,7 @@ def new_trip():
         max_travelers=max_members,
         min_age=minAge,
         max_age=maxAge,
+        university = university,
         timestamp=datetime.now(dateutil.tz.tzlocal()),
         status=status,
         image=filename
@@ -169,6 +171,10 @@ def edit_trip(trip_id):
     max_members = request.form.get("max_members")
     minAge = request.form.get("min_age")
     maxAge = request.form.get("max_age")
+    university = request.form.get("university_specific") or None
+
+    if university == "":
+        university = None
     
     image = request.files.get("trip_image")
     
@@ -188,7 +194,7 @@ def edit_trip(trip_id):
     trip.max_travelers_finalized = 'max_travelers_finalized' in request.form
     trip.age_range_finalized = 'age_range_finalized' in request.form
     trip.status_finalized = 'status_finalized' in request.form
-
+    trip.university_finalized ='university_finalized' in request.form
     if not trip.origin_finalized and origin and trip.origin != origin:
         trip.origin = origin
 
@@ -209,10 +215,14 @@ def edit_trip(trip_id):
             trip.min_age = minAge
         if maxAge and trip.max_age != maxAge:
             trip.max_age = maxAge
-    if image.filename and image.filename != trip.image:
+    if not trip.university_finalized:
+        if trip.university != university:
+            trip.university = university
+    if image and image.filename and image.filename != trip.image:
         filename = secure_filename(image.filename)
         save_path = os.path.join(current_app.static_folder, "resources", filename)
         image.save(save_path)
+        trip.image = filename
     
     db.session.commit()
 

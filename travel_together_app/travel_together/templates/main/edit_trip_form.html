@@ -156,7 +156,7 @@
                 <div class="single-entry3">
                     <input type="checkbox" id="ageToJoinToggle" name="use_age_range" {% if trip.min_age is not none and
                         trip.max_age is not none %}checked{% endif %}>
-                    <label for="ageToJoinToggle">Age to Join:</label>
+                    <label for="ageToJoinToggle">Age:</label>
 
                     <div class="double-range">
                         <div class="slider-container">
@@ -189,6 +189,30 @@
                         </label>
                     </div>
                 </div>
+
+                <div class="single-entry3 {{ 'finalized' if trip.university_finalized }}">
+                    <input type="checkbox" id="universitySpecificToggle" 
+                        {% if trip.university is not none %}checked{% endif %}>
+                    <label for="university_specific" class="disabled">Restrict to a Specific University:</label>
+            
+                    <select id="university_specific" name="university_specific">
+            
+                        <option value="" {% if not trip.university %} selected {% endif %}>No restriction</option>
+                        <option value="home_only" {% if trip.university == 'home_only' %} selected {% endif %}>Home university only</option>
+                        <option value="visiting_only" {% if trip.university == 'visiting_only' %} selected {% endif %}>Visiting university only</option>
+                        <option value="both" {% if trip.university == 'both' %} selected {% endif %}>Both</option>
+                    </select>
+
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox"
+                               name="university_finalized"
+                               id="universityFinalizedToggle"
+                               {% if trip.university_finalized %}checked{% endif %}
+                               data-locked="{{ 'true' if trip.university_finalized else 'false' }}">
+                               <span>Finalize</span>
+                    </div>
+                </div>
+
                 <div class="single-entry3">
                     <label class="trip-image">Trip Image: </label>
                     <input type="file" id="trip_image" name="trip_image" accept="image/*">
