@@ -89,12 +89,6 @@ def new_trip():
     #since our model stores 'destinations' as a comma separated string
     destinations_str = ",".join(destinations) 
 
-
-    #response_to = request.form.get("response_to")
-
-   # if response_to:
-       # response_to_trip = db.get_or_404(model.TripProposal, response_to)
-
     new_trip = model.TripProposal(
         creator=user,
         title=title, 
@@ -117,21 +111,15 @@ def new_trip():
     db.session.commit()
     
     participation = model.TripProposalParticipation(
-    user_id=user.id,
-    trip_proposal_id=new_trip.id,
-    is_editor=True
-)
+        user_id=user.id,
+        trip_proposal_id=new_trip.id,
+        is_editor=True
+    )
 
     db.session.add(participation)
     db.session.commit()
 
     return redirect(url_for("main.trip", trip_id=new_trip.id))
-
-    
-   # if response_to:
-        #return redirect(url_for("main.trip", trip_id=response_to))
-   # else:
-       # return redirect(url_for("main.trip", trip_id=new_trip.id))
 
 @bp.route("/make_editor/<int:trip_id>/<int:participant_id>", methods=["POST"])
 @flask_login.login_required
