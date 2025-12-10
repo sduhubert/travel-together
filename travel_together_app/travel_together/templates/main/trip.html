@@ -259,7 +259,7 @@
     {% endif %}
     {% endwith %}
 
-    {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)%}
+    {% if not (trip.participants|length >= max_travelers or current_user.age < min_age or current_user.age > max_age)%}
       {% if already_joined %}
       <p class="member-specifics">You are an active member of this trip.</p>
       {% if current_user.is_editor_for(trip) %}

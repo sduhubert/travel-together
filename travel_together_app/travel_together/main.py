@@ -278,24 +278,40 @@ def join_trip(trip_id):
     trip = db.get_or_404(model.TripProposal, trip_id)
     user = flask_login.current_user
 
-    if user in trip.participants or trip.status != model.TripProposalStatus.OPEN:
+    if trip.status != model.TripProposalStatus.OPEN.value:
+        flash("This trip is not open for joining.", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
-    
+
+    if user in trip.participants:
+        flash("You are already part of this trip!", "info")
+        return redirect(url_for("main.trip", trip_id=trip_id))
+
     if trip.max_travelers is not None and len(trip.participants) >= trip.max_travelers:
+        flash("Trip is already full!", "error")
         return redirect(url_for("main.trip", trip_id=trip_id))
-    
-    if trip.max_age is not None and trip.min_age is not None:
-        if trip.min_age > user.age or trip.max_age < user.age:
+
+    if trip.age_range_finalized:
+        if trip.min_age and user.age < trip.min_age:
+            flash("You are too young for this trip.", "error")
             return redirect(url_for("main.trip", trip_id=trip_id))
-        
-    joining_user = model.TripProposalParticipation(
+        if trip.max_age and user.age > trip.max_age:
+            flash("You are too old for this trip.", "error")
+            return redirect(url_for("main.trip", trip_id=trip_id))
+
+    if trip.university_finalized and trip.university:
+        if not user.university or user.university != trip.university:
+            flash("This trip is restricted to a specific university.", "error")
+            return redirect(url_for("main.trip", trip_id=trip_id))
+
+    participation = model.TripProposalParticipation(
         user_id=user.id,
         trip_proposal_id=trip.id,
         is_editor=False,
     )
-    db.session.add(joining_user)
+    db.session.add(participation)
     db.session.commit()
 
+    flash("Successfully joined the trip!", "success")
     return redirect(url_for("main.trip", trip_id=trip_id))
 
 @bp.route("/trip/<int:trip_id>/request_join", methods=["POST"])
