@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
 
 
@@ -11,8 +11,8 @@
  also necessary to define the url so we can reload page from javascript to remove filters 
  -->
 <script>
-    window.USER_AGE = "{{ current_user.age }}";
-    window.SHOW_ALL_TRIPS_URL = "{{ url_for('main.browse_trips') }}#trip-list";
+  window.USER_AGE = "{{ current_user.age }}";
+  window.SHOW_ALL_TRIPS_URL = "{{ url_for('main.browse_trips') }}#trip-list";
 </script>
 
 
@@ -21,70 +21,70 @@
   <div id="formPopupOverlay" style="display:none;"></div>
 
   <div id="formPopupModal" style="display:none;">
-      <div id="formPopupContent">
-          {% include 'main/trip_form.html' %}
-      </div>
-      <button id="closeFormPopup">Close</button>
+    <div id="formPopupContent">
+      {% include 'main/trip_form.html' %}
+    </div>
+    <button id="closeFormPopup">Close</button>
   </div>
 </div>
 
-  <div class="top-container">
-    <div class="trapezoid-overlay">
-      <h1>Browse Trips</h1>
-      <p>Use the filters to find the trip for you</p>
-      <button class="primary-button" id="openFormPopup">Create a new trip!</button>
-      <a href="{{url_for('main.index')}}">
-        <button class="secondary-button">Return to Main Screen</button>
-      </a>
+<div class="top-container">
+  <div class="trapezoid-overlay">
+    <h1>Browse Trips</h1>
+    <p>Use the filters to find the trip for you</p>
+    <button class="primary-button" id="openFormPopup">Create a new trip!</button>
+    <a href="{{url_for('main.index')}}">
+      <button class="secondary-button">Return to Main Screen</button>
+    </a>
   </div>
 
-    <img src="../../static/resources/index-background.jpeg"/>
-  </div>
+  <img src="../../static/resources/index-background.jpeg" />
+</div>
 
-  <div class="trip-filters" id="trip-filters">
-    <form method="GET" action = "{{ url_for('main.browse_trips') }}#trip-list">
-        <label>Maximum Budget:</label>
-        <input type="number" id="max-budget-filter" name="max_budget" placeholder="Enter max budget...">
-    
-        <label>From:</label>
-        <input type="date" id="start-date-filter" name="start_date">
-        
-        <label>To:</label>
-        <input type="date" id="end-date-filter" name="end_date">
-    
-        <label>Age Range:</label>
-        <input type="number" id="min-age-filter" name="min_age" placeholder="Min age...">
-        <input type="number" id="max-age-filter" name="max_age" placeholder="Max age...">
-    
-        <label>Origin:</label>
-        <input type="text" id="origin-filter" name="origin" placeholder="Where do you want to travel from?..">
-    
-        <label>Destination:</label>
-        <input type="text" id="destination-filter" name="destination" placeholder="Enter somewhere you'd like to visit...">
+<div class="trip-filters" id="trip-filters">
+  <form method="GET" action="{{ url_for('main.browse_trips') }}#trip-list">
+    <label>Maximum Budget:</label>
+    <input type="number" id="max-budget-filter" name="max_budget" placeholder="Enter max budget...">
 
-        <label>Trip Status: </label>
-        <select id="status-filter" name="status">
-          <option value="OPEN">OPEN</option>
-          <option value="APPROVAL_REQUIRED">APPROVAL_REQUIRED</option>
-          <option value="CLOSED">CLOSED</option>
-          <option value="FINALIZED">FINALIZED</option>
-          <option value="CANCELLED">CANCELLED</option>
-        </select>
+    <label>From:</label>
+    <input type="date" id="start-date-filter" name="start_date">
 
-        <button type="submit">Filter Trips</button>
-    </form>
-    <br>
-    <button id="show-joinable-trips">Show All Joinable Trips</button>
-    <button id="show-all-trips">Show All Trips</button>
+    <label>To:</label>
+    <input type="date" id="end-date-filter" name="end_date">
 
-  </div>
+    <label>Age Range:</label>
+    <input type="number" id="min-age-filter" name="min_age" placeholder="Min age...">
+    <input type="number" id="max-age-filter" name="max_age" placeholder="Max age...">
 
-  
-  <div class="trip-contents" id="trip-list">
-    <h1>Listed Trips:</h1>
-    {% set trips = trips %}
-    {% include 'trips_template.html' %}
-  </div>
+    <label>Origin:</label>
+    <input type="text" id="origin-filter" name="origin" placeholder="Where do you want to travel from?..">
+
+    <label>Destination:</label>
+    <input type="text" id="destination-filter" name="destination" placeholder="Enter somewhere you'd like to visit...">
+
+    <label>Trip Status: </label>
+    <select id="status-filter" name="status">
+      <option value="OPEN">OPEN</option>
+      <option value="APPROVAL_REQUIRED">APPROVAL_REQUIRED</option>
+      <option value="CLOSED">CLOSED</option>
+      <option value="FINALIZED">FINALIZED</option>
+      <option value="CANCELLED">CANCELLED</option>
+    </select>
+
+    <button type="submit">Filter Trips</button>
+  </form>
+  <br>
+  <button id="show-joinable-trips">Show All Joinable Trips</button>
+  <button id="show-all-trips">Show All Trips</button>
+
+</div>
+
+
+<div class="trip-contents" id="trip-list">
+  <h1>Listed Trips:</h1>
+  {% set trips = trips %}
+  {% include 'trips_template.html' %}
+</div>
 
 </div>
 {% endblock %}

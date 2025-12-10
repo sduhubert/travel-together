@@ -69,7 +69,7 @@
                 <p>Planned Date Range: <span class="criteria">{{ trip.start_date.strftime('%B %d, %Y') }} to {{
                     trip.end_date.strftime('%B %d, %Y') }}</span></p>
                 {% set status_map = {0: 'Open for joining', 1: 'Open (approval required)', 2: 'Closed', 3: 'Finalized',
-                4: 'Canceled'} %}
+                4: 'Cancelled'} %}
                 {% if trip.status == 0 %}
                 <p>Status:<span class="criteria green"> {{ status_map[trip.status] }}</span></p>
                 {% elif trip.status == 1 %}
@@ -81,7 +81,7 @@
 
 
           <div class="button-container">
-            {% if current_user.is_editor_for(trip) %}
+            {% if current_user.is_editor_for(trip) and not (trip.status == 3 or trip.status == 4) %}
             <button class="trip-button" id="openFormPopup" fdprocessedid="vywhbj">Modify Trip</button>
             {% endif %}
             {% if trip.participants|length < max_travelers and current_user.age>= min_age and current_user.age <=
@@ -121,18 +121,18 @@
 
     {% if not (trip.participants|length>= max_travelers) or (current_user.age < min_age and current_user.age> max_age)%}
       {% if not already_joined %}
-        <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
-          <button type="submit">Join Trip!</button>
-        </form>
+      <form action="{{ url_for('main.join_trip', trip_id=trip.id) }}" method="POST">
+        <button type="submit">Join Trip!</button>
+      </form>
       {% else %}
-          <p class="member-specifics">You are an active member of this trip.</p>
-        {% if current_user.is_editor_for(trip) %}
-          <p class="member-specifics membership-level">Membership Level: Editor</p>
-        {% else %}
-          <p class="member-specifics membership-level">Membership Level: Member</p>
-        {% endif %}
+      <p class="member-specifics">You are an active member of this trip.</p>
+      {% if current_user.is_editor_for(trip) %}
+      <p class="member-specifics membership-level">Membership Level: Editor</p>
+      {% else %}
+      <p class="member-specifics membership-level">Membership Level: Member</p>
       {% endif %}
-    {% endif %}
+      {% endif %}
+      {% endif %}
 
       <div id="formPopupOverlay" style="display:none;">
         <div id="formPopupModal" style="display:none;">

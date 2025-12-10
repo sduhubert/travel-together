@@ -45,17 +45,8 @@
                 </div>
 
                 <div class="single-entry">
-                    <div class="entry-header">
-                        <label for="status">Status</label>
-
-                        <label class="checkbox-wrapper">
-                            <span>Finalize</span>
-                            <input type="checkbox" name="status_finalized" {% if trip.status_finalized %}checked{% endif
-                                %}>
-                        </label>
-                    </div>
+                    <label for="status">Status</label>
                     <select id="status" name="status" placeholder="Trip Status" required>{{ trip.status }}
-
                         {% for status in statuses %}
                         <option value="{{ status.value }}" {% if status==trip.status.name %}selected{% endif %}>
                             {{ status.name.replace('_', ' ').title() }}</option>
@@ -79,8 +70,8 @@
 
                         <label class="checkbox-wrapper">
                             <span>Finalize</span>
-                            <input type="checkbox" name="origin_finalized" {% if trip.origin_finalized %}checked{% endif
-                                %}>
+                            <input type="checkbox" name="origin_finalized" id="originFinalizedToggle" {% if
+                                trip.origin_finalized %}checked{% endif %}>
                         </label>
                     </div>
                     <input type="text" id="departure_location" name="departure_location" value="{{ trip.origin or '' }}"
@@ -91,8 +82,8 @@
 
                         <label class="checkbox-wrapper">
                             <span>Finalize</span>
-                            <input type="checkbox" name="destinations_finalized" {% if trip.destinations_finalized
-                                %}checked{% endif %}>
+                            <input type="checkbox" name="destinations_finalized" id="destinationsFinalizedToggle" {% if
+                                trip.destinations_finalized %}checked{% endif %}>
                         </label>
                     </div>
                     <div id="destination-container">
@@ -112,8 +103,8 @@
 
                         <label class="checkbox-wrapper">
                             <span>Finalize</span>
-                            <input type="checkbox" name="dates_finalized" {% if trip.dates_finalized %}checked{% endif
-                                %}>
+                            <input type="checkbox" name="dates_finalized" id="#datesFinalizedToggle" {% if
+                                trip.dates_finalized %}checked{% endif %}>
                         </label>
                     </div>
                     <div class="date-entries">
@@ -137,19 +128,21 @@
             <h2 class="step-header">Preferences (Optional)</h2>
             <div class="form-entries">
                 <div class="single-entry3">
-                    <input type="checkbox" id="budgetToggle">
-                    <label for="budget" class="disabled">Budget:</label>
+                    <input type="checkbox" id="budgetToggle" {% if trip.budget is not none %}checked{% endif %}>
+                    <label for="budget">Budget:</label>
                     <input type="number" id="budget" name="budget" value="{{ trip.budget or '' }}">
                     <div class="checkbox-wrapper">
                         <label>
-                            <input type="checkbox" name="budget_finalized" {% if trip.budget_finalized %}checked{% endif %}>
+                            <input type="checkbox" name="budget_finalized" {% if trip.budget_finalized %}checked{% endif
+                                %}>
                             Finalize
                         </label>
                     </div>
                 </div>
                 <div class="single-entry3">
-                    <input type="checkbox" id="maxMembersToggle">
-                    <label for="max_members" class="disabled">Maximum Trip Members:</label>
+                    <input type="checkbox" id="maxMembersToggle" {% if trip.max_travelers is not none %}checked{% endif
+                        %}>
+                    <label for="max_members">Maximum Trip Members:</label>
                     <input type="number" id="max_members" name="max_members" value="{{ trip.max_travelers or '' }}">
                     <div class="checkbox-wrapper">
                         <label>
@@ -160,8 +153,9 @@
                     </div>
                 </div>
                 <div class="single-entry3">
-                    <input type="checkbox" id="ageToJoinToggle" name="use_age_range">
-                    <label for="ageToJoinToggle" class="disabled">Age to Join:</label>
+                    <input type="checkbox" id="ageToJoinToggle" name="use_age_range" {% if trip.min_age is not none and
+                        trip.max_age is not none %}checked{% endif %}>
+                    <label for="ageToJoinToggle">Age to Join:</label>
 
                     <div class="double-range">
                         <div class="slider-container">
@@ -186,8 +180,8 @@
                     </div>
                     <div class="checkbox-wrapper">
                         <label>
-                            <input type="checkbox" name="age_range_finalized" {% if trip.age_range_finalized %}checked{%
-                                endif %}>
+                            <input type="checkbox" name="age_range_finalized" id="ageToJoinFinalizedToggle" {% if
+                                trip.age_range_finalized %}checked{% endif %}>
                             Finalize
                         </label>
                     </div>

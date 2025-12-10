@@ -113,7 +113,6 @@ class TripProposal(db.Model):
     sex_preference_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     activities_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     age_range_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
-    status_finalized: Mapped[bool] = mapped_column(Boolean, default=False)
     
 class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

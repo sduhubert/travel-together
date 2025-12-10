@@ -140,6 +140,10 @@ def edit_trip(trip_id):
     user = flask_login.current_user
     
     participation = model.TripProposalParticipation.query.get((user.id, trip.id))
+    
+    if trip.status == model.TripProposalStatus.FINALIZED or trip.status == model.TripProposalStatus.CANCELLED:
+        flash("This trip has been finalized or cancelled and cannot be edited.", "error")
+        return redirect(url_for("main.trip", trip_id=trip_id))
 
     if (user not in trip.participants) and not (participation and participation.is_editor):
         flash("You do not have permission to edit this trip.", "error")
@@ -160,8 +164,8 @@ def edit_trip(trip_id):
     
     budget = request.form.get("budget")
     max_members = request.form.get("max_members")
-    minAge = request.form.get("min")
-    maxAge = request.form.get("max")
+    minAge = request.form.get("min_age")
+    maxAge = request.form.get("max_age")
     
     image = request.files.get("trip_image")
     
@@ -173,6 +177,14 @@ def edit_trip(trip_id):
         
     if status and trip.status != status:
         trip.status = status
+        
+    trip.origin_finalized = 'origin_finalized' in request.form
+    trip.destinations_finalized = 'destinations_finalized' in request.form
+    trip.dates_finalized = 'dates_finalized' in request.form
+    trip.budget_finalized = 'budget_finalized' in request.form
+    trip.max_travelers_finalized = 'max_travelers_finalized' in request.form
+    trip.age_range_finalized = 'age_range_finalized' in request.form
+    trip.status_finalized = 'status_finalized' in request.form
 
     if not trip.origin_finalized and origin and trip.origin != origin:
         trip.origin = origin
@@ -223,7 +235,6 @@ def trip(trip_id, forum_topic=None):
             model.TripProposalParticipation.trip_proposal_id == trip.id
         )
         is_editor = db.session.execute(is_editor_query).scalar_one_or_none()
-        print(is_editor)
         if is_editor:
             trip_admin = True
 

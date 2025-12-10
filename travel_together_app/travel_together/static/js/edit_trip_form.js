@@ -119,10 +119,34 @@ $(document).ready(function () {
     preventSliderCrossing();
 
     const controls = [
-        { checkbox: "#budgetToggle", inputs: ["#budget"] },
-        { checkbox: "#maxMembersToggle", inputs: ["#max_members"] },
+        { finalized: "#originFinalizedToggle", inputs: ["#departure_location"] },
+        { finalized: "#destinationsFinalizedToggle", inputs: ["#destination-container .destination"] },
+        { finalized: "#datesFinalizedToggle", inputs: ["#start", "#end"] }
+    ];
+
+    controls.forEach(control => {
+        const $finalized = $(control.finalized);
+        const $inputs = control.inputs.map(selector => $(selector));
+
+        const toggleInputs = () => {
+            const isFinalized = $finalized.is(":checked");
+
+            $inputs.forEach($input => {
+                $input.prop("disabled", isFinalized);
+                $input.toggleClass("disabled", isFinalized);
+            });
+        };
+
+        toggleInputs();
+        $finalized.on("change", toggleInputs);
+    });
+
+    const optionalControls = [
+        { checkbox: "#budgetToggle", finalized: "#budgetFinalizedToggle", inputs: ["#budget"] },
+        { checkbox: "#maxMembersToggle", finalized: "#maxMembersFinalizedToggle", inputs: ["#max_members"] },
         {
             checkbox: "#ageToJoinToggle",
+            finalized: "#ageToJoinFinalizedToggle",
             inputs: [
                 "#min-age",
                 "#max-age",
@@ -132,19 +156,28 @@ $(document).ready(function () {
         }
     ];
 
-    controls.forEach(control => {
+    optionalControls.forEach(control => {
         const $checkbox = $(control.checkbox);
+        const $finalized = $(control.finalized);
         const $inputs = control.inputs.map(selector => $(selector));
 
         const toggleInputs = () => {
+            const isFinalized = $finalized.is(":checked");
+            const isEnabled = $checkbox.is(":checked") && !isFinalized;
+
             $inputs.forEach($input => {
                 $input.prop("disabled", !$checkbox.is(":checked"));
                 $input.toggleClass("disabled", !$checkbox.is(":checked"));
             });
+
+            if (isFinalized) {
+                $checkbox.prop("disabled", true);
+            }
         };
 
         toggleInputs();
         $checkbox.on("change", toggleInputs);
+        $finalized.on("change", toggleInputs);
     });
 
 
