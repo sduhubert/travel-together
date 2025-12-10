@@ -44,40 +44,73 @@
         </div>
         <div class="details">
           <div class="trip-info">
-            <p class="trip-origin">Origin: <span class="criteria">{{ trip.origin }}</span></p>
-            <p class="trip-destinations">Destination(s): <span class="criteria">{{ trip.destinations.replace(',', ', ')
-                }}</span></p>
-            {% if max_travelers != 999999 and max_travelers > 0 and trip.participants|length < max_travelers %} <p>
-              Member Capacity: <span class="criteria">{{ trip.participants|length }}/{{ max_travelers }} </span><span
-                class="open-members-popup">(view)</span></p>
-              {% elif trip.participants|length >= max_travelers%}
-              <p>Member Capacity: <span class="criteria red">{{ trip.participants|length }}/{{ max_travelers }}</span>
-              </p>
+
+            <p class="trip-origin">
+              Origin: <span class="criteria">{{ trip.origin }}</span>
+              {% if trip.origin_finalized %}
+                <img src="{{ url_for('static', filename='resources/finalized.png') }}" class="lock-icon" alt="Finalized">
               {% endif %}
-              {% if not (min_age == 0 and max_age == 999999) %}
-              {% if current_user.age < min_age or current_user.age> max_age %}
-                <p>Age range: <span class="criteria red">{{min_age}} to {{max_age}} years old</span></p>
-                {% else %}
-                <p>Age range: <span class="criteria">{{min_age}} to {{max_age}} years old</span></p>
+            </p>
+
+            <p class="trip-destinations">
+              Destination(s): <span class="criteria">{{ trip.destinations.replace(',', ', ') }}</span>
+              {% if trip.destinations_finalized %}
+                <img src="{{ url_for('static', filename='resources/finalized.png') }}" class="lock-icon" alt="Finalized">
+              {% endif %}
+            </p>
+
+            {% if max_travelers != 999999 and max_travelers > 0 %}
+              <p>
+                Member Capacity: 
+                <span class="criteria {% if trip.participants|length >= max_travelers %}red{% endif %}">
+                  {{ trip.participants|length }}/{{ max_travelers }}
+                </span>
+                {% if trip.participants|length < max_travelers %}
+                  <span class="open-members-popup">(view)</span>
                 {% endif %}
-                {% else %}
-                <p>Age range: <span class="criteria">N/A</span></p>
+              </p>
+            {% endif %}
+
+            {% if not (min_age == 0 and max_age == 999999) %}
+              <p>
+                Age range: 
+                <span class="criteria {% if current_user.age < min_age or current_user.age > max_age %}red{% endif %}">
+                  {{ min_age }} to {{ max_age }} years old
+                </span>
+                {% if trip.age_range_finalized %}
+                  <img src="{{ url_for('static', filename='resources/finalized.png') }}" class="lock-icon" alt="Finalized">
                 {% endif %}
-                {% if trip.budget and trip.budget > 0 %}
-                <p>Trip Budget: <span class="criteria">€{{ trip.budget }}</span></p>
+              </p>
+            {% else %}
+              <p>Age range: <span class="criteria">N/A</span></p>
+            {% endif %}
+
+            {% if trip.budget and trip.budget > 0 %}
+              <p>
+                Trip Budget: <span class="criteria">€{{ trip.budget }}</span>
+                {% if trip.budget_finalized %}
+                  <img src="{{ url_for('static', filename='resources/finalized.png') }}" class="lock-icon" alt="Finalized">
                 {% endif %}
-                <p>Planned Date Range: <span class="criteria">{{ trip.start_date.strftime('%B %d, %Y') }} to {{
-                    trip.end_date.strftime('%B %d, %Y') }}</span></p>
-                {% set status_map = {0: 'Open for joining', 1: 'Open (approval required)', 2: 'Closed', 3: 'Finalized',
-                4: 'Cancelled'} %}
-                {% if trip.status == 0 %}
-                <p>Status:<span class="criteria green"> {{ status_map[trip.status] }}</span></p>
-                {% elif trip.status == 1 %}
-                <p>Status:<span class="criteria yellow"> {{ status_map[trip.status] }}</span></p>
-                {% else %}
-                <p>Status:<span class="criteria red"> {{ status_map[trip.status] }}</span></p>
-                {% endif %}
+              </p>
+            {% endif %}
+
+            <p>
+              Planned Date Range: 
+              <span class="criteria">{{ trip.start_date.strftime('%B %d, %Y') }} to {{ trip.end_date.strftime('%B %d, %Y') }}</span>
+              {% if trip.dates_finalized %}
+                <img src="{{ url_for('static', filename='resources/finalized.png') }}" class="lock-icon" alt="Finalized">
+              {% endif %}
+            </p>
+
+            {% set status_map = {0: 'Open for joining', 1: 'Open (approval required)', 2: 'Closed', 3: 'Finalized', 4: 'Cancelled'} %}
+            <p>
+              Status: 
+              <span class="criteria {% if trip.status == 0 %}green{% elif trip.status == 1 %}yellow{% else %}red{% endif %}">
+                {{ status_map[trip.status] }}
+              </span>
+            </p>
           </div>
+
 
 
           <div class="button-container">
@@ -125,6 +158,7 @@
         </div>
       </div>
     </div>
+  </div>
 
     <div id="members-popup" class="popup">
       <div class="popup-content">

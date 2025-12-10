@@ -654,3 +654,14 @@
       overflow: auto;
       background-color: rgba(0, 0, 0, 0.3);
   }
+
+.finalized:hover {
+    cursor:not-allowed;
+}
+
+.lock-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
+    vertical-align: middle;
+}

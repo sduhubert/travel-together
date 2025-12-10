@@ -65,37 +65,38 @@
             <h2 class="step-header">Route and Dates</h2>
             <div class="form-entries">
                 <div class="single-entry" id="route-section">
-                    <div class="entry-header">
+                    <div class="entry-header {% if trip.origin_finalized %}finalized{% endif %}">
                         <label for="departure_location">Departure Location</label>
 
-                        <label class="checkbox-wrapper">
+                        <label class="checkbox-wrapper {% if trip.origin_finalized %}finalized{% endif %}">
                             <span>Finalize</span>
                             <input type="checkbox" name="origin_finalized" id="originFinalizedToggle" {% if
-                                trip.origin_finalized %}checked{% endif %}>
+                                trip.origin_finalized %}checked{% endif %} data-locked="{{ 'true' if trip.origin_finalized else 'false' }}">
                         </label>
                     </div>
                     <input type="text" id="departure_location" name="departure_location" value="{{ trip.origin or '' }}"
-                        placeholder="Departure location (optional)...">
+                        placeholder="Departure location (optional)..." {% if trip.origin_finalized %}class="finalized" disabled{% endif %}>
+
 
                     <div class="entry-header">
                         <label for="title">Destinations</label>
 
-                        <label class="checkbox-wrapper">
+                        <label class="checkbox-wrapper {% if trip.destinations_finalized %}finalized{% endif %}">
                             <span>Finalize</span>
                             <input type="checkbox" name="destinations_finalized" id="destinationsFinalizedToggle" {% if
-                                trip.destinations_finalized %}checked{% endif %}>
+                                trip.destinations_finalized %}checked{% endif %} data-locked="{{ 'true' if trip.destinations_finalized else 'false' }}">
                         </label>
                     </div>
                     <div id="destination-container">
                         {% set dest_list = trip.destinations.split(',') if trip.destinations else [] %}
                         {% for dest in dest_list %}
-                        <div class="destination-entry">
-                            <input type="text" class="destination" name="destination" placeholder="Destination"
-                                value="{{ dest }}" required>
+                        <div class="destination-entry" >
+                            <input type="text" class="destination {% if trip.destinations_finalized %}finalized{% endif %}" name="destination" placeholder="Destination"
+                                value="{{ dest }}" required {% if trip.destinations_finalized %}disabled{% endif %}>
                         </div>
                         {% endfor %}
                     </div>
-                    <span id="add-destination" class="add-destination">Add another destination</span>
+                    <span id="add-destination" class="add-destination" {% if trip.destinations_finalized %}hidden{% endif %}>Add another destination</span>
                 </div>
                 <div class="single-entry">
                     <div class="entry-header">
@@ -103,16 +104,16 @@
 
                         <label class="checkbox-wrapper">
                             <span>Finalize</span>
-                            <input type="checkbox" name="dates_finalized" id="#datesFinalizedToggle" {% if
-                                trip.dates_finalized %}checked{% endif %}>
+                            <input type="checkbox" name="dates_finalized" id="datesFinalizedToggle" {% if
+                                trip.dates_finalized %}checked{% endif %} data-locked="{{ 'true' if trip.dates_finalized else 'false' }}">
                         </label>
                     </div>
                     <div class="date-entries">
                         <label for="start">From:</label>
                         <input type="date" id="start" name="start"
-                            value="{{ trip.start_date if trip.start_date else '' }}" required>
+                            value="{{ trip.start_date.strftime('%Y-%m-%d') or '' }}" required>
                         <label for="end">To:</label>
-                        <input type="date" id="end" name="end" value="{{ trip.end_date if trip.end_date else '' }}"
+                        <input type="date" id="end" name="end" value="{{ trip.end_date.strftime('%Y-%m-%d') or '' }}"
                             required>
                     </div>
                 </div>
@@ -134,7 +135,7 @@
                     <div class="checkbox-wrapper">
                         <label>
                             <input type="checkbox" name="budget_finalized" {% if trip.budget_finalized %}checked{% endif
-                                %}>
+                                %} data-locked="{{ 'true' if trip.budget_finalized else 'false' }}">
                             Finalize
                         </label>
                     </div>
@@ -147,7 +148,7 @@
                     <div class="checkbox-wrapper">
                         <label>
                             <input type="checkbox" name="max_travelers_finalized" {% if trip.max_travelers_finalized
-                                %}checked{% endif %}>
+                                %}checked{% endif %} data-locked="{{ 'true' if trip.max_travelers_finalized else 'false' }}">
                             Finalize
                         </label>
                     </div>
@@ -183,7 +184,7 @@
                     <div class="checkbox-wrapper">
                         <label>
                             <input type="checkbox" name="age_range_finalized" id="ageToJoinFinalizedToggle" {% if
-                                trip.age_range_finalized %}checked{% endif %}>
+                                trip.age_range_finalized %}checked{% endif %} data-locked="{{ 'true' if trip.age_range_finalized else 'false' }}">
                             Finalize
                         </label>
                     </div>
